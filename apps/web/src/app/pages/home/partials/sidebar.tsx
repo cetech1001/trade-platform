@@ -1,0 +1,123 @@
+import '../styles/Sidebar.css';
+import {Popup} from "../../../shared/popup";
+
+
+const Multiplier = () => (
+  <div className={'multiplier'}>
+    <span>Multiplier</span>
+    <p className={'option'}>
+      <span className={'x-sign'}>x</span>500
+    </p>
+  </div>
+);
+
+const SlTp = () => (
+  <div className={'multiplier'}>
+    <span>SL / TP</span>
+    <p className={'option'}>
+      -- / --
+    </p>
+  </div>
+);
+
+const EnableOrders = () => (
+  <div className={'enable-orders'}>
+    <span>Enable Orders</span>
+    <i className="fa-solid fa-clock"></i>
+  </div>
+)
+
+const MultiplierOptions = () => (
+  <div className={'multiplier-options'}>
+    <p>Multiplier</p>
+    <div className={'options-block'}>
+      <div className={'options'}>
+        <div className={'option'}>
+          <span className={'x-sign'}>x</span>50
+        </div>
+        <div className={'option'}>
+          <span className={'x-sign'}>x</span>100
+        </div>
+      </div>
+      <div className={'options'}>
+        <div className={'option'}>
+          <span className={'x-sign'}>x</span>200
+        </div>
+        <div className={'option active'}>
+          <span className={'x-sign'}>x</span>500
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const SlTpOptions = () => (
+  <div className={'multiplier-options'}>
+    <p>Stop Loss and Take Profit</p>
+    <div className={'options-block'}>
+      <div className={'sl-tp-option'}>
+        <div className={'input'}>
+          <span>Stop Loss</span>
+          <div className={'input-field'}>
+            <span>-</span>
+            <input type={'number'} step={0.00000001}/>
+          </div>
+        </div>
+        <div className={'symbol'}>
+          $
+        </div>
+      </div>
+      <div className={'sl-tp-option'}>
+        <div className={'input'}>
+          <span>Take Profit</span>
+          <div className={'input-field'}>
+            <span>+</span>
+            <input type={'number'} step={0.00000001}/>
+          </div>
+        </div>
+        <div className={'symbol'}>
+          $
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
+const Sidebar = () => {
+  return (
+    <div className="sidebar">
+      <div className={'top-buttons'}>
+        <button>Payments</button>
+        <div>
+          <i className="fa-solid fa-user"></i>
+        </div>
+      </div>
+      <div>
+        <div className={'amount-input'}>
+          <span>Amount, $</span>
+          <input type={'number'} placeholder={'0'}/>
+        </div>
+        <div className={'amount-change'}>
+          <div className={'subtract'}>-</div>
+          <div style={{backgroundColor: "rgba(14, 15, 18, 1)", flex: 0.1}}/>
+          <div className={'add'}>+</div>
+        </div>
+      </div>
+      <Popup popupLauncher={<Multiplier/>} popupContent={<MultiplierOptions/>}/>
+      <Popup popupLauncher={<SlTp/>} popupContent={<SlTpOptions/>}/>
+      <Popup popupLauncher={<EnableOrders/>} popupContent={<MultiplierOptions/>}/>
+      <div className={'order-buttons'}>
+        <button className={'bg-positive'}>
+          <span>Up</span>
+          <i className="fa-solid fa-arrow-up"></i>
+        </button>
+        <button className={'bg-negative'}>
+          <span>Down</span>
+          <i className="fa-solid fa-arrow-down"></i>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;

@@ -1,0 +1,27 @@
+.dropdown {
+  background-color: #1A1D21;
+  padding: 12px;
+  position: absolute;
+  border-radius: 8px;
+  box-shadow: 0 0.125rem 0.125rem rgba(0, 0, 0, 0.102);
+  box-sizing: border-box;
+}
+
+.dropdown-header {
+  font-size: .8125rem;
+  font-weight: 400;
+  line-height: 1rem;
+  color: #9CB0C2;
+}
+
+.dropdown-option {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  color: #FFFFFF;
+}
+
+.dropdown-option:hover {
+  background-color: rgba(94, 105, 120, 0.22);
+  cursor: pointer;
+}
