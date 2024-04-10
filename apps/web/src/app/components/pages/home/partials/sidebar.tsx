@@ -1,5 +1,6 @@
 import '../styles/Sidebar.css';
 import {Popup} from "../../../shared/popup";
+import {useState} from "react";
 
 
 const Multiplier = () => (
@@ -28,7 +29,7 @@ const EnableOrders = () => (
 )
 
 const MultiplierOptions = () => (
-  <div className={'multiplier-options'}>
+  <div className={'trade-options'}>
     <p>Multiplier</p>
     <div className={'options-block'}>
       <div className={'options'}>
@@ -52,7 +53,7 @@ const MultiplierOptions = () => (
 );
 
 const SlTpOptions = () => (
-  <div className={'multiplier-options'}>
+  <div className={'trade-options'}>
     <p>Stop Loss and Take Profit</p>
     <div className={'options-block'}>
       <div className={'sl-tp-option'}>
@@ -81,7 +82,56 @@ const SlTpOptions = () => (
       </div>
     </div>
   </div>
-)
+);
+
+const EnableOrdersOptions = () => {
+  const [activeTab, setActiveTab] = useState<'bp' | 'bt'>('bp');
+  return (
+    <div className={'trade-options'}>
+      <p>Order Details</p>
+      <div className="tabs">
+        <button className={`${activeTab === 'bp' && 'active'}`}
+                onClick={() => setActiveTab('bp')}>By Price
+        </button>
+        <button className={`${activeTab === 'bt' && 'active'}`}
+                onClick={() => setActiveTab('bt')}>By Time
+        </button>
+      </div>
+      <div className={'sl-tp-option'}>
+        <div className={'input'}>
+          <span>Profitability</span>
+          <div className={'input-field'}>
+            <select>
+              <option>Any</option>
+              <option>from 70%</option>
+              <option>from 80%</option>
+              <option>from 90%</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div className={'sl-tp-option'}>
+        {activeTab === 'bp' && (
+          <div className={'input'}>
+            <span>Opening Price</span>
+            <div className={'input-field'}>
+              <input type={'number'} step={0.00000001}/>
+            </div>
+          </div>
+        )}
+        {activeTab === 'bt' && (
+          <div className={'input'}>
+            <span>Opening Time</span>
+            <div className={'input-field'}>
+              <input type={'time'}/>
+            </div>
+          </div>
+        )}
+      </div>
+      <button className={"save"}>Save</button>
+    </div>
+  );
+};
 
 const Sidebar = () => {
   return (
@@ -89,7 +139,7 @@ const Sidebar = () => {
       <div className={'top-buttons'}>
         <button>Payments</button>
         <div>
-          <i className="fa-solid fa-user"></i>
+        <i className="fa-solid fa-user"></i>
         </div>
       </div>
       <div>
@@ -105,7 +155,7 @@ const Sidebar = () => {
       </div>
       <Popup popupLauncher={<Multiplier/>} popupContent={<MultiplierOptions/>}/>
       <Popup popupLauncher={<SlTp/>} popupContent={<SlTpOptions/>}/>
-      <Popup popupLauncher={<EnableOrders/>} popupContent={<MultiplierOptions/>}/>
+      <Popup popupLauncher={<EnableOrders/>} popupContent={<EnableOrdersOptions/>} top={-75}/>
       <div className={'order-buttons'}>
         <button className={'bg-positive'}>
           <span>Up</span>

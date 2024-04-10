@@ -1,15 +1,14 @@
-import React, { useEffect, useRef, memo } from 'react';
+import React, {useEffect, useRef, memo, useCallback} from 'react';
 
 function TradingViewWidget() {
   const container = useRef<HTMLDivElement>(null);
 
-  useEffect(
-    () => {
-      const script = document.createElement("script");
-      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";
-      script.type = "text/javascript";
-      script.async = true;
-      script.innerHTML = `
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";
+    script.type = "text/javascript";
+    script.async = true;
+    script.innerHTML = `
         {
           "symbols": [
             [
@@ -26,8 +25,8 @@ function TradingViewWidget() {
             ]
           ],
           "chartOnly": false,
-          "width": 720,
-          "height": 400,
+          "width": 650,
+          "height": 667,
           "locale": "en",
           "colorTheme": "dark",
           "autosize": true,
@@ -58,10 +57,8 @@ function TradingViewWidget() {
             "all|1M"
           ]
         }`;
-      container.current?.appendChild(script);
-    },
-    []
-  );
+    container.current?.appendChild(script);
+  }, []);
 
   return (
     <div className="tradingview-widget-container" ref={container}/>

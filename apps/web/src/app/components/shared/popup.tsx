@@ -4,6 +4,7 @@ import "./styles/Popup.css";
 interface IProps {
   popupLauncher: JSX.Element;
   popupContent: JSX.Element;
+  top?: number;
 }
 
 export const Popup: FC<IProps> = (props) => {
@@ -30,7 +31,7 @@ export const Popup: FC<IProps> = (props) => {
         {props.popupLauncher}
       </span>
       {showPopup && (
-        <div className={'popup'}>
+        <div className={'popup'} style={{ top: props.top || 0 }}>
           {props.popupContent}
         </div>
       )}

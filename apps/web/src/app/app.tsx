@@ -1,14 +1,11 @@
-import {Route, Routes} from "react-router-dom";
-import {Home} from "./pages/home";
-import {Nav} from "./layout/nav";
+import {Nav} from "./components/layout/nav";
+import {Home} from "./components/pages/home";
 
 export const App = () => {
   return (
     <div className={'main'}>
-      <Nav/>
-      <Routes>
-        <Route path={'/'} element={<Home/>}/>
-      </Routes>
+        <Nav/>
+        <Home/>
     </div>
   );
 }

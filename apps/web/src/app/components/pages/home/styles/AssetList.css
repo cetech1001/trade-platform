@@ -85,7 +85,7 @@ input[type="search"]::placeholder {
   flex-direction: row;
   flex-wrap: nowrap;
   overflow-x: auto;
-  gap: 16px;
+  gap: 8px;
   padding: 0 16px;
 }
 

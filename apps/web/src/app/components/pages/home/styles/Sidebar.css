@@ -14,10 +14,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
 .top-buttons button {
-  padding: 8px 16px;
+  padding: 12px 24px;
   background-color: rgba(0, 148, 255, 1);
   border: none;
   border-radius: 8px;
@@ -26,12 +27,12 @@
 
 .top-buttons div {
   background-color: #5E697836;
-  height: 40px;
-  width: 40px;
+  height: 50px;
+  width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
+  border-radius: 25px;
 }
 
 .amount-input {
@@ -49,10 +50,10 @@
   color: #9CB0C2;
 }
 
-input[type="number"] {
+input, select {
   width: 100%;
   background: #1A1D21;
-  color: #9CB0C2;
+  color: #FFFFFF;
   border: none;
   outline: none;
   font-size: 16px;
@@ -63,7 +64,7 @@ input[type="number"] {
 }
 
 .amount-change div {
-  padding: 4px;
+  padding: 8px 4px;
   border-radius: 8px;
   background-color: #1A1D21;
   flex: 1;
@@ -86,7 +87,7 @@ input[type="number"] {
   font-size: .8125rem;
 }
 
-.multiplier-options {
+.trade-options {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -99,7 +100,7 @@ input[type="number"] {
   gap: 16px;
 }
 
-.multiplier-options .options {
+.trade-options .options {
   display: flex;
   gap: 8px;
 }
@@ -121,28 +122,33 @@ input[type="number"] {
   font-size: .8125rem;
 }
 
-.multiplier-options .options .option.active {
+.trade-options .options .option.active {
   background-color: rgba(0, 148, 255, 1);
 }
 
-.multiplier-options .options .option {
+.trade-options .options .option {
   justify-content: center;
   background-color: rgba(94, 105, 120, 0.21);
   padding: 12px;
 }
 
-.multiplier-options .options .option:hover {
+.trade-options .options .option:hover {
   background-color: rgba(94, 105, 120, 0.32);
 }
 
 .enable-orders {
   display: flex;
   align-items: center;
+  justify-content: center;
   background-color: #1A1D21;
   gap: 4px;
   padding: 12px;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.enable-orders span {
+  padding: 0 10px;
 }
 
 .order-buttons {
@@ -205,4 +211,31 @@ input[type="number"] {
   padding: 16px;
   gap: 8px;
   margin-bottom: 8px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 0.0625rem solid rgba(85, 89, 104, 0.35);
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  color: #9CB0C2;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  color: #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.save {
+  padding: 12px 24px;
+  background-color: rgba(0, 148, 255, 1);
+  border: none;
+  border-radius: 8px;
+  color: #FFFFFF;
 }
