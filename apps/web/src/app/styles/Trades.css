@@ -45,11 +45,10 @@
 
 .trade {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   padding: 16px;
   background-color: rgba(94, 105, 120, 0.14);
   border-radius: 10px;
-  align-items: center;
   flex: 0 0 auto;
 }
 
@@ -81,4 +80,15 @@
 .history-button:hover {
   background-color: rgba(94, 105, 120, 0.22);
   cursor: pointer;
+}
+
+.close-trade-button {
+  padding: 12px;
+  text-align: center;
+  margin-top: 0.75rem;
+  background-color: #E24F32;
+  border: none;
+  border-radius: 7px;
+  color: white;
+  font-size: 1rem;
 }

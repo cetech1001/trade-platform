@@ -99,7 +99,7 @@
 .option {
   padding: 8px;
   border-radius: 8px;
-  background-color: #1A1D21;
+  background-color: inherit;
   flex: 1;
   text-align: center;
   cursor: pointer;

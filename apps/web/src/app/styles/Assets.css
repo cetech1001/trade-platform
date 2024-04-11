@@ -8,28 +8,6 @@
   background: rgba(20, 22, 26, 1);
 }
 
-.filters {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 8px;
-  padding: 0 16px;
-}
-
-.filter {
-  display: flex;
-  flex-direction: row;
-  flex: 0 0 auto;
-  gap: 4px;
-  align-items: center;
-  border: .0625rem solid rgba(85, 89, 104, 0.35);
-  border-radius: 1rem;
-  padding: 8px 12px;
-  font-size: .8125rem;
-  cursor: pointer;
-}
-
 .table-header {
   display: flex;
   flex-direction: row;

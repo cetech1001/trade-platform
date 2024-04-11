@@ -1,6 +1,7 @@
 import '../styles/Sidebar.css';
 import {Popup} from "./shared/popup";
 import {useState} from "react";
+import {StopLossTakeProfitOptions} from "./shared/stop-los-take-profit";
 
 
 const Multiplier = () => (
@@ -8,15 +9,6 @@ const Multiplier = () => (
     <span>Multiplier</span>
     <p className={'option'}>
       <span className={'x-sign'}>x</span>500
-    </p>
-  </div>
-);
-
-const SlTp = () => (
-  <div className={'multiplier'}>
-    <span>SL / TP</span>
-    <p className={'option'}>
-      -- / --
     </p>
   </div>
 );
@@ -46,38 +38,6 @@ const MultiplierOptions = () => (
         </div>
         <div className={'option active'}>
           <span className={'x-sign'}>x</span>500
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const SlTpOptions = () => (
-  <div className={'trade-options'}>
-    <p>Stop Loss and Take Profit</p>
-    <div className={'options-block'}>
-      <div className={'sl-tp-option'}>
-        <div className={'input'}>
-          <span>Stop Loss</span>
-          <div className={'input-field'}>
-            <span>-</span>
-            <input type={'number'} step={0.00000001}/>
-          </div>
-        </div>
-        <div className={'symbol'}>
-          $
-        </div>
-      </div>
-      <div className={'sl-tp-option'}>
-        <div className={'input'}>
-          <span>Take Profit</span>
-          <div className={'input-field'}>
-            <span>+</span>
-            <input type={'number'} step={0.00000001}/>
-          </div>
-        </div>
-        <div className={'symbol'}>
-          $
         </div>
       </div>
     </div>
@@ -138,9 +98,7 @@ export const Sidebar = () => {
     <div className="sidebar">
       <div className={'top-buttons'}>
         <button>Payments</button>
-        <div>
-        <i className="fa-solid fa-user"></i>
-        </div>
+        <div><i className="fa-solid fa-user"></i></div>
       </div>
       <div>
         <div className={'amount-input'}>
@@ -154,7 +112,7 @@ export const Sidebar = () => {
         </div>
       </div>
       <Popup popupLauncher={<Multiplier/>} popupContent={<MultiplierOptions/>}/>
-      <Popup popupLauncher={<SlTp/>} popupContent={<SlTpOptions/>}/>
+      <StopLossTakeProfitOptions/>
       <Popup popupLauncher={<EnableOrders/>} popupContent={<EnableOrdersOptions/>} top={-75}/>
       <div className={'order-buttons'}>
         <button className={'bg-positive'}>
@@ -169,5 +127,3 @@ export const Sidebar = () => {
     </div>
   );
 };
-
-export default Sidebar;

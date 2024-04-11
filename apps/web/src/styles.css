@@ -65,6 +65,43 @@ table {
   background-color: #E24F32;
 }
 
+.bg-primary {
+  background-color: rgba(0, 148, 255, 1);
+}
+
+.bg-light-grey {
+  background-color: rgba(94, 105, 120, 0.21);
+}
+
+.flex-row-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.button {
+  padding: 12px;
+  text-align: center;
+  margin-top: 0.75rem;
+  border: none;
+  border-radius: 7px;
+  color: white;
+  font-size: 1rem;
+  flex: 1;
+  cursor: pointer;
+}
+
 .assets {
   flex: 5;
   background-color: rgba(14, 15, 18, 1);
@@ -81,7 +118,6 @@ table {
 
 .title {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
@@ -139,4 +175,26 @@ input, select {
 
 input::placeholder {
   color: #9CB0C2;
+}
+
+.filters {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.filter {
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 auto;
+  gap: 4px;
+  align-items: center;
+  border: .0625rem solid rgba(85, 89, 104, 0.35);
+  border-radius: 1rem;
+  padding: 8px 12px;
+  font-size: .8125rem;
+  cursor: pointer;
 }

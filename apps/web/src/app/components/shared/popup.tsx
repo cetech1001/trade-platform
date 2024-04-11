@@ -5,6 +5,8 @@ interface IProps {
   popupLauncher: JSX.Element;
   popupContent: JSX.Element;
   top?: number;
+  left?: number;
+  closePopup?: boolean;
 }
 
 export const Popup: FC<IProps> = (props) => {
@@ -25,15 +27,22 @@ export const Popup: FC<IProps> = (props) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (props.closePopup) {
+      setShowPopup(false);
+    }
+  }, [props.closePopup]);
+
   return (
     <div ref={containerRef} className={'parent-container'}>
       <span onClick={() => setShowPopup(!showPopup)}>
         {props.popupLauncher}
       </span>
       {showPopup && (
-        <div className={'popup'} style={{ top: props.top || 0 }}>
-          {props.popupContent}
-        </div>
+        <div className={'popup'} style={{
+          top: props.top || 0,
+          left: props.left !== undefined ? props.left : -295
+        }}>{props.popupContent}</div>
       )}
     </div>
   );

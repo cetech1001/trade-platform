@@ -31,7 +31,8 @@ export const Nav: FC<IProps> = (props) => {
           <p>Home</p>
         </Link>
         <Link to={'#'} onClick={() => props.setActiveNav(ROUTES.trades)}
-              className={`nav-item ${props.activeTab === ROUTES.trades && 'nav-item-active'}`}>
+              className={`nav-item ${[ROUTES.trades, ROUTES.history].includes(props.activeTab)
+              && 'nav-item-active'}`}>
           <div className={'has-badge'}>
             <div className={'badge'}>
               <p>1</p>

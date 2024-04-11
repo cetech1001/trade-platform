@@ -2,6 +2,7 @@ import {FC, useMemo, useRef, useState} from "react";
 import {Link} from "react-router-dom";
 import {Dropdown} from "./shared/dropdown";
 import '../styles/Assets.css';
+import {FilterDropdown} from "./shared/filter-dropdown";
 
 interface AssetItemIProps {
   flag: string;
@@ -13,11 +14,6 @@ interface AssetItemIProps {
 
 interface FilterIProps {
   activeTab: 'ft' | 'fx' | 'st';
-}
-
-interface DropDownFilterIProps {
-  title: string;
-  options: string[];
 }
 
 const AssetItem: FC<AssetItemIProps> = (props) => {
@@ -51,42 +47,37 @@ const AssetItem: FC<AssetItemIProps> = (props) => {
 };
 
 const AssetFilters: FC<FilterIProps> = ({ activeTab }) => {
-  const DropDownFilter: FC<DropDownFilterIProps> = (props) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef(null);
-
-    return (
-      <div className={'filter'} onClick={() => setIsOpen(!isOpen)}>
-        {props.title}
-        <i className="fa-solid fa-chevron-down"></i>
-        {isOpen && (
-          <Dropdown dropdownRef={dropdownRef} options={props.options} setIsOpen={setIsOpen}/>
-        )}
-      </div>
-    )
-  }
   const Favorites = () => (
     <div className={'filter'}>Favorites</div>
   );
 
   const Markets = () => {
-    const options = ['Commodities', 'Composites', 'Crypto', 'Currencies', 'ETF', 'Indices', 'Metals', 'Stocks'];
+    const options = [
+      'Commodities',
+      'Composites',
+      'Crypto',
+      'Currencies',
+      'ETF',
+      'Indices',
+      'Metals',
+      'Stocks'
+    ];
     return (
-      <DropDownFilter title={"All Markets"} options={options}/>
+      <FilterDropdown title={"All Markets"} options={options}/>
     )
   }
 
   const Profitability = () => {
     const options = ['Over 90%', 'Over 80%', 'Over 70%'];
     return (
-      <DropDownFilter title={"Any Profitability"} options={options}/>
+      <FilterDropdown title={"Any Profitability"} options={options}/>
     )
   }
 
   const Countries = () => {
     const options = ['Europe', 'USA'];
     return (
-      <DropDownFilter title={"All Countries"} options={options}/>
+      <FilterDropdown title={"All Countries"} options={options}/>
     )
   }
 

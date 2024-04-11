@@ -1,0 +1,9 @@
+.trades {
+  gap: 1rem;
+}
+
+.history-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}

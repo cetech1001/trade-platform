@@ -1,25 +1,14 @@
-import {useState} from "react";
+import {Dispatch, FC, SetStateAction, useState} from "react";
 import "../styles/Trades.css";
 import {Link} from "react-router-dom";
+import {Trade} from "./shared/trade";
+import {ROUTES} from "../constants";
 
-const Trade = () => {
-  return (
-    <div className="trade">
-      <div className="asset">
-        <img src={"https://cfcdn.olymptrade.com/assets1/instrument/vector/ASIA.c98e6b5283b2504d839b790a34a65587.svg"} alt={"Asset"} className={"symbol"}/>
-        <div className={"description"}>
-          <span className={"text"}>Bitcoin</span>
-          <span className={"amount"}>
-            $1.00 <i className={"fa-solid fa-long-arrow-up positive"}></i>
-          </span>
-        </div>
-      </div>
-      <span className={"positive"}>-$2.45</span>
-    </div>
-  );
+interface IProps {
+  setActiveNav: Dispatch<SetStateAction<ROUTES>>;
 }
 
-export const Trades = () => {
+export const Trades: FC<IProps> = (props) => {
   const [activeTab, setActiveTab] = useState<'ft' | 'fx' | 'st'>('fx');
   return (
     <div className={"assets"}>
@@ -58,11 +47,11 @@ export const Trades = () => {
             </div>
           </div>
           <div className={"trades"}>
-            <Trade/>
+            <Trade isActive={true}/>
           </div>
           <div className={"title"} style={{ marginTop: 16 }}>
             <h5>History</h5>
-            <Link to={'#'} className={"link"}>
+            <Link to={'#'} className={"link"} onClick={() => props.setActiveNav(ROUTES.history)}>
               Show all
               <i className="fa-solid fa-chevron-right"></i>
             </Link>
@@ -73,7 +62,9 @@ export const Trades = () => {
             <Trade/>
             <Trade/>
             <Trade/>
-            <div className={"history-button"}>Open Full History</div>
+            <div className={"history-button"} onClick={() => props.setActiveNav(ROUTES.history)}>
+              Open Full History
+            </div>
           </div>
         </div>
       </div>
