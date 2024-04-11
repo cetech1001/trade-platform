@@ -4,7 +4,7 @@ import {FC, useState} from "react";
 import {StopLossTakeProfitOptions} from "./shared/stop-los-take-profit";
 
 interface IProps {
-  toggleSidebar: () => void;
+  toggleSidebar: (component: 'payments' | 'settings') => void;
 }
 
 const Multiplier = () => (
@@ -100,8 +100,9 @@ export const CreateTrade: FC<IProps> = (props) => {
   return (
     <div className="create-trade">
       <div className={'top-buttons'}>
-        <button>Payments</button>
-        <div className={"cursor-pointer"} onClick={props.toggleSidebar}>
+        <button onClick={() => props.toggleSidebar('payments')}>Payments</button>
+        <div className={"cursor-pointer"}
+             onClick={() => props.toggleSidebar('settings')}>
           <i className="fa-solid fa-user"></i>
         </div>
       </div>
