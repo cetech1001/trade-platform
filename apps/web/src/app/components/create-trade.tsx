@@ -1,8 +1,11 @@
-import '../styles/Sidebar.css';
+import '../styles/CreateTrade.css';
 import {Popup} from "./shared/popup";
-import {useState} from "react";
+import {FC, useState} from "react";
 import {StopLossTakeProfitOptions} from "./shared/stop-los-take-profit";
 
+interface IProps {
+  toggleSidebar: () => void;
+}
 
 const Multiplier = () => (
   <div className={'multiplier'}>
@@ -93,12 +96,14 @@ const EnableOrdersOptions = () => {
   );
 };
 
-export const Sidebar = () => {
+export const CreateTrade: FC<IProps> = (props) => {
   return (
-    <div className="sidebar">
+    <div className="create-trade">
       <div className={'top-buttons'}>
         <button>Payments</button>
-        <div><i className="fa-solid fa-user"></i></div>
+        <div className={"cursor-pointer"} onClick={props.toggleSidebar}>
+          <i className="fa-solid fa-user"></i>
+        </div>
       </div>
       <div>
         <div className={'amount-input'}>

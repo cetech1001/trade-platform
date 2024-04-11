@@ -1,213 +1,53 @@
 .sidebar {
+  position: fixed;
+  top: 0;
+  right: -26%;
+  width: 25%;
+  height: 100%;
   background-color: rgba(14, 15, 18, 1);
-  color: rgba(255, 255, 255, 1);
-  padding: 20px;
-  box-sizing: border-box;
+  transition: right 0.3s ease-out;
+  z-index: 999;
+  padding: 1%;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  flex: 2;
-  gap: 24px;
-}
-
-.top-buttons {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 8px;
 }
 
-.top-buttons button {
-  padding: 12px 24px;
-  background-color: rgba(0, 148, 255, 1);
-  border: none;
-  border-radius: 8px;
+.sidebar.open {
+  right: 0;
+}
+
+.close-button {
   color: #FFFFFF;
+  font-size: 1.25rem;
+  margin-bottom: 16px;
 }
 
-.top-buttons div {
-  background-color: #5E697836;
-  height: 50px;
-  width: 50px;
+.sidebar-option {
+  padding: 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 25px;
+  gap: 1rem;
+  background-color: rgba(94, 105, 120, 0.14);
+  color: #fff;
+  border-radius: 8px;
 }
 
-.amount-input {
+.sidebar-option:hover {
+  background-color: rgba(94, 105, 120, 0.22);
+  cursor: pointer;
+}
+
+.sidebar-option .info {
   display: flex;
   flex-direction: column;
-  background: #1A1D21;
-  border-radius: 8px;
-  padding: 4px 16px;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 0.5rem;
 }
 
-.amount-input span {
-  font-size: 0.725rem;
-  color: #9CB0C2;
-}
-
-.amount-change {
-  display: flex;
-}
-
-.amount-change div {
-  padding: 8px 4px;
-  border-radius: 8px;
-  background-color: #1A1D21;
-  flex: 1;
-  text-align: center;
-  cursor: pointer;
+.sidebar-option .info h5 {
   font-size: 1rem;
 }
 
-.multiplier {
-  display: flex;
-  flex-direction: column;
-  background-color: #1A1D21;
-  gap: 4px;
-  padding: 8px 8px 0;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.multiplier span {
-  font-size: .8125rem;
-}
-
-.trade-options {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 8px;
-}
-
-.options-block {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.trade-options .options {
-  display: flex;
-  gap: 8px;
-}
-
-.option {
-  padding: 8px;
-  border-radius: 8px;
-  background-color: inherit;
-  flex: 1;
-  text-align: center;
-  cursor: pointer;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1px;
-}
-
-.x-sign {
-  font-size: .8125rem;
-}
-
-.trade-options .options .option.active {
-  background-color: rgba(0, 148, 255, 1);
-}
-
-.trade-options .options .option {
-  justify-content: center;
-  background-color: rgba(94, 105, 120, 0.21);
-  padding: 12px;
-}
-
-.trade-options .options .option:hover {
-  background-color: rgba(94, 105, 120, 0.32);
-}
-
-.enable-orders {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #1A1D21;
-  gap: 4px;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.enable-orders span {
-  padding: 0 10px;
-}
-
-.order-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.order-buttons button {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px;
-  font-weight: 700;
-  border-radius: 8px;
-  border: none;
-  color: #FFFFFF;
-}
-
-.sl-tp-options {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 12px;
-}
-
-.sl-tp-option {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
-.sl-tp-option .input {
-  flex: 5;
-  display: flex;
-  flex-direction: column;
-  background: #1A1D21;
-  border-radius: 8px;
-  padding: 4px 16px;
-  /*gap: 2px;*/
-  margin-bottom: 8px;
-}
-
-.sl-tp-option .input span {
-  font-size: 0.725rem;
-  color: #9CB0C2;
-}
-
-.sl-tp-option .input .input-field {
-  display: flex;
-  align-items: center;
-}
-
-.sl-tp-option .symbol {
-  background-color: rgba(94, 105, 120, 0.21);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 8px;
-  padding: 16px;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.save {
-  padding: 12px 24px;
-  background-color: rgba(0, 148, 255, 1);
-  border: none;
-  border-radius: 8px;
-  color: #FFFFFF;
+.sidebar-option .info p {
+  font-size: 0.8625rem;
 }
