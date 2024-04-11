@@ -8,20 +8,6 @@
   background: rgba(20, 22, 26, 1);
 }
 
-input[type="search"] {
-  width: 100%;
-  padding: 8px 0;
-  background: rgba(20, 22, 26, 1);
-  color: #9CB0C2;
-  border: none;
-  outline: none;
-  font-size: 16px;
-}
-
-input[type="search"]::placeholder {
-  color: #9CB0C2;
-}
-
 .filters {
   display: flex;
   flex-direction: row;

@@ -50,15 +50,6 @@
   color: #9CB0C2;
 }
 
-input, select {
-  width: 100%;
-  background: #1A1D21;
-  color: #FFFFFF;
-  border: none;
-  outline: none;
-  font-size: 16px;
-}
-
 .amount-change {
   display: flex;
 }
@@ -187,7 +178,7 @@ input, select {
   background: #1A1D21;
   border-radius: 8px;
   padding: 4px 16px;
-  gap: 8px;
+  /*gap: 2px;*/
   margin-bottom: 8px;
 }
 
@@ -211,25 +202,6 @@ input, select {
   padding: 16px;
   gap: 8px;
   margin-bottom: 8px;
-}
-
-.tabs {
-  display: flex;
-  border-bottom: 0.0625rem solid rgba(85, 89, 104, 0.35);
-}
-
-.tabs button {
-  background: none;
-  border: none;
-  color: #9CB0C2;
-  padding: 8px 16px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.tabs button.active {
-  color: #fff;
-  border-bottom: 2px solid #fff;
 }
 
 .save {

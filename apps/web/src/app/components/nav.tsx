@@ -1,9 +1,15 @@
-import {Link, useLocation} from "react-router-dom";
-import "./styles/Nav.css";
+import {Link} from "react-router-dom";
+import "../styles/Nav.css";
+import {Dispatch, FC, SetStateAction} from "react";
+import {ROUTES} from "../constants";
 
-export const Nav = () => {
-  const location = useLocation();
 
+interface IProps {
+  activeTab: ROUTES;
+  setActiveNav: Dispatch<SetStateAction<ROUTES>>;
+}
+
+export const Nav: FC<IProps> = (props) => {
   return (
     <div className={'nav'}>
       <div className={'navbar'}>
@@ -19,11 +25,13 @@ export const Nav = () => {
             </g>
           </svg>
         </div>
-        <Link to={'/'} className={`nav-item ${location.pathname === '/' && 'nav-item-active'}`}>
+        <Link to={'#'} onClick={() => props.setActiveNav(ROUTES.home)}
+              className={`nav-item ${props.activeTab === ROUTES.home && 'nav-item-active'}`}>
           <i className="fas fa-house"></i>
           <p>Home</p>
         </Link>
-        <Link to={'#'} className={'nav-item'}>
+        <Link to={'#'} onClick={() => props.setActiveNav(ROUTES.trades)}
+              className={`nav-item ${props.activeTab === ROUTES.trades && 'nav-item-active'}`}>
           <div className={'has-badge'}>
             <div className={'badge'}>
               <p>1</p>
@@ -32,7 +40,8 @@ export const Nav = () => {
           </div>
           <p>Trades</p>
         </Link>
-        <Link to={'#'} className={'nav-item'}>
+        <Link to={'#'} onClick={() => props.setActiveNav(ROUTES.help)}
+              className={`nav-item ${props.activeTab === ROUTES.help && 'nav-item-active'}`}>
           <i className="fas fa-circle-question"></i>
           <p>Help</p>
         </Link>

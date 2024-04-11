@@ -1,5 +1,5 @@
 import {FC, Fragment, JSX, useEffect, useRef, useState} from "react";
-import "./styles/Popup.css";
+import "../../styles/Popup.css";
 
 interface IProps {
   popupLauncher: JSX.Element;

@@ -1,6 +1,7 @@
-import React, {useEffect, useRef, memo, useCallback} from 'react';
+import React, {useEffect, useRef} from 'react';
+import "../styles/Chart.css";
 
-export const TradingViewWidget = () => {
+export const Chart = () => {
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

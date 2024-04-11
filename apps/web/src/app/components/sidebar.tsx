@@ -1,5 +1,5 @@
 import '../styles/Sidebar.css';
-import {Popup} from "../../../shared/popup";
+import {Popup} from "./shared/popup";
 import {useState} from "react";
 
 
@@ -133,7 +133,7 @@ const EnableOrdersOptions = () => {
   );
 };
 
-const Sidebar = () => {
+export const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className={'top-buttons'}>

@@ -1,7 +1,7 @@
 import {FC, useMemo, useRef, useState} from "react";
 import {Link} from "react-router-dom";
-import {Dropdown} from "../../../shared/dropdown";
-import '../styles/AssetList.css';
+import {Dropdown} from "./shared/dropdown";
+import '../styles/Assets.css';
 
 interface AssetItemIProps {
   flag: string;
@@ -128,7 +128,7 @@ const AssetSorter: FC<FilterIProps> = ({ activeTab }) => {
   )
 }
 
-const AssetList = () => {
+export const Assets = () => {
   const assets = [
     {
       flag: 'https://cfcdn.olymptrade.com/assets1/instrument/vector/ASIA.c98e6b5283b2504d839b790a34a65587.svg',
@@ -188,5 +188,3 @@ const AssetList = () => {
     </div>
   );
 };
-
-export default AssetList;

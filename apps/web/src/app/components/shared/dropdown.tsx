@@ -1,5 +1,5 @@
 import {Dispatch, FC, MutableRefObject, SetStateAction, useEffect} from "react";
-import "./styles/Dropdown.css";
+import "../../styles/Dropdown.css";
 
 interface IProps {
   dropdownRef: MutableRefObject<null>;

@@ -1,0 +1,84 @@
+.title h5 {
+  font-size: 1.0875rem;
+  line-height: 1.3333;
+}
+
+.title .link {
+  display: flex;
+  gap: 1rem;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 0.825rem;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.title .link:hover {
+  background-color: rgba(94, 105, 120, 0.21);
+}
+
+.subtitle {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  margin-top: -1rem;
+}
+
+.subtitle div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.text {
+  color: #9CB0C2;
+  font-size: 0.725rem;
+}
+
+.trades {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+}
+
+.trade {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: rgba(94, 105, 120, 0.14);
+  border-radius: 10px;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.trade:hover {
+  background-color: rgba(94, 105, 120, 0.22);
+  cursor: pointer;
+}
+
+.asset {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.asset .description {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.history-button {
+  padding: 12px;
+  background-color: rgba(94, 105, 120, 0.14);
+  border-radius: 7.5px;
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
+.history-button:hover {
+  background-color: rgba(94, 105, 120, 0.22);
+  cursor: pointer;
+}
