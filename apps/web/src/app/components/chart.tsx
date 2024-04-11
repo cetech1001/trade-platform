@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, memo, useCallback} from 'react';
 
-function TradingViewWidget() {
+export const TradingViewWidget = () => {
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,8 +25,6 @@ function TradingViewWidget() {
             ]
           ],
           "chartOnly": false,
-          "width": 650,
-          "height": 667,
           "locale": "en",
           "colorTheme": "dark",
           "autosize": true,
@@ -61,8 +59,8 @@ function TradingViewWidget() {
   }, []);
 
   return (
-    <div className="tradingview-widget-container" ref={container}/>
+    <div className={'chart'}>
+      <div className="tradingview-widget-container" ref={container}/>
+    </div>
   );
 }
-
-export default memo(TradingViewWidget);
