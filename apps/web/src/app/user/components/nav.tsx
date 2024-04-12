@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 import "../styles/Nav.css";
 import {FC} from "react";
-import {ROUTES} from "../constants";
+import {ROUTES} from "../../constants";
 
 
 interface IProps {

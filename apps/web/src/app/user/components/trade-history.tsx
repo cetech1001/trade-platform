@@ -2,7 +2,7 @@ import {FC, useState} from "react";
 import {Trade} from "./shared/trade";
 import {FilterDropdown} from "./shared/filter-dropdown";
 import "../styles/TradeHistory.css";
-import {ROUTES} from "../constants";
+import {ROUTES} from "../../constants";
 
 interface IProps {
   toggleNav: (route: ROUTES) => void;
