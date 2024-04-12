@@ -27,6 +27,8 @@ export const Chart = () => {
           ],
           "chartOnly": false,
           "locale": "en",
+          "width": 650,
+          "height": 667,
           "colorTheme": "dark",
           "autosize": true,
           "showVolume": false,

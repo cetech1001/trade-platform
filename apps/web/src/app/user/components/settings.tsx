@@ -1,4 +1,6 @@
 import React, {FC} from 'react';
+import {useNavigate} from "react-router-dom";
+
 import '../styles/Sidebar.css';
 
 interface IProps {
@@ -7,6 +9,13 @@ interface IProps {
 }
 
 export const Settings: FC<IProps> = (props) => {
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem('access_token');
+    navigate('/');
+  }
+
   return (
     <div className={`sidebar ${props.isOpen ? 'open' : ''}`}>
       <div>
@@ -39,7 +48,7 @@ export const Settings: FC<IProps> = (props) => {
         </div>
       </div>
       <div style={{display: 'flex'}}>
-        <button className={"button bg-negative"} style={{ marginBottom: "1rem" }}>
+        <button className={"button bg-negative"} style={{ marginBottom: "1rem" }} onClick={logout}>
           <i className={"fa-solid fa-sign-out-alt"}></i> Logout
         </button>
       </div>

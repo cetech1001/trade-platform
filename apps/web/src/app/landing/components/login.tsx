@@ -5,20 +5,24 @@ import axios from "axios";
 
 export const Login = () => {
   const navigateTo = useNavigate();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async () => {
     try {
+      setIsSubmitting(true);
       const response = await axios.post('http://localhost:3000/auth/login', {
-        username,
+        email,
         password,
       });
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('access_token', response.data.access_token);
       navigateTo('/platform');
     } catch (error) {
       console.error('Login failed', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -28,8 +32,8 @@ export const Login = () => {
         <div className={'input'}>
           <span>Email</span>
           <div className={'input-field'}>
-            <input type={'email'}
-                   onChange={e => setUsername(e.target.value)} required/>
+            <input type={'email'} value={email}
+                   onChange={e => setEmail(e.target.value)} required/>
           </div>
         </div>
       </div>
@@ -37,7 +41,7 @@ export const Login = () => {
         <div className={'input'}>
           <span>Password</span>
           <div className={'input-field'}>
-            <input type={showPassword ? 'text' : 'password'}
+            <input type={showPassword ? 'text' : 'password'} value={password}
                    onChange={e => setPassword(e.target.value)} required/>
             {showPassword ? (
               <i className={"fa-solid fa-eye-slash cursor-pointer"} onClick={() => setShowPassword(false)}></i>
@@ -47,7 +51,9 @@ export const Login = () => {
           </div>
         </div>
       </div>
-      <button className={"button bg-primary"}>Login</button>
+      <button className={"button bg-primary"} onClick={handleLogin} disabled={isSubmitting}>
+        {isSubmitting ? 'Signing in...' : 'Sign in'}
+      </button>
     </div>
   );
 };
