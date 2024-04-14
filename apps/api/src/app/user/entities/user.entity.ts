@@ -33,6 +33,13 @@ export class User {
   @ApiProperty({ type: String, enum: UserRole, default: UserRole.user })
   role: UserRole;
 
+  @Column('decimal', {
+    precision: 8,
+    scale: 2,
+    default: 0,
+  })
+  availableBalance: number;
+
   @Column()
   @IsNotEmpty()
   @IsString()

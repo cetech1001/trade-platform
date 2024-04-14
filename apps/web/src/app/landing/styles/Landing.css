@@ -63,3 +63,11 @@
   justify-content: center;
   height: 80vh;
 }
+
+.auth-error {
+  padding: 8px 16px;
+  background-color: #E24F32;
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+}
