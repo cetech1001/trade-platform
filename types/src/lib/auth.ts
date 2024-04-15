@@ -1,7 +1,7 @@
 import {User} from "./user";
 
 export interface AuthState {
-  user: User | null;
+  user: AuthUser | null;
   accessToken: string | undefined;
 }
 
@@ -18,3 +18,5 @@ export interface LoginResponse {
 export interface RegisterRequest extends LoginRequest {
   name: string;
 }
+
+export interface AuthUser extends Omit<User, 'password'> {}

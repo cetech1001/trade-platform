@@ -2,10 +2,12 @@ import {AuthState} from "@coinvant/types";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {AuthType} from "../types";
 
-const initialState: AuthState = {
+const _authData = localStorage.getItem("authData");
+
+const initialState: AuthState = _authData ? JSON.parse(_authData) : {
   user: null,
   accessToken: '',
-}
+};
 
 const reducer = (state = initialState, action: PayloadAction<AuthState>) => {
   const { type, payload } = action;
