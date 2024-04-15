@@ -1,28 +1,28 @@
-import {useState} from "react";
+import {FC, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
+import {LoginRequest} from "@coinvant/types";
+import {connect} from "react-redux";
+import {login} from "../../../store";
 
-export const Login = () => {
+interface IProps {
+  login: (payload: LoginRequest) => Promise<void>;
+}
+
+const Component: FC<IProps> = (props) => {
   const navigateTo = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isError, setIsError] = useState(false);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     try {
-      setIsError(false);
       setIsSubmitting(true);
-      const response = await axios.post('http://localhost:3000/auth/login', {
+      props.login({
         email,
         password,
-      });
-      localStorage.setItem('access_token', response.data.access_token);
-      navigateTo('/platform');
-    } catch (error) {
-      setIsError(true);
+      }).then(() => navigateTo('/platform'));
     } finally {
       setIsSubmitting(false);
     }
@@ -30,9 +30,6 @@ export const Login = () => {
 
   return (
     <div className={"flex-column"} style={{gap: "1rem", marginTop: "2rem"}}>
-      {isError && <div className={"auth-error"}>
-        Invalid login details
-      </div>}
       <div className={'sl-tp-option'}>
         <div className={'input'}>
           <span>Email</span>
@@ -62,3 +59,5 @@ export const Login = () => {
     </div>
   );
 };
+
+export const Login = connect(null, { login })(Component);

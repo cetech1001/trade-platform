@@ -7,14 +7,14 @@ import {hideAlert} from "../../store";
 
 interface IProps {
   alert: AlertState;
-  dispatch: AppDispatch;
+  hideAlert: () => void;
 }
 
-const Alert: FC<IProps> = (props) => {
+const Component: FC<IProps> = (props) => {
   useEffect(() => {
     if (props.alert.show) {
       const timer = setTimeout(() => {
-        props.dispatch(hideAlert());
+        props.hideAlert();
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -23,7 +23,7 @@ const Alert: FC<IProps> = (props) => {
   return (
     <div className={`alert-container ${props.alert.show ? 'show' : ''}`}>
       <div className={`alert ${props.alert.type === 'success' ? 'bg-positive' : 'bg-negative'}`}>
-        <button className="close-btn" onClick={() => props.dispatch(hideAlert())}>
+        <button className="close-btn" onClick={() => props.hideAlert()}>
           &times;
         </button>
         <div className="alert-body">{props.alert.message}</div>
@@ -38,4 +38,4 @@ const mapStateToProps = (state: RootState) => {
   }
 }
 
-export default connect(mapStateToProps)(Alert);
+export const Alert = connect(mapStateToProps, { hideAlert })(Component);

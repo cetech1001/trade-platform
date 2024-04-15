@@ -1,20 +1,25 @@
 import {Route, Routes, Navigate, Outlet} from "react-router-dom";
 import {User} from "./user";
 import {Landing} from "./landing";
-import {useState} from "react";
-import Alert from "./shared/alert";
+import {Alert} from "./shared/alert";
+import {connect} from "react-redux";
+import {RootState} from "../store";
+import {AuthState} from "@coinvant/types";
+import {FC} from "react";
 
-const GuestRoute = () => {
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  return !isAuthenticated ? <Outlet/> : <Navigate to={'/platform'}/>
+interface IProps {
+  auth: AuthState,
 }
 
-const ProtectedRoute = () => {
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  return isAuthenticated ? <Outlet/> : <Navigate to={'/'}/>
-};
+const Component: FC<IProps> = (props) => {
+  const GuestRoute = () => {
+    return !props.auth.user ? <Outlet/> : <Navigate to={'/platform'}/>
+  }
 
-export const App = () => {
+  const ProtectedRoute = () => {
+    return props.auth.user ? <Outlet/> : <Navigate to={'/'}/>
+  };
+
   return (
     <>
       <Alert/>
@@ -29,3 +34,9 @@ export const App = () => {
     </>
   );
 }
+
+const mapStateToProps = (state: RootState) => ({
+  auth: state.auth,
+})
+
+export const App = connect(mapStateToProps)(Component);

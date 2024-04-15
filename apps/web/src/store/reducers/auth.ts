@@ -1,11 +1,6 @@
-import {User} from "@coinvant/types";
+import {AuthState} from "@coinvant/types";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {AuthType} from "../types";
-
-interface AuthState {
-  user: User | null;
-  accessToken: string | undefined;
-}
 
 const initialState: AuthState = {
   user: null,

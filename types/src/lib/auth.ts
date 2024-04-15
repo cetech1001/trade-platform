@@ -1,5 +1,10 @@
 import {User} from "./user";
 
+export interface AuthState {
+  user: User | null;
+  accessToken: string | undefined;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;
