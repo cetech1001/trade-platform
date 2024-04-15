@@ -1,12 +1,12 @@
 import {Link} from "react-router-dom";
 import "../styles/Nav.css";
 import {FC} from "react";
-import {ROUTES} from "../../constants";
+import {USER_ROUTES} from "../../../routes";
 
 
 interface IProps {
-  activeTab: ROUTES;
-  toggleNav: (route: ROUTES) => void;
+  activeTab: USER_ROUTES;
+  toggleNav: (route: USER_ROUTES) => void;
 }
 
 export const Nav: FC<IProps> = (props) => {
@@ -25,13 +25,13 @@ export const Nav: FC<IProps> = (props) => {
             </g>
           </svg>
         </div>
-        <Link to={'#'} onClick={() => props.toggleNav(ROUTES.home)}
-              className={`nav-item ${props.activeTab === ROUTES.home && 'nav-item-active'}`}>
+        <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.home)}
+              className={`nav-item ${props.activeTab === USER_ROUTES.home && 'nav-item-active'}`}>
           <i className="fas fa-house"></i>
           <p>Home</p>
         </Link>
-        <Link to={'#'} onClick={() => props.toggleNav(ROUTES.trades)}
-              className={`nav-item ${[ROUTES.trades, ROUTES.history].includes(props.activeTab)
+        <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
+              className={`nav-item ${[USER_ROUTES.trades, USER_ROUTES.history].includes(props.activeTab)
               && 'nav-item-active'}`}>
           <div className={'has-badge'}>
             <div className={'badge'}>
@@ -41,8 +41,8 @@ export const Nav: FC<IProps> = (props) => {
           </div>
           <p>Trades</p>
         </Link>
-        <Link to={'#'} onClick={() => props.toggleNav(ROUTES.help)}
-              className={`nav-item ${props.activeTab === ROUTES.help && 'nav-item-active'}`}>
+        <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.help)}
+              className={`nav-item ${props.activeTab === USER_ROUTES.help && 'nav-item-active'}`}>
           <i className="fas fa-circle-question"></i>
           <p>Help</p>
         </Link>

@@ -1,0 +1,36 @@
+.alert-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.alert-container.show {
+  opacity: 1;
+}
+
+.alert {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #fff;
+}
+
+.alert-body {
+  flex: 1;
+  margin-right: 10px;
+  color: #FFFFFF;
+}

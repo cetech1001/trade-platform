@@ -2,10 +2,10 @@ import {FC, useState} from "react";
 import "../styles/Trades.css";
 import {Link} from "react-router-dom";
 import {Trade} from "./shared/trade";
-import {ROUTES} from "../../constants";
+import {USER_ROUTES} from "../../../routes";
 
 interface IProps {
-  toggleNav: (route: ROUTES) => void;
+  toggleNav: (route: USER_ROUTES) => void;
 }
 
 export const Trades: FC<IProps> = (props) => {
@@ -51,7 +51,7 @@ export const Trades: FC<IProps> = (props) => {
           </div>
           <div className={"title"} style={{ marginTop: 16 }}>
             <h5>History</h5>
-            <Link to={'#'} className={"link"} onClick={() => props.toggleNav(ROUTES.history)}>
+            <Link to={'#'} className={"link"} onClick={() => props.toggleNav(USER_ROUTES.history)}>
               Show all
               <i className="fa-solid fa-chevron-right"></i>
             </Link>
@@ -62,7 +62,7 @@ export const Trades: FC<IProps> = (props) => {
             <Trade/>
             <Trade/>
             <Trade/>
-            <div className={"history-button"} onClick={() => props.toggleNav(ROUTES.history)}>
+            <div className={"history-button"} onClick={() => props.toggleNav(USER_ROUTES.history)}>
               Open Full History
             </div>
           </div>

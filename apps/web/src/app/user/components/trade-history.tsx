@@ -2,10 +2,10 @@ import {FC, useState} from "react";
 import {Trade} from "./shared/trade";
 import {FilterDropdown} from "./shared/filter-dropdown";
 import "../styles/TradeHistory.css";
-import {ROUTES} from "../../constants";
+import {USER_ROUTES} from "../../../routes";
 
 interface IProps {
-  toggleNav: (route: ROUTES) => void;
+  toggleNav: (route: USER_ROUTES) => void;
 }
 
 interface TradeFiltersProps {
@@ -66,7 +66,7 @@ export const TradeHistory: FC<IProps> = (props) => {
       <div className="asset-list">
         <div className={"flex-row-space-between"} style={{paddingRight: 16, paddingLeft: 16}}>
           <i className="fa-solid fa-long-arrow-left cursor-pointer"
-             onClick={() => props.toggleNav(ROUTES.trades)}></i>
+             onClick={() => props.toggleNav(USER_ROUTES.trades)}></i>
           <i className="fa-solid fa-up-right-and-down-left-from-center"></i>
         </div>
         <div className={"title"}>

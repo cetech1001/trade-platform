@@ -1,11 +1,7 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 import {IsEmail, IsIn, IsNotEmpty, IsString} from "class-validator";
-
-export enum UserRole {
-  user = 'user',
-  admin = 'admin',
-}
+import {UserRole} from "@coinvant/types";
 
 @Entity('users')
 export class User {
@@ -38,7 +34,7 @@ export class User {
     scale: 2,
     default: 0,
   })
-  availableBalance: number;
+  walletBalance: string;
 
   @Column()
   @IsNotEmpty()

@@ -1,6 +1,8 @@
 import {Route, Routes, Navigate, Outlet} from "react-router-dom";
 import {User} from "./user";
 import {Landing} from "./landing";
+import {useState} from "react";
+import Alert from "./shared/alert";
 
 const GuestRoute = () => {
   const isAuthenticated = !!localStorage.getItem('access_token');
@@ -14,13 +16,16 @@ const ProtectedRoute = () => {
 
 export const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<GuestRoute/>}>
-        <Route path="/" element={<Landing/>}/>
-      </Route>
-      <Route path={'/platform'} element={<ProtectedRoute/>}>
-        <Route path="/platform" element={<User/>}/>
-      </Route>
-    </Routes>
+    <>
+      <Alert/>
+      <Routes>
+        <Route path="/" element={<GuestRoute/>}>
+          <Route path="/" element={<Landing/>}/>
+        </Route>
+        <Route path={'/platform'} element={<ProtectedRoute/>}>
+          <Route path="/platform" element={<User/>}/>
+        </Route>
+      </Routes>
+    </>
   );
 }

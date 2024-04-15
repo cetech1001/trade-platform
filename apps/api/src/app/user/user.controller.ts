@@ -5,14 +5,17 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  Delete, Request, UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {JwtAuthGuard} from "../auth/guards/jwt-auth.guard";
 
 @ApiTags('User Controller')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -20,6 +23,11 @@ export class UserController {
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
+  }
+
+  @Get('profile')
+  getProfile(@Request() req) {
+    return this.userService.findOne({ id: req.user.id });
   }
 
   @Get()
