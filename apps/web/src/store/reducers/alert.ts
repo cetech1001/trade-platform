@@ -1,5 +1,5 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {AlertTypes} from "../types/alert";
+import {AlertType} from "../types/alert";
 
 interface AlertState {
   message: string | null;
@@ -17,9 +17,9 @@ const reducer = (state = initialState, action: PayloadAction<AlertState>) => {
     const { type, payload } = action;
 
     switch (type) {
-        case AlertTypes.SHOW_ALERT:
+        case AlertType.SHOW:
           return payload;
-        case AlertTypes.HIDE_ALERT:
+        case AlertType.HIDE:
           return {
             message: null,
             type: null,

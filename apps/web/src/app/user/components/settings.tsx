@@ -1,22 +1,24 @@
 import React, {FC} from 'react';
 
 import '../styles/Sidebar.css';
-import {AuthUser} from "@coinvant/types";
+import {AuthUser, Modals, ModalState} from "@coinvant/types";
 
 interface IProps {
-  isOpen: boolean;
-  toggleSidebar: () => void;
-  logout: () => void;
   user: AuthUser | null;
+  logout: () => void;
+  activeModal: Modals | null;
+  openModal: (payload: ModalState) => void;
+  closeModal: () => void;
 }
 
 export const Settings: FC<IProps> = (props) => {
   return (
-    <div className={`sidebar ${props.isOpen ? 'open' : ''}`}>
+    <div className={`sidebar ${props.activeModal === Modals.settings ? 'open' : ''}`}>
       <div>
         <div className={"flex-row-space-between close-button"}>
+          <div/>
           <i className="fa-solid fa-xmark cursor-pointer"
-             onClick={props.toggleSidebar}></i>
+             onClick={props.closeModal}></i>
         </div>
         <div className={"title"} style={{padding: 0}}>
           <h3 style={{color: "#FFF"}}>Settings</h3>
@@ -25,7 +27,8 @@ export const Settings: FC<IProps> = (props) => {
           <h5 style={{color: "#FFF"}}>Profile</h5>
         </div>
         <div className={"flex-column"} style={{gap: "1rem"}}>
-          <div className={"sidebar-option"}>
+          <div className={"sidebar-option"}
+               onClick={() => props.openModal({ activeModal: Modals.personal })}>
             <i className="fa-solid fa-user"></i>
             <div className={"info"}>
               <h5>Personal</h5>

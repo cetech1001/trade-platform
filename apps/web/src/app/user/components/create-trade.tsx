@@ -2,9 +2,11 @@ import '../styles/CreateTrade.css';
 import {Popup} from "./shared/popup";
 import {FC, useState} from "react";
 import {StopLossTakeProfitOptions} from "./shared/stop-los-take-profit";
+import {Modals, ModalState} from "@coinvant/types";
 
 interface IProps {
-  toggleSidebar: (component: 'payments' | 'settings') => void;
+  openModal: (payload: ModalState) => void;
+  closeModal: () => void;
 }
 
 const Multiplier = () => (
@@ -100,9 +102,10 @@ export const CreateTrade: FC<IProps> = (props) => {
   return (
     <div className="create-trade">
       <div className={'top-buttons'}>
-        <button onClick={() => props.toggleSidebar('payments')}>Payments</button>
-        <div className={"cursor-pointer"}
-             onClick={() => props.toggleSidebar('settings')}>
+        <button onClick={() => props.openModal({ activeModal: Modals.payments })}>
+          Payments
+        </button>
+        <div onClick={() => props.openModal({ activeModal: Modals.settings })}>
           <i className="fa-solid fa-user"></i>
         </div>
       </div>

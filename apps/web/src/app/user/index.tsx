@@ -9,27 +9,21 @@ import {TradeHistory} from "./components/trade-history";
 import {Settings} from "./components/settings";
 import {Payments} from "./components/payments";
 import {connect} from "react-redux";
-import {logout, RootState} from "../../store";
-import {AuthUser} from "@coinvant/types";
+import {closeModal, logout, RootState, openModal} from "../../store";
+import {AuthUser, Modals, ModalState} from "@coinvant/types";
+import {UpdateProfile} from "./components/update-profile";
 
 
 interface IProps {
   user: Omit<AuthUser, 'password'> | null;
+  activeModal: Modals | null;
   logout: () => void;
+  openModal: (payload: ModalState) => void;
+  closeModal: () => void;
 }
 
 const Component: FC<IProps> = (props) => {
   const [activeNav, setActiveNav] = useState<USER_ROUTES>(USER_ROUTES.trades);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isPaymentsOpen, setIsPaymentsOpen] = useState(false);
-
-  const toggleSidebar = (component: 'settings' | 'payments') => {
-    if (component === 'settings') {
-      setIsSettingsOpen(!isSettingsOpen);
-    } else {
-      setIsPaymentsOpen(!isPaymentsOpen);
-    }
-  };
 
   const toggleNav = (route: USER_ROUTES) => {
     setActiveNav(route);
@@ -42,18 +36,24 @@ const Component: FC<IProps> = (props) => {
       {activeNav === USER_ROUTES.trades && <Trades toggleNav={toggleNav}/>}
       {activeNav === USER_ROUTES.history && <TradeHistory toggleNav={toggleNav}/>}
       <Chart/>
-      <CreateTrade toggleSidebar={toggleSidebar}/>
-      <Settings isOpen={isSettingsOpen} toggleSidebar={() => toggleSidebar('settings')}
-                logout={props.logout} user={props.user}/>
-      <Payments isOpen={isPaymentsOpen} toggleSidebar={() => toggleSidebar('payments')}/>
+      <CreateTrade openModal={props.openModal} closeModal={props.closeModal}/>
+      <Settings openModal={props.openModal} activeModal={props.activeModal}
+                logout={props.logout} user={props.user} closeModal={props.closeModal}/>
+      <Payments openModal={props.openModal} activeModal={props.activeModal}
+                closeModal={props.closeModal}/>
+      <UpdateProfile openModal={props.openModal} activeModal={props.activeModal}
+                closeModal={props.closeModal} user={props.user}/>
     </div>
   );
 }
 
 const mapStateToProps = (state: RootState) => ({
   user: state.auth.user,
+  activeModal: state.modal.activeModal,
 });
 
 export const User = connect(mapStateToProps, {
-  logout
+  logout,
+  openModal,
+  closeModal,
 })(Component);

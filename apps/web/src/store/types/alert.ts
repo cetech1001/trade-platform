@@ -1,4 +1,4 @@
-export enum AlertTypes {
-  SHOW_ALERT = 'showAlert',
-  HIDE_ALERT = 'hideAlert',
+export enum AlertType {
+  SHOW = 'alert.show',
+  HIDE = 'alert.hide',
 }

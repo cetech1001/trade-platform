@@ -1,19 +1,21 @@
 import React, {FC} from 'react';
 import '../styles/Sidebar.css';
+import {Modals, ModalState} from "@coinvant/types";
 
 interface IProps {
-  isOpen: boolean;
-  toggleSidebar: () => void;
+  activeModal: Modals | null;
+  openModal: (payload: ModalState) => void;
+  closeModal: () => void;
 }
 
 export const Payments: FC<IProps> = (props) => {
   return (
-    <div className={`sidebar ${props.isOpen ? 'open' : ''}`}>
+    <div className={`sidebar ${props.activeModal === Modals.payments ? 'open' : ''}`}>
       <div>
         <div className={"flex-row-space-between close-button"}>
           <div/>
           <i className="fa-solid fa-xmark cursor-pointer"
-             onClick={props.toggleSidebar}></i>
+             onClick={props.closeModal}></i>
         </div>
         <div className={"flex-column"} style={{gap: "1rem"}}>
           <div className={"sidebar-option"} style={{ padding: "24px 16px" }}>

@@ -1,4 +1,4 @@
 export enum AuthType {
-  LOGIN = 'login',
-  LOGOUT = 'logout',
+  LOGIN = 'auth.login',
+  LOGOUT = 'auth.logout',
 }
