@@ -12,6 +12,7 @@ import {connect} from "react-redux";
 import {closeModal, logout, RootState, openModal} from "../../store";
 import {AuthUser, Modals, ModalState} from "@coinvant/types";
 import {UpdateProfile} from "./components/update-profile";
+import {UpdatePassword} from "./components/update-password";
 
 
 interface IProps {
@@ -43,6 +44,7 @@ const Component: FC<IProps> = (props) => {
                 closeModal={props.closeModal}/>
       <UpdateProfile openModal={props.openModal} activeModal={props.activeModal}
                 closeModal={props.closeModal} user={props.user}/>
+      <UpdatePassword activeModal={props.activeModal} openModal={props.openModal} closeModal={props.closeModal}/>
     </div>
   );
 }

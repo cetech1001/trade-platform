@@ -35,7 +35,8 @@ export const Settings: FC<IProps> = (props) => {
               <p>Name and contacts</p>
             </div>
           </div>
-          <div className={"sidebar-option"}>
+          <div className={"sidebar-option"}
+               onClick={() => props.openModal({ activeModal: Modals.password })}>
             <i className="fa-solid fa-key"></i>
             <div className={"info"}>
               <h5>Password</h5>
