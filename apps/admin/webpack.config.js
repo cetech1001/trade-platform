@@ -4,10 +4,10 @@ const { join } = require('path');
 
 module.exports = {
   output: {
-    path: join(__dirname, '../../dist/apps/web'),
+    path: join(__dirname, '../../dist/apps/admin'),
   },
   devServer: {
-    port: 4200,
+    port: 4300,
     historyApiFallback: true,
   },
   plugins: [
