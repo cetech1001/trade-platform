@@ -118,24 +118,25 @@ export const Sidebar = () => {
               </Nav.Link>
             </div>
             <Nav className="flex-column pt-3 pt-md-0">
-              <NavItem title="Overview" link={AdminRoutes.overview} icon={'chart-pie'} />
-              <NavItem title="Users" link={AdminRoutes.users} icon={'users'}/>
+              <NavItem title="Overview" link={`/${AdminRoutes.overview}`} icon={'chart-pie'} />
+              <NavItem title="Users" link={`/${AdminRoutes.users}`} icon={'users'}/>
+              <NavItem title="Payment Methods" link={`/${AdminRoutes.paymentMethods}`} icon={'credit-card'}/>
               <CollapsableNavItem eventKey="trades/" title="Trades" icon={'chart-line'}>
-                <NavItem title="Pending" link={`${AdminRoutes.trades}/?status=pending`}/>
-                <NavItem title="Active" link={`${AdminRoutes.trades}/?status=active`}/>
-                <NavItem title="Completed" link={`${AdminRoutes.trades}/?status=completed`}/>
-                <NavItem title="Cancelled" link={`${AdminRoutes.trades}/?status=cancelled`}/>
+                <NavItem title="Pending" link={`/${AdminRoutes.trades}/?status=pending`}/>
+                <NavItem title="Active" link={`/${AdminRoutes.trades}/?status=active`}/>
+                <NavItem title="Completed" link={`/${AdminRoutes.trades}/?status=completed`}/>
+                <NavItem title="Cancelled" link={`/${AdminRoutes.trades}/?status=cancelled`}/>
               </CollapsableNavItem>
               <CollapsableNavItem eventKey="deposits/" title="Deposits" icon={'wallet'}>
-                <NavItem title="Pending" link={`${AdminRoutes.deposits}/?status=pending`}/>
-                <NavItem title="Approved" link={`${AdminRoutes.deposits}/?status=approved`}/>
-                <NavItem title="Cancelled" link={`${AdminRoutes.deposits}/?status=cancelled`}/>
-                <NavItem title="Refunded" link={`${AdminRoutes.deposits}/?status=refunded`}/>
+                <NavItem title="Pending" link={`/${AdminRoutes.deposits}/?status=pending`}/>
+                <NavItem title="Approved" link={`/${AdminRoutes.deposits}/?status=approved`}/>
+                <NavItem title="Cancelled" link={`/${AdminRoutes.deposits}/?status=cancelled`}/>
+                <NavItem title="Refunded" link={`/${AdminRoutes.deposits}/?status=refunded`}/>
               </CollapsableNavItem>
               <CollapsableNavItem eventKey="withdrawals/" title="Withdrawals" icon={'money-bill'}>
-                <NavItem title="Pending" link={`${AdminRoutes.withdrawals}/?status=pending`}/>
-                <NavItem title="Paid" link={`${AdminRoutes.withdrawals}/?status=paid`}/>
-                <NavItem title="Cancelled" link={`${AdminRoutes.withdrawals}/?status=cancelled`}/>
+                <NavItem title="Pending" link={`/${AdminRoutes.withdrawals}/?status=pending`}/>
+                <NavItem title="Paid" link={`/${AdminRoutes.withdrawals}/?status=paid`}/>
+                <NavItem title="Cancelled" link={`/${AdminRoutes.withdrawals}/?status=cancelled`}/>
               </CollapsableNavItem>
               <Button variant="secondary" className="upgrade-to-pro">
                 <i className="fa-solid fa-right-from-bracket me-1" /> Logout

@@ -14,7 +14,7 @@ export class User {
   @ApiProperty({ type: String, required: true, example: 'John Doe' })
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({ type: String, required: true, example: 'johndoe@mail.com' })

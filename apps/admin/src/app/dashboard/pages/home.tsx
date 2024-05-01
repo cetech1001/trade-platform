@@ -33,15 +33,7 @@ export const Home = () => {
 
       <Row>
         <Col xs={12} xl={12} className="mb-4">
-          <Row>
-            <Col xs={12} xl={8} className="mb-4">
-              <Row>
-                <Col xs={12} className="mb-4">
-                  <TransactionsTable/>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+          <TransactionsTable/>
         </Col>
       </Row>
     </>

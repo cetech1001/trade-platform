@@ -1,8 +1,14 @@
 import {useNavigate} from "react-router-dom";
-import {useState} from "react";
-import axios from "axios";
+import {FC, useState} from "react";
+import {connect} from "react-redux";
+import {register} from "../../../store";
+import {RegisterRequest} from "@coinvant/types";
 
-export const Signup = () => {
+interface IProps {
+  register: (payload: RegisterRequest) => Promise<void>;
+}
+
+const Component: FC<IProps> = (props) => {
   const navigateTo = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState('');
@@ -13,15 +19,13 @@ export const Signup = () => {
   const handleSignup = async () => {
     try {
       setIsSubmitting(true);
-      const response = await axios.post('http://localhost:3000/auth/register', {
+      setIsSubmitting(true);
+      props.register({
         name,
         email,
         password,
-      });
-      localStorage.setItem('access_token', response.data.access_token);
+      }).then(() => navigateTo('/platform'));
       navigateTo('/platform');
-    } catch (error) {
-      console.error('Sign up failed', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -69,3 +73,5 @@ export const Signup = () => {
     </div>
   );
 };
+
+export const Signup = connect(null, { register })(Component);

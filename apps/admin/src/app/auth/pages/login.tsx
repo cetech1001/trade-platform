@@ -1,5 +1,6 @@
 import { Col, Row, Form, Card, Button, FormCheck, Container, InputGroup } from '@themesberg/react-bootstrap';
 import {Link} from "react-router-dom";
+import {AuthRoutes} from "../../../routes";
 
 export const Login = () => {
   return (
@@ -37,7 +38,7 @@ export const Login = () => {
                         <FormCheck.Input id="defaultCheck5" className="me-2"/>
                         <FormCheck.Label htmlFor="defaultCheck5" className="mb-0">Remember me</FormCheck.Label>
                       </Form.Check>
-                      <Card.Link as={Link} to={'/forgot/password'} className="small text-end">
+                      <Card.Link as={Link} to={`/${AuthRoutes.forgotPassword}`} className="small text-end">
                         Lost password?
                       </Card.Link>
                     </div>

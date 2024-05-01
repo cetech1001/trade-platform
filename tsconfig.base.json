@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@coinvant/store": ["store/src/index.ts"],
       "@coinvant/types": ["types/src/index.ts"]
     }
   },

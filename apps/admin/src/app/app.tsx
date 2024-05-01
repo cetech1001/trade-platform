@@ -1,4 +1,4 @@
-import {Route, Routes} from 'react-router-dom';
+import {Navigate, Route, Routes} from 'react-router-dom';
 import "../scss/volt.scss";
 import {Auth} from "./auth";
 import {Dashboard} from "./dashboard";

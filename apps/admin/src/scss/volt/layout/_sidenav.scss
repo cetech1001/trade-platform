@@ -12,7 +12,7 @@
 	overflow-y: auto;
 	width: 100%;
 	@include transition(max-width .3s);
-	
+
 	@include media-breakpoint-up(md) {
 		width: 100%;
 		max-width: 260px;
@@ -102,14 +102,14 @@
 			display: none;
 			@include transition(opacity .3s);
 		}
-	
+
 		&.contracted {
 			.sidebar-text,
 			.link-arrow,
 			.badge {
 				opacity: 0;
 			}
-	
+
 			.notification-count {
 				opacity: 1;
 				position: absolute;
@@ -121,7 +121,7 @@
 				font-size: .7rem;
 				padding: .2rem;
 			}
-	
+
 			.nav-item {
 				position: relative;
 				width: 47px;
@@ -136,31 +136,31 @@
 					}
 				}
 			}
-	
+
 			.sidebar-text-contracted {
 				display: inline;
 			}
-	
+
 			.multi-level .nav-link {
 				padding-left: 17px;
 			}
-	
+
 			.nav-item {
 				white-space: nowrap;
 			}
-	
+
 			.sidebar-icon {
 				text-align: center;
 			}
-	
-	
+
+
 			@include media-breakpoint-up(md) {
 				& + .content {
 					margin-left: 95px;
-					
+
 				}
 			}
-	
+
 			max-width: 95px;
 		}
 	}

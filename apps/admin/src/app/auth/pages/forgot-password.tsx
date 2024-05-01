@@ -1,5 +1,6 @@
 import {Button, Card, Col, Container, Form, InputGroup, Row} from "@themesberg/react-bootstrap";
 import {Link} from "react-router-dom";
+import {AuthRoutes} from "../../../routes";
 
 export const ForgotPassword = () => {
   return (
@@ -8,7 +9,7 @@ export const ForgotPassword = () => {
         <Container>
           <Row className="justify-content-center">
             <p className="text-center">
-              <Card.Link as={Link} to={'/'} className="text-gray-700">
+              <Card.Link as={Link} to={`/${AuthRoutes.login}`} className="text-gray-700">
                 <i className="fa-solid fa-long-arrow-left me-2"/> Back to sign in
               </Card.Link>
             </p>
