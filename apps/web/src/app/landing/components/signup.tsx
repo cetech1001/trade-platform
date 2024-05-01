@@ -1,8 +1,8 @@
 import {useNavigate} from "react-router-dom";
 import {FC, useState} from "react";
 import {connect} from "react-redux";
-import {register} from "../../../store";
 import {RegisterRequest} from "@coinvant/types";
+import {register} from "@coinvant/store";
 
 interface IProps {
   register: (payload: RegisterRequest) => Promise<void>;

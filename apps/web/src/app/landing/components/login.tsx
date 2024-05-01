@@ -2,7 +2,7 @@ import {FC, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {LoginRequest} from "@coinvant/types";
 import {connect} from "react-redux";
-import {login} from "../../../store";
+import {login} from "@coinvant/store";
 
 interface IProps {
   login: (payload: LoginRequest) => Promise<void>;

@@ -9,7 +9,7 @@ import {TradeHistory} from "./components/trade-history";
 import {Settings} from "./components/settings";
 import {Payments} from "./components/payments";
 import {connect} from "react-redux";
-import {closeModal, logout, RootState, openModal} from "../../store";
+import {closeModal, logout, RootState, openModal} from "@coinvant/store";
 import {AuthUser, Modals, ModalState} from "@coinvant/types";
 import {UpdateProfile} from "./components/update-profile";
 import {UpdatePassword} from "./components/update-password";

@@ -1,9 +1,8 @@
 import React, {useEffect, FC} from 'react';
 import './styles/Alert.css';
-import {AppDispatch, RootState} from "../../store";
 import {connect} from "react-redux";
 import {AlertState} from "@coinvant/types";
-import {hideAlert} from "../../store";
+import {hideAlert, RootState} from "@coinvant/store";
 
 interface IProps {
   alert: AlertState;

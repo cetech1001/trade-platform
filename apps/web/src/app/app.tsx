@@ -3,9 +3,9 @@ import {User} from "./user";
 import {Landing} from "./landing";
 import {Alert} from "./shared/alert";
 import {connect} from "react-redux";
-import {RootState} from "../store";
 import {AuthState} from "@coinvant/types";
 import {FC} from "react";
+import {RootState} from "@coinvant/store";
 
 interface IProps {
   auth: AuthState,
