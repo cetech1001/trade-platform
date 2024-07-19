@@ -9,9 +9,9 @@ api.interceptors.request.use(
   async (config) => {
     const _authData = localStorage.getItem('authData');
     if (_authData) {
-      const { accessToken } = JSON.parse(_authData);
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
+      const { access_token } = JSON.parse(_authData);
+      if (access_token) {
+        config.headers['Authorization'] = `Bearer ${access_token}`;
       }
     }
     return config;

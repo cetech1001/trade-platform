@@ -1,4 +1,4 @@
 import {useDispatch} from "react-redux";
-import {AppDispatch} from "../store";
+import {AppDispatch} from "@coinvant/store";
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();

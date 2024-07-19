@@ -10,8 +10,10 @@ import {
 import { TradeAssetService } from './trade-asset.service';
 import { CreateTradeAssetDto } from './dto/create-trade-asset.dto';
 import { UpdateTradeAssetDto } from './dto/update-trade-asset.dto';
+import {ApiTags} from "@nestjs/swagger";
 
 @Controller('trade-asset')
+@ApiTags('Trade Asset Controller')
 export class TradeAssetController {
   constructor(private readonly tradeAssetService: TradeAssetService) {}
 

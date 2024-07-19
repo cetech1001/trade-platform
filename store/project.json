@@ -3,6 +3,20 @@
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "store/src",
   "projectType": "library",
-  "targets": {},
+  "targets": {
+    "build": {
+      "configurations": {
+        "development": {},
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "store/src/environments/environment.ts",
+              "with": "store/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    }
+  },
   "tags": []
 }

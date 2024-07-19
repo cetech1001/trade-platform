@@ -38,15 +38,17 @@ const authenticate = async (payload: LoginRequest | RegisterRequest, actionType:
         show: true,
       }));
     }
+
+    throw error;
   }
 }
 
 export const login = (payload: LoginRequest) => async (dispatch: AppDispatch) => {
-  return authenticate(payload as LoginRequest, 'login', dispatch);
+  return authenticate(payload, 'login', dispatch);
 }
 
 export const register = (payload: RegisterRequest) => async (dispatch: AppDispatch) => {
-  return authenticate(payload as LoginRequest, 'register', dispatch);
+  return authenticate(payload, 'register', dispatch);
 }
 
 export const logout = () => async (dispatch: AppDispatch) => {

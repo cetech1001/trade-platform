@@ -1,11 +1,17 @@
 import React, {FC, useState} from "react";
 import SimpleBar from 'simplebar-react';
-import { useLocation, Link } from "react-router-dom";
+import {useLocation, Link, useNavigate} from "react-router-dom";
 import { CSSTransition } from 'react-transition-group';
 import { Nav, Badge, Image, Button, Accordion, Navbar } from '@themesberg/react-bootstrap';
 import {Color} from "@themesberg/react-bootstrap/lib/cjs/types";
 import ProfilePicture from "../../../../assets/images/profile-picture.jpg";
 import {AdminRoutes} from "../../../../routes";
+import {connect} from "react-redux";
+import {logout} from "@coinvant/store";
+
+interface IProps {
+  logout: () => void;
+}
 
 interface CollapsableNavItemProps {
   eventKey: string;
@@ -23,11 +29,17 @@ interface NavItemProps {
   badgeColor?: Color | undefined;
 }
 
-export const Sidebar = () => {
+export const Sidebar = connect(null, { logout })((props: IProps) => {
   const location = useLocation();
+  const navigateTo = useNavigate();
   const { pathname } = location;
   const [show, setShow] = useState(false);
   const showClass = show ? "show" : "";
+
+  const handleLogout = () => {
+    props.logout();
+    navigateTo('/');
+  }
 
   const onCollapse = () => setShow(!show);
 
@@ -138,7 +150,7 @@ export const Sidebar = () => {
                 <NavItem title="Paid" link={`/${AdminRoutes.withdrawals}/?status=paid`}/>
                 <NavItem title="Cancelled" link={`/${AdminRoutes.withdrawals}/?status=cancelled`}/>
               </CollapsableNavItem>
-              <Button variant="secondary" className="upgrade-to-pro">
+              <Button variant="secondary" className="upgrade-to-pro" onClick={handleLogout}>
                 <i className="fa-solid fa-right-from-bracket me-1" /> Logout
               </Button>
             </Nav>
@@ -147,4 +159,4 @@ export const Sidebar = () => {
       </CSSTransition>
     </>
   );
-};
+});

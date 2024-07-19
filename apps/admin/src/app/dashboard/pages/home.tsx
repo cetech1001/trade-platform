@@ -1,15 +1,32 @@
 import {Col, Row} from "@themesberg/react-bootstrap";
 import {CounterWidget} from "./shared/counter-widget";
 import {TransactionsTable} from "./shared/transactions-table";
+import {connect} from "react-redux";
+import {fetchUsers, RootState} from "@coinvant/store";
+import {UserState} from "@coinvant/types";
+import {useEffect} from "react";
 
-export const Home = () => {
+interface IProps {
+  user: UserState;
+  fetchUsers: () => void;
+}
+
+const mapStateToProps = (state: RootState) => ({
+  user: state.user,
+});
+
+export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) => {
+  useEffect(() => {
+    props.fetchUsers();
+  }, []);
+
   return (
     <>
       <Row className="justify-content-md-center">
         <Col xs={12} sm={6} xl={4} className="mb-4">
           <CounterWidget
             category="Users"
-            title="3"
+            title={`${props.user.list.length}`}
             icon={'users'}
           />
         </Col>
@@ -38,4 +55,4 @@ export const Home = () => {
       </Row>
     </>
   );
-}
+});

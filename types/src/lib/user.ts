@@ -7,6 +7,10 @@ export interface User {
   role: UserRole;
 }
 
+export interface UserState {
+  list: User[];
+}
+
 export enum UserRole {
   user = 'user',
   admin = 'admin',
