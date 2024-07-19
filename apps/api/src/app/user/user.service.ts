@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {Injectable} from '@nestjs/common';
+import {CreateUserDto} from './dto/create-user.dto';
+import {UpdateUserDto} from './dto/update-user.dto';
 import {Repository} from "typeorm";
 import {User} from "./entities/user.entity";
 import {InjectRepository} from "@nestjs/typeorm";
-import {UserRole} from "@coinvant/types";
+import {PaginationOptions, UserRole} from "@coinvant/types";
+import {IPaginationOptions, paginate, Pagination} from "nestjs-typeorm-paginate";
 
 @Injectable()
 export class UserService {
@@ -15,8 +16,8 @@ export class UserService {
     return this.userRepo.save(createUserDto);
   }
 
-  findAll() {
-    return this.userRepo.find({ where: { role: UserRole.user } });
+  findAll(options: PaginationOptions): Promise<Pagination<User>> {
+    return paginate(this.userRepo, options, { where: { role: UserRole.user } });
   }
 
   findOne(condition: { id?: string; email?: string; }) {

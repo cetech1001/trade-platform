@@ -3,16 +3,18 @@ import {CounterWidget} from "./shared/counter-widget";
 import {TransactionsTable} from "./shared/transactions-table";
 import {connect} from "react-redux";
 import {fetchUsers, RootState} from "@coinvant/store";
-import {UserState} from "@coinvant/types";
+import {PaginationOptions, User} from "@coinvant/types";
 import {useEffect} from "react";
+import {UsersTable} from "./shared/users-table";
 
 interface IProps {
-  user: UserState;
-  fetchUsers: () => void;
+  users: User[];
+  fetchUsers: (options?: PaginationOptions) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
-  user: state.user,
+  users: state.user.list,
+  count: state.user.count,
 });
 
 export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) => {
@@ -26,7 +28,7 @@ export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) =>
         <Col xs={12} sm={6} xl={4} className="mb-4">
           <CounterWidget
             category="Users"
-            title={`${props.user.list.length}`}
+            title={`${props.users.length}`}
             icon={'users'}
           />
         </Col>
@@ -50,7 +52,7 @@ export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) =>
 
       <Row>
         <Col xs={12} xl={12} className="mb-4">
-          <TransactionsTable/>
+          <UsersTable users={props.users}/>
         </Col>
       </Row>
     </>

@@ -1,7 +1,7 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 import {IsEmail, IsIn, IsNotEmpty, IsString} from "class-validator";
-import {UserRole} from "@coinvant/types";
+import {UserRole, UserStatus} from "@coinvant/types";
 
 @Entity('users')
 export class User {
@@ -28,6 +28,15 @@ export class User {
   @IsIn(Object.values(UserRole))
   @ApiProperty({ type: String, enum: UserRole, default: UserRole.user })
   role: UserRole;
+
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    default: UserStatus.active,
+  })
+  @IsIn(Object.values(UserStatus))
+  @ApiProperty({ type: String, enum: UserStatus, default: UserStatus.active })
+  status: UserStatus;
 
   @Column('decimal', {
     precision: 8,

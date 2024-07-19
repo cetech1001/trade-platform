@@ -5,13 +5,14 @@ import {
   Body,
   Patch,
   Param,
-  Delete, Request, UseGuards,
+  Delete, Request, UseGuards, Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {JwtAuthGuard} from "../auth/guards/jwt-auth.guard";
+import {PaginationOptionsDto} from "../../dto/pagination.dto";
 
 @ApiTags('User Controller')
 @ApiBearerAuth()
@@ -31,8 +32,8 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  findAll(@Query() options: PaginationOptionsDto) {
+    return this.userService.findAll(options);
   }
 
   @Get(':id')

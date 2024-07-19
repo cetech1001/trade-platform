@@ -3,17 +3,27 @@ import {PayloadAction} from "@reduxjs/toolkit";
 import {UserType} from "../types";
 
 const initialState: UserState = {
+	count: 0,
 	list: [],
 }
 
-const reducer = (state = initialState, action: PayloadAction<{ user: User, users: User[] }>) => {
+const reducer = (state = initialState, action: PayloadAction<UserState & { user: User }>) => {
 	switch (action.type) {
 		case UserType.LIST:
-			return { list: action.payload.users };
+			return {
+				...state,
+				list: action.payload.list,
+				count: action.payload.count
+			};
 		case UserType.CREATE:
-			return { list: [ ...state.list, action.payload.user ] };
+			return {
+				...state,
+				list: [ ...state.list, action.payload.user ],
+				count: state.count + 1,
+			};
 		case UserType.UPDATE:
 			return {
+				...state,
 				list: [
 					...state.list.map(user => {
 						if (user.id === action.payload.user.id) {
@@ -24,7 +34,14 @@ const reducer = (state = initialState, action: PayloadAction<{ user: User, users
 				]
 			};
 		case UserType.DELETE:
-			return { list: [ ...state.list.filter(user => user.id !== action.payload.user.id) ] };
+			return {
+				...state,
+				list: [
+					...state.list.filter(user =>
+						user.id !== action.payload.user.id)
+				],
+				count: state.count - 1,
+			};
 		default:
 			return state;
 	}

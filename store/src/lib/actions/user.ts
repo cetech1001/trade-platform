@@ -1,13 +1,15 @@
 import {AppDispatch} from "@coinvant/store";
 import {UserService} from "../services";
 import {UserType} from "../types";
+import {PaginationOptions} from "@coinvant/types";
 
-export const fetchUsers = () => async (dispatch: AppDispatch) => {
-	const users = await UserService.getUsers();
+export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
+	const data = await UserService.getUsers(options);
 	dispatch({
 		type: UserType.LIST,
 		payload: {
-			users,
+			list: data.items,
+			count: data.meta.totalItems,
 		},
 	});
 }

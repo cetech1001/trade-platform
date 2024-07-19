@@ -52,6 +52,7 @@ export const register = (payload: RegisterRequest) => async (dispatch: AppDispat
 }
 
 export const logout = () => async (dispatch: AppDispatch) => {
+  localStorage.removeItem('authData');
   dispatch({
     type: AuthType.LOGOUT,
   });

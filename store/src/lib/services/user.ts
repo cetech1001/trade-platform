@@ -1,13 +1,9 @@
 import {api} from "./api";
+import {Paginated, PaginationOptions, User} from "@coinvant/types";
 
 export class UserService {
-  static async getProfile() {
-    let { data } = await api.get('/user/profile');
-    return data;
-  }
-
-  static async getUsers(): Promise<number> {
-    let { data } =  await api.get('/user');
+  static async getUsers(options?: PaginationOptions): Promise<Paginated<User>> {
+    let { data } =  await api.get('/user', { params: options });
     return data;
   }
 }
