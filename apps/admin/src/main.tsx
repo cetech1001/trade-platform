@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import {App} from './app/app';
 import {Provider} from "react-redux";
 import store from "@coinvant/store";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

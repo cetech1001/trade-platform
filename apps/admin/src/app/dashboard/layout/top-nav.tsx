@@ -1,5 +1,5 @@
 import { Nav, Image, Navbar, Dropdown, Container } from '@themesberg/react-bootstrap';
-import Profile3 from "../../../../assets/images/profile-picture.jpg";
+import Profile3 from "../../../assets/images/admin-img.png";
 
 export const TopNav = () => {
   return (

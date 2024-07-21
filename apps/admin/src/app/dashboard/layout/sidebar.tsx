@@ -4,8 +4,8 @@ import {useLocation, Link, useNavigate} from "react-router-dom";
 import { CSSTransition } from 'react-transition-group';
 import { Nav, Badge, Image, Button, Accordion, Navbar } from '@themesberg/react-bootstrap';
 import {Color} from "@themesberg/react-bootstrap/lib/cjs/types";
-import ProfilePicture from "../../../../assets/images/profile-picture.jpg";
-import {AdminRoutes} from "../../../../routes";
+import ProfilePicture from "../../../assets/images/admin-img.png";
+import {AdminRoutes} from "../../routes";
 import {connect} from "react-redux";
 import {logout} from "@coinvant/store";
 
@@ -133,23 +133,9 @@ export const Sidebar = connect(null, { logout })((props: IProps) => {
               <NavItem title="Overview" link={`/${AdminRoutes.overview}`} icon={'chart-pie'} />
               <NavItem title="Users" link={`/${AdminRoutes.users}`} icon={'users'}/>
               <NavItem title="Payment Methods" link={`/${AdminRoutes.paymentMethods}`} icon={'credit-card'}/>
-              <CollapsableNavItem eventKey="trades/" title="Trades" icon={'chart-line'}>
-                <NavItem title="Pending" link={`/${AdminRoutes.trades}/?status=pending`}/>
-                <NavItem title="Active" link={`/${AdminRoutes.trades}/?status=active`}/>
-                <NavItem title="Completed" link={`/${AdminRoutes.trades}/?status=completed`}/>
-                <NavItem title="Cancelled" link={`/${AdminRoutes.trades}/?status=cancelled`}/>
-              </CollapsableNavItem>
-              <CollapsableNavItem eventKey="deposits/" title="Deposits" icon={'wallet'}>
-                <NavItem title="Pending" link={`/${AdminRoutes.deposits}/?status=pending`}/>
-                <NavItem title="Approved" link={`/${AdminRoutes.deposits}/?status=approved`}/>
-                <NavItem title="Cancelled" link={`/${AdminRoutes.deposits}/?status=cancelled`}/>
-                <NavItem title="Refunded" link={`/${AdminRoutes.deposits}/?status=refunded`}/>
-              </CollapsableNavItem>
-              <CollapsableNavItem eventKey="withdrawals/" title="Withdrawals" icon={'money-bill'}>
-                <NavItem title="Pending" link={`/${AdminRoutes.withdrawals}/?status=pending`}/>
-                <NavItem title="Paid" link={`/${AdminRoutes.withdrawals}/?status=paid`}/>
-                <NavItem title="Cancelled" link={`/${AdminRoutes.withdrawals}/?status=cancelled`}/>
-              </CollapsableNavItem>
+              <NavItem title="Trades" link={`/${AdminRoutes.trades}`} icon={'chart-line'}/>
+              <NavItem title="Deposits" link={`/${AdminRoutes.deposits}`} icon={'wallet'}/>
+              <NavItem title="Withdrawals" link={`/${AdminRoutes.withdrawals}`} icon={'money-bill'}/>
               <Button variant="secondary" className="upgrade-to-pro" onClick={handleLogout}>
                 <i className="fa-solid fa-right-from-bracket me-1" /> Logout
               </Button>

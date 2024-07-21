@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { environment } from '../environment/environment';
 import { TradeModule } from './trade/trade.module';
 import { TradeAssetModule } from './trade-asset/trade-asset.module';
+import { PaymentMethodModule } from './payment-method/payment-method.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { TradeAssetModule } from './trade-asset/trade-asset.module';
     TypeOrmModule.forRoot(environment.db),
     TradeModule,
     TradeAssetModule,
+    PaymentMethodModule,
   ],
 })
 export class AppModule {}

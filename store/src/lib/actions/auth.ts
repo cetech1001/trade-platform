@@ -1,7 +1,7 @@
 import {AuthService} from "../services";
 import {LoginRequest, LoginResponse, RegisterRequest} from "@coinvant/types";
 import {AppDispatch, showAlert} from "../../index";
-import {AuthType} from "../types";
+import {AuthActions} from "../types";
 import {getError} from "../helpers";
 
 const authenticate = async (payload: LoginRequest | RegisterRequest, actionType: 'login' | 'register', dispatch: AppDispatch) => {
@@ -17,7 +17,7 @@ const authenticate = async (payload: LoginRequest | RegisterRequest, actionType:
     localStorage.setItem('authData', JSON.stringify(response));
 
     dispatch({
-      type: AuthType.LOGIN,
+      type: AuthActions.LOGIN,
       payload: response,
     });
 
@@ -54,6 +54,6 @@ export const register = (payload: RegisterRequest) => async (dispatch: AppDispat
 export const logout = () => async (dispatch: AppDispatch) => {
   localStorage.removeItem('authData');
   dispatch({
-    type: AuthType.LOGOUT,
+    type: AuthActions.LOGOUT,
   });
 }

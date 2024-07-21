@@ -1,6 +1,6 @@
 import { Col, Row, Form, Card, Button, FormCheck, Container, InputGroup } from '@themesberg/react-bootstrap';
 import {Link, useNavigate} from "react-router-dom";
-import {AdminRoutes, AuthRoutes} from "../../../routes";
+import {AdminRoutes, AuthRoutes} from "../../routes";
 import {FormEvent, useState} from "react";
 import {login} from "@coinvant/store";
 import {connect} from "react-redux";

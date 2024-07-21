@@ -5,7 +5,7 @@ import {Repository} from "typeorm";
 import {User} from "./entities/user.entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {PaginationOptions, UserRole} from "@coinvant/types";
-import {IPaginationOptions, paginate, Pagination} from "nestjs-typeorm-paginate";
+import {paginate, Pagination} from "nestjs-typeorm-paginate";
 
 @Injectable()
 export class UserService {
@@ -25,7 +25,8 @@ export class UserService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userRepo.update(id, updateUserDto);
+    return this.userRepo.update(id, updateUserDto)
+        .then(() => this.findOne({ id }));
   }
 
   remove(id: string) {

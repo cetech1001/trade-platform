@@ -1,7 +1,8 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
-import {IsEmail, IsIn, IsNotEmpty, IsString} from "class-validator";
+import {IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString} from "class-validator";
 import {UserRole, UserStatus} from "@coinvant/types";
+import {Transform} from "class-transformer";
 
 @Entity('users')
 export class User {
@@ -25,6 +26,7 @@ export class User {
     enum: UserRole,
     default: UserRole.user,
   })
+  @IsOptional()
   @IsIn(Object.values(UserRole))
   @ApiProperty({ type: String, enum: UserRole, default: UserRole.user })
   role: UserRole;
@@ -34,6 +36,7 @@ export class User {
     enum: UserStatus,
     default: UserStatus.active,
   })
+  @IsOptional()
   @IsIn(Object.values(UserStatus))
   @ApiProperty({ type: String, enum: UserStatus, default: UserStatus.active })
   status: UserStatus;
@@ -43,7 +46,11 @@ export class User {
     scale: 2,
     default: 0,
   })
-  walletBalance: string;
+  @IsOptional()
+  @Transform(v => Number(v.value))
+  @IsNumber()
+  @ApiProperty({ type: Number, example: 0.00 })
+  walletBalance: number;
 
   @Column()
   @IsNotEmpty()

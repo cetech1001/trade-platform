@@ -3,7 +3,7 @@ export interface User {
   name: string;
   email: string;
   password: string;
-  walletBalance: string;
+  walletBalance: number;
   status: UserStatus;
   role: UserRole;
 }
@@ -11,6 +11,7 @@ export interface User {
 export interface UserState {
   list: User[];
   count: number;
+  currentUser: User | null;
 }
 
 export enum UserRole {
@@ -22,3 +23,6 @@ export enum UserStatus {
   active = 'active',
   disabled = 'disabled',
 }
+
+export interface CreateUser extends Omit<User, 'id'> {}
+export interface UpdateUser extends Partial<CreateUser> {}

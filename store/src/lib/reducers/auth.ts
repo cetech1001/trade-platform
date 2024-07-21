@@ -1,6 +1,6 @@
 import {AuthState} from "@coinvant/types";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {AuthType} from "../types";
+import {AuthActions} from "../types";
 
 const _authData = localStorage.getItem("authData");
 
@@ -13,9 +13,9 @@ const reducer = (state = initialState, action: PayloadAction<AuthState>) => {
   const { type, payload } = action;
 
   switch (type) {
-    case AuthType.LOGIN:
+    case AuthActions.LOGIN:
       return { user: payload.user, accessToken: payload.accessToken };
-    case AuthType.LOGOUT:
+    case AuthActions.LOGOUT:
       return { user: null, accessToken: '' };
     default:
       return state;

@@ -2,7 +2,7 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import {Login} from "./pages/login";
 import {ForgotPassword} from "./pages/forgot-password";
 import {ResetPassword} from "./pages/reset-password";
-import {AdminRoutes, AuthRoutes} from "../../routes";
+import {AdminRoutes, AuthRoutes} from "../routes";
 import {AuthUser} from "@coinvant/types";
 import {RootState} from "@coinvant/store";
 import { connect } from "react-redux";

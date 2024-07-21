@@ -1,5 +1,5 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {AlertType} from "../types";
+import {AlertActions} from "../types";
 import {AlertState} from "@coinvant/types";
 
 const initialState: AlertState = {
@@ -12,9 +12,9 @@ const reducer = (state = initialState, action: PayloadAction<AlertState>) => {
     const { type, payload } = action;
 
     switch (type) {
-        case AlertType.SHOW:
+        case AlertActions.SHOW:
           return payload;
-        case AlertType.HIDE:
+        case AlertActions.HIDE:
           return {
             message: null,
             type: null,

@@ -1,47 +1,52 @@
 import {User, UserState} from "@coinvant/types";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {UserType} from "../types";
+import {UserActions} from "../types";
 
 const initialState: UserState = {
 	count: 0,
 	list: [],
+	currentUser: null,
 }
 
-const reducer = (state = initialState, action: PayloadAction<UserState & { user: User }>) => {
+const reducer = (state = initialState, action: PayloadAction<UserState>) => {
 	switch (action.type) {
-		case UserType.LIST:
+		case UserActions.LIST:
 			return {
 				...state,
 				list: action.payload.list,
 				count: action.payload.count
 			};
-		case UserType.CREATE:
+		case UserActions.CREATE:
 			return {
 				...state,
-				list: [ ...state.list, action.payload.user ],
+				list: [ ...state.list, action.payload.currentUser! ],
 				count: state.count + 1,
 			};
-		case UserType.UPDATE:
+		case UserActions.UPDATE:
 			return {
 				...state,
 				list: [
 					...state.list.map(user => {
-						if (user.id === action.payload.user.id) {
-							return action.payload.user;
+						if (user.id === state.currentUser?.id) {
+							return action.payload.currentUser!;
 						}
 						return user;
 					})
 				]
 			};
-		case UserType.DELETE:
+		case UserActions.DELETE:
 			return {
 				...state,
 				list: [
-					...state.list.filter(user =>
-						user.id !== action.payload.user.id)
+					...state.list.filter(user => user.id !== state.currentUser?.id)
 				],
 				count: state.count - 1,
 			};
+		case UserActions.SET_CURRENT_USER:
+			return {
+				...state,
+				currentUser: action.payload.currentUser,
+			}
 		default:
 			return state;
 	}

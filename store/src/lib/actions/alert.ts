@@ -1,11 +1,11 @@
-import {AlertType} from "../types";
+import {AlertActions} from "../types";
 import {AlertState} from "@coinvant/types";
 
 export const showAlert = (payload: AlertState) => ({
-    type: AlertType.SHOW,
+    type: AlertActions.SHOW,
     payload,
 });
 
 export const hideAlert = () => ({
-    type: AlertType.HIDE,
+    type: AlertActions.HIDE,
 });

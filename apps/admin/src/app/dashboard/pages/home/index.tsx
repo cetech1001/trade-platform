@@ -1,25 +1,28 @@
 import {Col, Row} from "@themesberg/react-bootstrap";
-import {CounterWidget} from "./shared/counter-widget";
-import {TransactionsTable} from "./shared/transactions-table";
+import {CounterWidget} from "./partials/counter-widget";
 import {connect} from "react-redux";
 import {fetchUsers, RootState} from "@coinvant/store";
-import {PaginationOptions, User} from "@coinvant/types";
-import {useEffect} from "react";
-import {UsersTable} from "./shared/users-table";
+import {PaginationOptions, UserState} from "@coinvant/types";
+import {useEffect, useState} from "react";
+import {UsersTable} from "../users/partials/users-table";
 
 interface IProps {
-  users: User[];
+  userCount: number;
   fetchUsers: (options?: PaginationOptions) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
-  users: state.user.list,
-  count: state.user.count,
+  userCount: state.user.count,
 });
 
 export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) => {
+  const [options, setOptions] = useState<PaginationOptions>({
+    limit: 10,
+    page: 1,
+  });
+
   useEffect(() => {
-    props.fetchUsers();
+    props.fetchUsers(options);
   }, []);
 
   return (
@@ -28,7 +31,7 @@ export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) =>
         <Col xs={12} sm={6} xl={4} className="mb-4">
           <CounterWidget
             category="Users"
-            title={`${props.users.length}`}
+            title={`${props.userCount}`}
             icon={'users'}
           />
         </Col>
@@ -52,7 +55,7 @@ export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) =>
 
       <Row>
         <Col xs={12} xl={12} className="mb-4">
-          <UsersTable users={props.users}/>
+          <UsersTable setOptions={setOptions} options={options}/>
         </Col>
       </Row>
     </>

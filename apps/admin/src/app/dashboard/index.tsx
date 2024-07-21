@@ -1,11 +1,12 @@
 import {Navigate, Route, Routes} from "react-router-dom";
 import {Home} from "./pages/home";
-import {TopNav} from "./pages/layout/top-nav";
-import {Sidebar} from "./pages/layout/sidebar";
+import {TopNav} from "./layout/top-nav";
+import {Sidebar} from "./layout/sidebar";
 import {connect} from "react-redux";
 import {RootState} from "@coinvant/store";
 import {AuthUser} from "@coinvant/types";
-import {AuthRoutes} from "../../routes";
+import {AuthRoutes} from "../routes";
+import {Users} from "./pages/users";
 
 interface IProps {
     authUser: AuthUser | null;
@@ -26,6 +27,7 @@ export const Dashboard = connect(mapStateToProps)((props: IProps) => {
                 <TopNav/>
                 <Routes>
                     <Route path="" element={<Home/>}/>
+                    <Route path="users" element={<Users/>}/>
                 </Routes>
             </main>
         </>

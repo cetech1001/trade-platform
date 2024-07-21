@@ -1,16 +1,16 @@
-import {ModalState} from "@coinvant/types";
+import {Modals, ModalState} from "@coinvant/types";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {ModalType} from "../types";
+import {ModalActions} from "../types";
 
 const initialState: ModalState = {
   activeModal: null,
 }
 
-const reducer = (state = initialState, action: PayloadAction<ModalState>) => {
+const reducer = (state = initialState, action: PayloadAction<Modals>) => {
   switch (action.type) {
-    case ModalType.OPEN:
-      return { activeModal: action.payload.activeModal };
-    case ModalType.CLOSE:
+    case ModalActions.OPEN:
+      return { activeModal: action.payload };
+    case ModalActions.CLOSE:
       return { activeModal: null };
     default:
       return state;

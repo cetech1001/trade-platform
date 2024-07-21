@@ -1,6 +1,6 @@
 import {Button, Card, Col, Container, Form, InputGroup, Row} from "@themesberg/react-bootstrap";
 import {Link} from "react-router-dom";
-import {AuthRoutes} from "../../../routes";
+import {AuthRoutes} from "../../routes";
 
 export const ResetPassword = () => {
   return (
