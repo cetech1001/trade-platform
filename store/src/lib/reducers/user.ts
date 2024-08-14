@@ -1,4 +1,4 @@
-import {User, UserState} from "@coinvant/types";
+import {UserState} from "@coinvant/types";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {UserActions} from "../types";
 

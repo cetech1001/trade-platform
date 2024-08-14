@@ -3,10 +3,12 @@ import auth from "./auth";
 import alert from "./alert";
 import modal from "./modal";
 import user from "./user";
+import paymentMethod from "./payment-method";
 
 export default combineReducers({
   auth,
   alert,
   modal,
   user,
+  paymentMethod,
 });

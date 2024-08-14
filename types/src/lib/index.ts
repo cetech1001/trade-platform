@@ -6,3 +6,4 @@ export * from './modal';
 export * from './trade';
 export * from './trade-asset';
 export * from './pagination';
+export * from './payment-method';

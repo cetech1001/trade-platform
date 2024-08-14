@@ -38,7 +38,6 @@ export const EditUserModal = connect(mapStateToProps, actions)((props: IProps) =
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
-		console.log('Props user', props.user);
 		if (props.user) {
 			setPayload({
 				email: props.user.email,

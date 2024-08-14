@@ -5,11 +5,12 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  Delete, Query,
 } from '@nestjs/common';
 import { PaymentMethodService } from './payment-method.service';
 import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
+import {PaginationOptionsDto} from "../../dto/pagination.dto";
 
 @Controller('payment-method')
 export class PaymentMethodController {
@@ -21,13 +22,13 @@ export class PaymentMethodController {
   }
 
   @Get()
-  findAll() {
-    return this.paymentMethodService.findAll();
+  findAll(@Query() options: PaginationOptionsDto) {
+    return this.paymentMethodService.findAll(options);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.paymentMethodService.findOne(+id);
+    return this.paymentMethodService.findOne(id);
   }
 
   @Patch(':id')
@@ -35,11 +36,11 @@ export class PaymentMethodController {
     @Param('id') id: string,
     @Body() updatePaymentMethodDto: UpdatePaymentMethodDto
   ) {
-    return this.paymentMethodService.update(+id, updatePaymentMethodDto);
+    return this.paymentMethodService.update(id, updatePaymentMethodDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.paymentMethodService.remove(+id);
+    return this.paymentMethodService.remove(id);
   }
 }

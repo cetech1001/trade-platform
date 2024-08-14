@@ -8,6 +8,9 @@ export enum Modals {
   addUser = 'addUser',
   editUser = 'editUser',
   deleteUser = 'deleteUser',
+  addPaymentMethod = 'addPaymentMethod',
+  editPaymentMethod = 'editPaymentMethod',
+  deletePaymentMethod = 'deletePaymentMethod',
 }
 
 export interface ModalState {

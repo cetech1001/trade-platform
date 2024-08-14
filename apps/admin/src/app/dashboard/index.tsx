@@ -5,8 +5,9 @@ import {Sidebar} from "./layout/sidebar";
 import {connect} from "react-redux";
 import {RootState} from "@coinvant/store";
 import {AuthUser} from "@coinvant/types";
-import {AuthRoutes} from "../routes";
+import {AdminRoutes, AuthRoutes} from "../routes";
 import {Users} from "./pages/users";
+import {PaymentMethods} from "./pages/payment-methods";
 
 interface IProps {
     authUser: AuthUser | null;
@@ -20,6 +21,11 @@ export const Dashboard = connect(mapStateToProps)((props: IProps) => {
     if (!props.authUser) {
         return <Navigate to={`/${AuthRoutes.login}`} />;
     }
+
+    const removeDashboardFromUrl = (url: string) => {
+        return url.replace(/dashboard\//, "");
+    }
+
     return (
         <>
             <Sidebar />
@@ -27,7 +33,10 @@ export const Dashboard = connect(mapStateToProps)((props: IProps) => {
                 <TopNav/>
                 <Routes>
                     <Route path="" element={<Home/>}/>
-                    <Route path="users" element={<Users/>}/>
+                    <Route path={removeDashboardFromUrl(AdminRoutes.users)}
+                           element={<Users/>}/>
+                    <Route path={removeDashboardFromUrl(AdminRoutes.paymentMethods)}
+                           element={<PaymentMethods/>}/>
                 </Routes>
             </main>
         </>
