@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {CreateUserDto} from './dto/create-user.dto';
 import {UpdateUserDto} from './dto/update-user.dto';
 import {Repository} from "typeorm";
@@ -12,8 +12,12 @@ export class UserService {
   constructor(@InjectRepository(User) private readonly userRepo: Repository<User>) {
   }
 
-  create(createUserDto: CreateUserDto) {
-    return this.userRepo.save(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    const user = await this.findOne({email: createUserDto.email});
+    if (user) {
+      throw new BadRequestException("Email address already exists");
+    }
+    return await this.userRepo.save(createUserDto);
   }
 
   findAll(options: PaginationOptions): Promise<Pagination<User>> {
@@ -25,6 +29,12 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.email) {
+      const user = await this.findOne({email: updateUserDto.email});
+      if (user && user.id !== id) {
+        throw new BadRequestException("Email address already exists");
+      }
+    }
     await this.userRepo.update(id, updateUserDto);
     return await this.findOne({id});
   }

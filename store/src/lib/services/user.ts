@@ -7,6 +7,11 @@ export class UserService {
     return data;
   }
 
+  static async getProfile(): Promise<User> {
+    let { data } = await api.get('/user/profile');
+    return data;
+  }
+
   static async createUser(payload: CreateUser): Promise<User> {
     let { data } = await api.post('/user', payload);
     return data;

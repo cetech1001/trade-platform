@@ -16,8 +16,8 @@ export const Trades: FC<IProps> = (props) => {
         <div className={"title"}>
           <h3>Trades</h3>
           <div className={"icons"}>
-            <i className="fa-solid fa-up-right-and-down-left-from-center"></i>
-            <i className="fa-solid fa-xmark"></i>
+            <i className="fa-solid fa-xmark"
+               onClick={() => props.toggleNav(USER_ROUTES.home)}></i>
           </div>
         </div>
         <div className="tabs">

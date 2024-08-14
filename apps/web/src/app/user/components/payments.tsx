@@ -1,10 +1,10 @@
 import React, {FC} from 'react';
 import '../styles/Sidebar.css';
-import {Modals, ModalState} from "@coinvant/types";
+import {Modals} from "@coinvant/types";
 
 interface IProps {
   activeModal: Modals | null;
-  openModal: (payload: ModalState) => void;
+  openModal: (payload: Modals) => void;
   closeModal: () => void;
 }
 

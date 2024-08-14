@@ -1,15 +1,34 @@
 import {Link} from "react-router-dom";
 import "../styles/Nav.css";
-import {FC} from "react";
+import {FC, useEffect, useState} from "react";
 import {USER_ROUTES} from "../../../routes";
+import {Modals} from "@coinvant/types";
 
 
 interface IProps {
   activeTab: USER_ROUTES;
   toggleNav: (route: USER_ROUTES) => void;
+  logout: () => void;
+  openModal: (activeModal: Modals) => void;
+  activeModal: Modals | null;
 }
 
+let intervalID: NodeJS.Timeout;
+
 export const Nav: FC<IProps> = (props) => {
+  const [activeUsers, setActiveUsers] = useState(0);
+
+  useEffect(() => {
+    intervalID = setInterval(function() {
+      let randomNumber = Math.floor(Math.random() * 9001) + 1000;
+      setActiveUsers(randomNumber);
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalID);
+    }
+  }, []);
+
   return (
     <div className={'nav'}>
       <div className={'navbar'}>
@@ -25,11 +44,11 @@ export const Nav: FC<IProps> = (props) => {
             </g>
           </svg>
         </div>
-        <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.home)}
+        {/*<Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.home)}
               className={`nav-item ${props.activeTab === USER_ROUTES.home && 'nav-item-active'}`}>
           <i className="fas fa-house"></i>
           <p>Home</p>
-        </Link>
+        </Link>*/}
         <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
               className={`nav-item ${[USER_ROUTES.trades, USER_ROUTES.history].includes(props.activeTab)
               && 'nav-item-active'}`}>
@@ -46,9 +65,18 @@ export const Nav: FC<IProps> = (props) => {
           <i className="fas fa-circle-question"></i>
           <p>Help</p>
         </Link>
+        <Link to={'#'} onClick={() => props.openModal(Modals.settings)}
+              className={`nav-item ${props.activeModal === Modals.settings && 'nav-item-active'}`}>
+          <i className="fas fa-user"></i>
+          <p>My Profile</p>
+        </Link>
+        <Link to={'#'} onClick={props.logout} className={`nav-item text-danger`}>
+          <i className="fas fa-sign-out-alt" style={{ color: "red" }}></i>
+          <p>Logout</p>
+        </Link>
       </div>
       <div className={'active-users'}>
-        <p className={'number'}>4003</p>
+        <p className={'number'}>{activeUsers}</p>
         <p className={'status'}>online</p>
       </div>
     </div>

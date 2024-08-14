@@ -130,8 +130,13 @@ table {
 }
 
 .title .icons {
-  display: flex;
-  gap: 24px;
+  padding: 8px;
+  border-radius: 25%;
+  cursor: pointer;
+}
+
+.title .icons:hover {
+  background-color: #5E697836;
 }
 
 .tabs {

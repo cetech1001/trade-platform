@@ -1,11 +1,10 @@
 import React, {FC, useState} from 'react';
-
 import '../styles/Sidebar.css';
-import {AuthUser, Modals, ModalState} from "@coinvant/types";
+import {Modals} from "@coinvant/types";
 
 interface IProps {
   activeModal: Modals | null;
-  openModal: (payload: ModalState) => void;
+  openModal: (payload: Modals) => void;
   closeModal: () => void;
 }
 
@@ -20,7 +19,7 @@ export const UpdatePassword: FC<IProps> = (props) => {
       <div>
         <div className={"flex-row-space-between close-button"}>
           <i className="fa-solid fa-long-arrow-left cursor-pointer"
-             onClick={() => props.openModal({activeModal: Modals.settings})}></i>
+             onClick={() => props.openModal(Modals.settings)}></i>
           <i className="fa-solid fa-xmark cursor-pointer"
              onClick={props.closeModal}></i>
         </div>
@@ -50,7 +49,7 @@ export const UpdatePassword: FC<IProps> = (props) => {
               <div className={'input-field'}>
                 <input type={'password'} value={rePassword}
                        onChange={e => setRePassword(e.target.value)} required/>
-                {showPassword ? (
+                {showRePassword ? (
                   <i className={"fa-solid fa-eye-slash cursor-pointer"} key={'change-re-password-eye'}
                      onClick={() => setShowRePassword(false)}></i>
                 ) : (

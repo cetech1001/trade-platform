@@ -1,7 +1,8 @@
 import {AppDispatch, showAlert} from "@coinvant/store";
 import {UserService} from "../services";
-import {UserActions} from "../types";
+import {AuthActions, UserActions} from "../types";
 import {CreateUser, PaginationOptions, UpdateUser, User} from "@coinvant/types";
+import {getError} from "../helpers";
 
 export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -60,8 +61,9 @@ export const editUser = (id: string, payload: UpdateUser) => async (dispatch: Ap
 			show: true,
 		}));
 	} catch (error) {
+		const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to update user.',
+			message: message || 'Failed to update user.',
 			type: 'error',
 			show: true,
 		}));
@@ -93,4 +95,37 @@ export const setCurrentUser = (user: User) => async (dispatch: AppDispatch) => {
 		type: UserActions.SET_CURRENT_USER,
 		payload: { currentUser: user },
 	});
+}
+
+export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
+	try {
+		const user = await UserService.getProfile();
+		dispatch({
+			type: UserActions.UPDATE,
+			payload: {
+				currentUser: user,
+			},
+		});
+		const _authData = localStorage.getItem('authData');
+		if (_authData) {
+			const { access_token } = JSON.parse(_authData);
+			const authData = {
+				access_token,
+				user,
+			};
+
+			localStorage.setItem('authData', JSON.stringify(authData));
+
+			dispatch({
+				type: AuthActions.LOGIN,
+				payload: authData,
+			});
+		}
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to get user.',
+			type: 'error',
+			show: true,
+		}));
+	}
 }

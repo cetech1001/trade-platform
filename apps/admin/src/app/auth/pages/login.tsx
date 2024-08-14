@@ -21,7 +21,7 @@ export const Login = connect(null, { login })((props: IProps) => {
     setIsSubmitting(true);
     props.login({ email, password })
       .then(() => navigateTo(`/${AdminRoutes.overview}`))
-      .catch(reason => {})
+      .catch(() => {})
       .finally(() => setIsSubmitting(false));
   }
 

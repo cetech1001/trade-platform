@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  /*gap: 8px;*/
 }
 
 .top-buttons button {
@@ -26,18 +26,19 @@
   cursor: pointer;
 }
 
-.top-buttons > div {
+.top-buttons > .icon {
   background-color: #5E697836;
+  /*background-color: red;*/
   height: 50px;
   width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 25px;
-  cursor: pointer;
+  /*cursor: pointer;*/
 }
 
-.top-buttons > div > i {
+.top-buttons > .icon > i {
   cursor: pointer;
 }
 

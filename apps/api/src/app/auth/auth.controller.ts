@@ -1,6 +1,6 @@
-import {Controller, Post, UseGuards, Request, Get, Body} from '@nestjs/common';
+import {Controller, Post, UseGuards, Request, Body} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {LocalAuthGuard} from "./guards/local-auth.guard";
+import {LocalAuthGuard} from "../../guards";
 import {ApiTags} from "@nestjs/swagger";
 import {CreateUserDto} from "../user/dto/create-user.dto";
 import {UserService} from "../user/user.service";
@@ -22,6 +22,9 @@ export class AuthController {
   @Post('register')
   signUp(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto)
-      .then(user => this.authService.login(user));
+      .then(user => {
+        const { password, ...result } = user;
+        return this.authService.login(result);
+      });
   }
 }

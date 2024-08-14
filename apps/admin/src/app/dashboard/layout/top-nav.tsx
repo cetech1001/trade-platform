@@ -18,7 +18,7 @@ export const TopNav = () => {
               </Dropdown.Toggle>
               <Dropdown.Menu className="user-dropdown dropdown-menu-right mt-2">
                 <Dropdown.Item className="fw-bold">
-                  <i className="fa-solid me-2" /> My Profile
+                  <i className="fa-solid fa-user me-2" /> My Profile
                 </Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item className="fw-bold">

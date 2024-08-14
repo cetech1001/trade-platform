@@ -1,4 +1,4 @@
-import {FC, useState} from "react";
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {LoginRequest} from "@coinvant/types";
 import {connect} from "react-redux";
@@ -8,7 +8,7 @@ interface IProps {
   login: (payload: LoginRequest) => Promise<void>;
 }
 
-const Component: FC<IProps> = (props) => {
+export const Login = connect(null, { login })((props: IProps) => {
   const navigateTo = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -17,47 +17,41 @@ const Component: FC<IProps> = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = () => {
-    try {
-      setIsSubmitting(true);
-      props.login({
-        email,
-        password,
-      }).then(() => navigateTo('/platform'));
-    } finally {
-      setIsSubmitting(false);
-    }
+    setIsSubmitting(true);
+    props.login({email, password})
+        .then(() => navigateTo('/platform'))
+        .catch(() => {})
+        .finally(() => setIsSubmitting(false));
   };
 
   return (
-    <div className={"flex-column"} style={{gap: "1rem", marginTop: "2rem"}}>
-      <div className={'sl-tp-option'}>
-        <div className={'input'}>
-          <span>Email</span>
-          <div className={'input-field'}>
-            <input type={'email'} value={email}
-                   onChange={e => setEmail(e.target.value)} required/>
+      <form className={"flex-column"} style={{gap: "1rem", marginTop: "2rem"}}>
+        <div className={'sl-tp-option'}>
+          <div className={'input'}>
+            <span>Email</span>
+            <div className={'input-field'}>
+              <input type={'email'} value={email} autoComplete={"username"}
+                     onChange={e => setEmail(e.target.value)} required/>
+            </div>
           </div>
         </div>
-      </div>
-      <div className={'sl-tp-option'}>
-        <div className={'input'}>
-          <span>Password</span>
-          <div className={'input-field'}>
-            <input type={showPassword ? 'text' : 'password'} value={password}
-                   onChange={e => setPassword(e.target.value)} required/>
-            {showPassword ? (
-              <i className={"fa-solid fa-eye-slash cursor-pointer"} onClick={() => setShowPassword(false)}></i>
-            ) : (
-              <i className={"fa-solid fa-eye cursor-pointer"} onClick={() => setShowPassword(true)}></i>
-            )}
+        <div className={'sl-tp-option'}>
+          <div className={'input'}>
+            <span>Password</span>
+            <div className={'input-field'}>
+              <input type={showPassword ? 'text' : 'password'} value={password} autoComplete={"current-password"}
+                     onChange={e => setPassword(e.target.value)} required/>
+              {showPassword ? (
+                  <i className={"fa-solid fa-eye-slash cursor-pointer"} onClick={() => setShowPassword(false)}></i>
+              ) : (
+                  <i className={"fa-solid fa-eye cursor-pointer"} onClick={() => setShowPassword(true)}></i>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      <button className={"button bg-primary"} onClick={handleLogin} disabled={isSubmitting}>
-        {isSubmitting ? 'Signing in...' : 'Sign in'}
-      </button>
-    </div>
+        <button className={"button bg-primary"} onClick={handleLogin} disabled={isSubmitting}>
+          {isSubmitting ? 'Signing in...' : 'Sign in'}
+        </button>
+      </form>
   );
-};
-
-export const Login = connect(null, { login })(Component);
+});

@@ -1,13 +1,13 @@
 import React, {FC} from 'react';
-
 import '../styles/Sidebar.css';
-import {AuthUser, Modals, ModalState} from "@coinvant/types";
+import {AuthUser, Modals} from "@coinvant/types";
+import {formatCurrency} from "../../helpers";
 
 interface IProps {
   user: AuthUser | null;
   logout: () => void;
   activeModal: Modals | null;
-  openModal: (payload: ModalState) => void;
+  openModal: (payload: Modals) => void;
   closeModal: () => void;
 }
 
@@ -20,15 +20,16 @@ export const Settings: FC<IProps> = (props) => {
           <i className="fa-solid fa-xmark cursor-pointer"
              onClick={props.closeModal}></i>
         </div>
-        <div className={"title"} style={{padding: 0}}>
-          <h3 style={{color: "#FFF"}}>Settings</h3>
+        <div className={"title"} style={{padding: 0, flexDirection: 'column'}}>
+          <h3 style={{color: "#FFF"}}>{props.user?.name}</h3>
+          <h5 style={{color: "#FFF"}}>{formatCurrency(props.user?.walletBalance || 0)}</h5>
         </div>
         <div className="title" style={{padding: 0}}>
-          <h5 style={{color: "#FFF"}}>Profile</h5>
+          <h5 style={{color: "#FFF"}}>Edit Profile</h5>
         </div>
         <div className={"flex-column"} style={{gap: "1rem"}}>
           <div className={"sidebar-option"}
-               onClick={() => props.openModal({ activeModal: Modals.personal })}>
+               onClick={() => props.openModal(Modals.personal)}>
             <i className="fa-solid fa-user"></i>
             <div className={"info"}>
               <h5>Personal</h5>
@@ -36,7 +37,7 @@ export const Settings: FC<IProps> = (props) => {
             </div>
           </div>
           <div className={"sidebar-option"}
-               onClick={() => props.openModal({ activeModal: Modals.password })}>
+               onClick={() => props.openModal(Modals.password)}>
             <i className="fa-solid fa-key"></i>
             <div className={"info"}>
               <h5>Password</h5>

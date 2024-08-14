@@ -5,18 +5,26 @@ import {
   Body,
   Patch,
   Param,
-  Delete, Query,
+  Delete, Query, UseGuards,
 } from '@nestjs/common';
 import { PaymentMethodService } from './payment-method.service';
 import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
 import {PaginationOptionsDto} from "../../dto/pagination.dto";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {JwtAuthGuard} from "../../guards";
+import {Roles} from "../../decorators";
+import {UserRole} from "@coinvant/types";
 
+@ApiTags('Payment Method Controller')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('payment-method')
 export class PaymentMethodController {
   constructor(private readonly paymentMethodService: PaymentMethodService) {}
 
   @Post()
+  @Roles(UserRole.admin)
   create(@Body() createPaymentMethodDto: CreatePaymentMethodDto) {
     return this.paymentMethodService.create(createPaymentMethodDto);
   }
@@ -32,6 +40,7 @@ export class PaymentMethodController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.admin)
   update(
     @Param('id') id: string,
     @Body() updatePaymentMethodDto: UpdatePaymentMethodDto
@@ -40,6 +49,7 @@ export class PaymentMethodController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.admin)
   remove(@Param('id') id: string) {
     return this.paymentMethodService.remove(id);
   }
