@@ -65,7 +65,8 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
                            editUser={props.editUser} showAlert={props.showAlert}
                            refreshUserProfile={props.refreshUserProfile}/>
             <UpdatePassword activeModal={props.activeModal} openModal={props.openModal}
-                            closeModal={props.closeModal}/>
+                            closeModal={props.closeModal} user={props.user}
+                            editUser={props.editUser} showAlert={props.showAlert}/>
         </div>
     );
 });

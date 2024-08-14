@@ -1,11 +1,14 @@
 import React, {FC, useState} from 'react';
 import '../styles/Sidebar.css';
-import {Modals} from "@coinvant/types";
+import {AlertState, AuthUser, Modals, UpdateUser} from "@coinvant/types";
 
 interface IProps {
   activeModal: Modals | null;
   openModal: (payload: Modals) => void;
   closeModal: () => void;
+  editUser: (id: string, payload: UpdateUser) => Promise<void>;
+  showAlert: (payload: AlertState) => void;
+  user: AuthUser | null;
 }
 
 export const UpdatePassword: FC<IProps> = (props) => {
@@ -13,6 +16,31 @@ export const UpdatePassword: FC<IProps> = (props) => {
   const [rePassword, setRePassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showRePassword, setShowRePassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSave = async () => {
+    if (password !== rePassword) {
+      return props.showAlert({
+        type: 'error',
+        message: 'Passwords do not match',
+        show: true,
+      });
+    }
+    try {
+      setIsSubmitting(true);
+      if (props.user) {
+        await props.editUser(props.user?.id, { password });
+      } else {
+        props.showAlert({
+          type: 'error',
+          message: 'User not provided',
+          show: true,
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className={`sidebar ${props.activeModal === Modals.password ? 'open' : ''}`}>
@@ -31,7 +59,7 @@ export const UpdatePassword: FC<IProps> = (props) => {
             <div className={'input'}>
               <span>Password</span>
               <div className={'input-field'}>
-                <input type={'password'} value={password}
+                <input type={showPassword ? 'text' : 'password'} value={password}
                        onChange={e => setPassword(e.target.value)} required/>
                 {showPassword ? (
                   <i className={"fa-solid fa-eye-slash cursor-pointer"} key={'change-password-eye'}
@@ -47,7 +75,7 @@ export const UpdatePassword: FC<IProps> = (props) => {
             <div className={'input'}>
               <span>Re-type Password</span>
               <div className={'input-field'}>
-                <input type={'password'} value={rePassword}
+                <input type={showRePassword ? 'text' : 'password'} value={rePassword}
                        onChange={e => setRePassword(e.target.value)} required/>
                 {showRePassword ? (
                   <i className={"fa-solid fa-eye-slash cursor-pointer"} key={'change-re-password-eye'}
@@ -62,8 +90,8 @@ export const UpdatePassword: FC<IProps> = (props) => {
         </div>
       </div>
       <div style={{display: 'flex'}}>
-        <button className={"button bg-primary"} style={{marginBottom: "1rem"}}>
-          Change Password
+        <button className={"button bg-primary"} style={{marginBottom: "1rem"}} onClick={onSave}>
+          {isSubmitting ? 'Saving...' : 'Change Password'}
         </button>
       </div>
     </div>
