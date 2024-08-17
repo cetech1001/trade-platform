@@ -16,12 +16,13 @@ import {
     editUser,
     showAlert,
     refreshUserProfile,
-    fetchPaymentMethods, addDeposit
+    fetchPaymentMethods, addDeposit, addWithdrawal, fetchTransactions
 } from "@coinvant/store";
-import {AlertState, AuthUser, Modals, PaymentMethod, UpdateUser} from "@coinvant/types";
+import {AlertState, AuthUser, CreateWithdrawal, Modals, PaymentMethod, UpdateUser} from "@coinvant/types";
 import {UpdateProfile} from "./components/update-profile";
 import {UpdatePassword} from "./components/update-password";
 import {Deposit} from "./components/deposit";
+import {Withdrawal} from "./components/withdrawal";
 
 
 interface IProps {
@@ -36,12 +37,15 @@ interface IProps {
   paymentMethods: PaymentMethod[];
   fetchPaymentMethods: () => void;
   addDeposit: (payload: FormData) => Promise<void>;
+  addWithdrawal: (payload: CreateWithdrawal) => Promise<void>;
+  fetchTransactions: () => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
     user: state.auth.user,
     activeModal: state.modal.activeModal,
     paymentMethods: state.paymentMethod.list,
+    transactions: state.transaction.list,
 });
 
 const actions = {
@@ -53,6 +57,8 @@ const actions = {
     refreshUserProfile,
     fetchPaymentMethods,
     addDeposit,
+    addWithdrawal,
+    fetchTransactions,
 };
 
 export const User = connect(mapStateToProps, actions)((props: IProps) => {
@@ -88,6 +94,9 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
             <Deposit activeModal={props.activeModal} openModal={props.openModal}
                      closeModal={props.closeModal} showAlert={props.showAlert}
                      paymentMethods={props.paymentMethods} addDeposit={props.addDeposit} />
+            <Withdrawal activeModal={props.activeModal} openModal={props.openModal}
+                        closeModal={props.closeModal} showAlert={props.showAlert} user={props.user}
+                        paymentMethods={props.paymentMethods} addWithdrawal={props.addWithdrawal}/>
         </div>
     );
 });

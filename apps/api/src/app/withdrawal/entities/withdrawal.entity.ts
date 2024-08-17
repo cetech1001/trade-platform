@@ -24,7 +24,7 @@ export class WithdrawalEntity implements Withdrawal {
 		default: 0,
 	})
 	@IsNotEmpty()
-	@Transform(v => +v)
+	@Transform(v => +v.value)
 	@IsNumber()
 	@ApiProperty({ type: Number, required: true })
 	amount: number;
