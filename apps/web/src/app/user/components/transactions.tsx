@@ -1,0 +1,175 @@
+import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
+import {
+	DepositStatus,
+	Modals,
+	PaginationOptions, TradeStatus,
+	Transaction,
+	TransactionType, WithdrawalStatus
+} from "@coinvant/types";
+import {FilterDropdown} from "./shared/filter-dropdown";
+import {capitalizeFirstLetter, formatCurrency, formatDate, groupTransactionsByDate} from "../../helpers";
+
+interface IProps {
+	activeModal: Modals | null;
+	openModal: (payload: Modals) => void;
+	closeModal: () => void;
+	transactions: Transaction[];
+	totalTransactions: number;
+	fetchTransactions: (options?: PaginationOptions) => void;
+}
+
+export const Transactions: FC<IProps> = (props) => {
+	const [options, setOptions] = useState<PaginationOptions>({
+		page: 1,
+		limit: 5,
+	});
+	const [transactionBlocks, setTransactionBlocks] = useState<Transaction[][]>([]);
+
+	useEffect(() => {
+		setTransactionBlocks(groupTransactionsByDate(props.transactions));
+	}, [props.transactions]);
+
+	const totalPages = useMemo(() => {
+		return Math.ceil(props.totalTransactions / options.limit);
+	}, [props.totalTransactions]);
+
+	const isExhausted = useCallback(() => {
+		if (props.transactions.length <= options.limit) {
+			return true;
+		}
+		return options.page * options.limit === props.totalTransactions;
+	}, [props]);
+
+	const onPrevClick = () => {
+		if (options.page > 1) {
+			setOptions(prevState => ({
+				...prevState,
+				page: prevState.page - 1,
+			}));
+		}
+	}
+
+	const onNextClick = () => {
+		if (!isExhausted()) {
+			setOptions(prevState => ({
+				...prevState,
+				page: prevState.page + 1,
+			}));
+		}
+	}
+
+	const TransactionFilters = () => {
+		return (
+			<div className={'filters'}>
+				<FilterDropdown title={"All Transaction Types"} options={Object.values(TransactionType)}/>
+			</div>
+		);
+	}
+
+	const Transaction: FC<{ transaction: Transaction }> = ({ transaction }) => {
+		const [isExpanded, setIsExpanded] = useState(false);
+
+		const symbol = useMemo(() => {
+			if (transaction.type === TransactionType.deposit) {
+				return '+';
+			}
+			if (transaction.type === TransactionType.withdrawal) {
+				return '-';
+			}
+			return '';
+		}, [transaction]);
+
+		const color = useMemo(() => {
+			if (transaction.type === TransactionType.deposit) {
+				return '#1B985E';
+			}
+			if (transaction.type === TransactionType.withdrawal) {
+				return '#E24F32';
+			}
+			return '#FFF';
+		}, [transaction]);
+
+		const statusColor = useMemo(() => {
+			// @ts-ignore
+			if ([
+				DepositStatus.confirmed,
+				WithdrawalStatus.paid,
+				TradeStatus.completed,
+				TradeStatus.active].includes(transaction.status)) {
+				return '#1B985E';
+			}
+			// @ts-ignore
+			if ([DepositStatus.rejected,
+				WithdrawalStatus.cancelled,
+				TradeStatus.cancelled].includes(transaction.status)) {
+				return '#E24F32';
+			}
+
+			return '#FFF000';
+		}, [transaction]);
+
+		return (
+			<div className={'trade'}>
+				<div className={"flex-row-space-between"} onClick={() => setIsExpanded(!isExpanded)}>
+					<div className="asset">
+						{transaction.type === TransactionType.deposit
+							&& <i className={"fa-solid fa-wallet symbol"}></i>}
+						{transaction.type === TransactionType.withdrawal
+							&& <i className="fa-solid fa-hand-holding-dollar"></i>}
+						{transaction.type === TransactionType.trade
+							&& <i className="fas fa-arrow-right-arrow-left"></i>}
+						<div className={"description"}>
+							<span className={"amount"}>
+								{capitalizeFirstLetter(transaction.type)}
+							</span>
+							<span className={"text"} style={{color: statusColor}}>
+								{capitalizeFirstLetter(transaction.status)}
+							</span>
+						</div>
+					</div>
+					<span style={{color}}>
+						{`${symbol} ${formatCurrency(transaction.amount || 0)}`}
+					</span>
+				</div>
+			</div>
+		);
+	}
+
+	return (
+		<div className={`sidebar ${props.activeModal === Modals.transactions ? 'open' : ''}`}>
+			<div>
+				<div className={"flex-row-space-between close-button"}>
+					<i className="fa-solid fa-long-arrow-left cursor-pointer"
+					   onClick={() => props.openModal(Modals.payments)}></i>
+					<i className="fa-solid fa-xmark cursor-pointer"
+					   onClick={props.closeModal}></i>
+				</div>
+				<div className="title" style={{padding: 0}}>
+					<h5 style={{color: "#FFF"}}>Transactions</h5>
+				</div>
+				<div className={"assets"} style={{ height: "100%" }}>
+					<div className={'assets-body'}>
+					<TransactionFilters/>
+					<div className={"trades"}>
+						{transactionBlocks.map(block => (
+							<div className="history-block">
+								<span className={"text"}>{formatDate(block[0].createdAt)}</span>
+								{block.map(transaction => (
+									<Transaction transaction={transaction}/>
+								))}
+							</div>
+						))}
+					</div>
+					</div>
+				</div>
+			</div>
+			<div style={{display: 'flex', gap: '16px', justifyContent: "center", marginBottom: "1rem"}}>
+				<i className="cursor-pointer fa-solid fa-angles-left" style={{ color: "#ffffff" }}
+				   onClick={onPrevClick}></i>
+				<span style={{ color: "#ffffff" }}>Page {options.page} of {totalPages}</span>
+				<i className="cursor-pointer fa-solid fa-angles-right" style={{ color: "#ffffff" }}
+				   onClick={onNextClick}></i>
+			</div>
+		</div>
+	);
+};

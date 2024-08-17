@@ -16,29 +16,42 @@ import {
     editUser,
     showAlert,
     refreshUserProfile,
-    fetchPaymentMethods, addDeposit, addWithdrawal, fetchTransactions
+    fetchPaymentMethods,
+    addDeposit,
+    addWithdrawal,
+    fetchTransactions
 } from "@coinvant/store";
-import {AlertState, AuthUser, CreateWithdrawal, Modals, PaymentMethod, UpdateUser} from "@coinvant/types";
+import {
+    AlertState,
+    AuthUser,
+    CreateWithdrawal,
+    Modals, PaginationOptions,
+    PaymentMethod, Transaction,
+    UpdateUser
+} from "@coinvant/types";
 import {UpdateProfile} from "./components/update-profile";
 import {UpdatePassword} from "./components/update-password";
 import {Deposit} from "./components/deposit";
 import {Withdrawal} from "./components/withdrawal";
+import {Transactions} from "./components/transactions";
 
 
 interface IProps {
-  user: Omit<AuthUser, 'password'> | null;
-  activeModal: Modals | null;
-  logout: () => void;
-  openModal: (activeModal: Modals) => void;
-  closeModal: () => void;
-  editUser: (id: string, payload: UpdateUser) => Promise<void>;
-  showAlert: (payload: AlertState) => void;
-  refreshUserProfile: () => Promise<void>;
-  paymentMethods: PaymentMethod[];
-  fetchPaymentMethods: () => void;
-  addDeposit: (payload: FormData) => Promise<void>;
-  addWithdrawal: (payload: CreateWithdrawal) => Promise<void>;
-  fetchTransactions: () => void;
+    user: Omit<AuthUser, 'password'> | null;
+    activeModal: Modals | null;
+    paymentMethods: PaymentMethod[];
+    transactions: Transaction[];
+    totalTransactions: number;
+    logout: () => void;
+    openModal: (activeModal: Modals) => void;
+    closeModal: () => void;
+    editUser: (id: string, payload: UpdateUser) => Promise<void>;
+    showAlert: (payload: AlertState) => void;
+    refreshUserProfile: () => Promise<void>;
+    fetchPaymentMethods: (options?: PaginationOptions) => void;
+    addDeposit: (payload: FormData) => Promise<void>;
+    addWithdrawal: (payload: CreateWithdrawal) => Promise<void>;
+    fetchTransactions: (options?: PaginationOptions) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -46,6 +59,7 @@ const mapStateToProps = (state: RootState) => ({
     activeModal: state.modal.activeModal,
     paymentMethods: state.paymentMethod.list,
     transactions: state.transaction.list,
+    totalTransactions: state.transaction.count,
 });
 
 const actions = {
@@ -66,6 +80,10 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
 
     useEffect(() => {
         props.fetchPaymentMethods();
+        props.fetchTransactions({
+            page: 1,
+            limit: 5,
+        });
     }, []);
 
     const toggleNav = (route: USER_ROUTES) => {
@@ -97,6 +115,10 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
             <Withdrawal activeModal={props.activeModal} openModal={props.openModal}
                         closeModal={props.closeModal} showAlert={props.showAlert} user={props.user}
                         paymentMethods={props.paymentMethods} addWithdrawal={props.addWithdrawal}/>
+            <Transactions activeModal={props.activeModal} openModal={props.openModal}
+                          closeModal={props.closeModal} transactions={props.transactions}
+                          fetchTransactions={props.fetchTransactions}
+                          totalTransactions={props.totalTransactions}/>
         </div>
     );
 });

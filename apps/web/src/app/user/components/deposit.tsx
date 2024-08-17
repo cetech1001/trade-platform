@@ -155,7 +155,7 @@ export const Deposit: FC<IProps> = (props) => {
             <div className={'qr-code'}>
               <QRCode value={`${method?.code}:${method?.walletAddress}`} style={{ border: "2px solid #ffffff" }}/>
             </div>
-            <div className={"amount"}>
+            <div className={"payment-amount"}>
               <h4 style={{color: "#9CB0C2"}}>Payment Amount</h4>
               <h3 style={{color: "#fff"}}>{cryptoAmount.toFixed(6)} {method?.code}</h3>
             </div>

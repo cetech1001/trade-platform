@@ -5,6 +5,7 @@ export enum Modals {
   password = 'password',
   deposit = 'deposit',
   withdrawal = 'withdrawal',
+  transactions = 'transactions',
   addUser = 'addUser',
   editUser = 'editUser',
   deleteUser = 'deleteUser',

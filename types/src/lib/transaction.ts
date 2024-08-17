@@ -30,9 +30,10 @@ export enum TransactionStatusEnum {
 	confirmed = 'confirmed',
 	rejected = 'rejected',
 	paid = 'paid',
-	canceled = 'canceled',
-	open = 'open',
-	closed = 'closed',
+	canceled = 'cancelled',
+	active = 'active',
+	completed = 'completed',
+
 }
 
 export interface TransactionState {

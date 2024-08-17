@@ -27,12 +27,13 @@ export const Payments: FC<IProps> = (props) => {
           </div>
           <div className={"sidebar-option"} onClick={() => props.openModal(Modals.withdrawal)}
                style={{ padding: "24px 16px" }}>
-            <i className="fa-solid fa-money-bill"></i>
+            <i className="fa-solid fa-hand-holding-dollar"></i>
             <div className={"info"}>
-              <h5>Withdraw</h5>
+            <h5>Withdraw</h5>
             </div>
           </div>
-          <div className={"sidebar-option"} style={{ padding: "24px 16px" }}>
+          <div className={"sidebar-option"} onClick={() => props.openModal(Modals.transactions)}
+               style={{ padding: "24px 16px" }}>
             <i className="fa-solid fa-clock-rotate-left"></i>
             <div className={"info"}>
               <h5>Transactions</h5>

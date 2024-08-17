@@ -126,7 +126,7 @@ export const Withdrawal: FC<IProps> = (props) => {
   };
 
   return (
-    <div className={`sidebar ${props.activeModal === Modals.withdrawal ? 'open' : ''}`}>
+    <div className={`sidebar ${props.activeModal === Modals.withdrawal ? 'open' : ''} transactions-modal`}>
       <div>
         <div className={"flex-row-space-between close-button"}>
           <i className="fa-solid fa-long-arrow-left cursor-pointer"
@@ -190,7 +190,7 @@ export const Withdrawal: FC<IProps> = (props) => {
             <div className={'qr-code'}>
               <GreenCheckmark size={150} color="#28a745" />
             </div>
-            <div className={"amount"}>
+            <div className={"payment-amount"}>
               <h4 style={{color: "#9CB0C2"}}>Payment Amount</h4>
               <h3 style={{color: "#fff"}}>{formatCurrency(amount)}</h3>
             </div>

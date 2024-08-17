@@ -3,7 +3,7 @@
     justify-content: center;
 }
 
-.amount {
+.payment-amount {
     display: flex;
     flex-direction: column;
     justify-content: center;

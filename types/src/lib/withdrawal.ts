@@ -15,7 +15,7 @@ export interface Withdrawal {
 export enum WithdrawalStatus {
 	pending = 'pending',
 	paid = 'paid',
-	canceled = 'canceled',
+	cancelled = 'cancelled',
 }
 
 export interface CreateWithdrawal extends Pick<Withdrawal, 'amount' | 'paymentMethod' | 'walletAddress' | 'network'> {}
