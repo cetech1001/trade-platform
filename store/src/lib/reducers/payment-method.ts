@@ -42,7 +42,7 @@ const reducer = (state = initialState, action: PayloadAction<PaymentMethodState>
 				],
 				count: state.count - 1,
 			};
-		case PaymentMethodActions.SET_CURRENT_USER:
+		case PaymentMethodActions.SET_CURRENT_PAYMENT_METHOD:
 			return {
 				...state,
 				currentPaymentMethod: action.payload.currentPaymentMethod,

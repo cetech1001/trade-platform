@@ -90,7 +90,7 @@ export const removePaymentMethod = (id: string) => async (dispatch: AppDispatch)
 
 export const setCurrentPaymentMethod = (paymentMethod: PaymentMethod) => async (dispatch: AppDispatch) => {
 	dispatch({
-		type: PaymentMethodActions.SET_CURRENT_USER,
+		type: PaymentMethodActions.SET_CURRENT_PAYMENT_METHOD,
 		payload: { currentPaymentMethod: paymentMethod },
 	});
 }

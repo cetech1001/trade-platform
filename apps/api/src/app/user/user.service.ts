@@ -1,18 +1,17 @@
 import {BadRequestException, Injectable} from '@nestjs/common';
-import {CreateUserDto} from './dto/create-user.dto';
 import {UpdateUserDto} from './dto/update-user.dto';
 import {Repository} from "typeorm";
-import {User} from "./entities/user.entity";
+import {UserEntity} from "./entities/user.entity";
 import {InjectRepository} from "@nestjs/typeorm";
-import {PaginationOptions, UserRole} from "@coinvant/types";
+import {CreateUser, PaginationOptions, User, UserRole} from "@coinvant/types";
 import {paginate, Pagination} from "nestjs-typeorm-paginate";
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private readonly userRepo: Repository<User>) {
+  constructor(@InjectRepository(UserEntity) private readonly userRepo: Repository<UserEntity>) {
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUser): Promise<User> {
     const user = await this.findOne({email: createUserDto.email});
     if (user) {
       throw new BadRequestException("Email address already exists");
@@ -24,11 +23,11 @@ export class UserService {
     return paginate(this.userRepo, options, { where: { role: UserRole.user } });
   }
 
-  findOne(condition: { id?: string; email?: string; }) {
+  findOne(condition: { id?: string; email?: string; }): Promise<User> {
     return this.userRepo.findOne({ where: condition });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     if (updateUserDto.email) {
       const user = await this.findOne({email: updateUserDto.email});
       if (user && user.id !== id) {

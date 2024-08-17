@@ -6,6 +6,8 @@ export interface User {
   walletBalance: number;
   status: UserStatus;
   role: UserRole;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface UserState {
@@ -24,5 +26,5 @@ export enum UserStatus {
   disabled = 'disabled',
 }
 
-export interface CreateUser extends Omit<User, 'id'> {}
+export interface CreateUser extends Omit<User, 'id' | 'createdAt' | 'updatedAt'> {}
 export interface UpdateUser extends Partial<CreateUser> {}

@@ -1,9 +1,17 @@
-import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {Trade, TradeAsset, TradeStatus} from "@coinvant/types";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from "typeorm";
+import {Trade, TradeStatus, User} from "@coinvant/types";
 import {IsNotEmpty, IsNumber, IsOptional, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 import {Transform} from "class-transformer";
-import {TradeAssetEntity} from "../../trade-asset/entities/trade-asset.entity";
+import {UserEntity} from "../../user/entities/user.entity";
 
 @Entity('trades')
 export class TradeEntity implements Trade {
@@ -21,11 +29,8 @@ export class TradeEntity implements Trade {
   @ApiProperty({ type: Number, required: true })
   amount: number;
 
-  @ManyToOne(() => TradeAssetEntity, ({ trades }) => trades, {
-    eager: true,
-  })
-  @JoinColumn({ name: 'assetID' })
-  asset: TradeAsset;
+  @Column()
+  asset: string;
 
   @Column()
   @IsOptional()
@@ -110,4 +115,13 @@ export class TradeEntity implements Trade {
   })
   upperLimit: number;
 
+  @ManyToOne(() => UserEntity, (user) => user.trades)
+  @JoinColumn({ name: 'userID' })
+  user: User;
+
+  @CreateDateColumn()
+  createdAt: string;
+
+  @UpdateDateColumn()
+  updatedAt: string;
 }

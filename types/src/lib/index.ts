@@ -7,3 +7,6 @@ export * from './trade';
 export * from './trade-asset';
 export * from './pagination';
 export * from './payment-method';
+export * from './deposit';
+export * from './withdrawal';
+export * from './transaction';

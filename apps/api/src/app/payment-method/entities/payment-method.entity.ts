@@ -1,10 +1,10 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {IsIn, IsNotEmpty, IsOptional, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
-import {PaymentMethodStatus} from "@coinvant/types";
+import {PaymentMethod, PaymentMethodStatus} from "@coinvant/types";
 
 @Entity('payment_methods')
-export class PaymentMethod {
+export class PaymentMethodEntity implements PaymentMethod{
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
@@ -39,6 +39,11 @@ export class PaymentMethod {
 	})
 	@IsOptional()
 	@IsIn(Object.values(PaymentMethodStatus))
-	@ApiProperty({ type: String, enum: PaymentMethodStatus, default: PaymentMethodStatus.active })
+	@ApiProperty({
+		type: String,
+		required: false,
+		enum: PaymentMethodStatus,
+		default: PaymentMethodStatus.active
+	})
 	status: PaymentMethodStatus;
 }

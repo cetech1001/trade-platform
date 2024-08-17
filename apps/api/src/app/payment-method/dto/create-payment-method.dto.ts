@@ -1,4 +1,7 @@
 import {OmitType} from "@nestjs/swagger";
-import {PaymentMethod} from "../entities/payment-method.entity";
+import {PaymentMethodEntity} from "../entities/payment-method.entity";
+import {CreatePaymentMethod} from "@coinvant/types";
 
-export class CreatePaymentMethodDto extends OmitType(PaymentMethod, ["id"]){}
+export class CreatePaymentMethodDto
+	extends OmitType(PaymentMethodEntity, ["id"])
+	implements CreatePaymentMethod {}

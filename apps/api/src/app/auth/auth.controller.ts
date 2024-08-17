@@ -5,6 +5,8 @@ import {ApiTags} from "@nestjs/swagger";
 import {CreateUserDto} from "../user/dto/create-user.dto";
 import {UserService} from "../user/user.service";
 import {LoginDto} from "./dto/login.dto";
+import {User, UserRole} from "@coinvant/types";
+import {CurrentUser} from "../../decorators";
 
 @ApiTags('Auth Controller')
 @Controller('auth')
@@ -15,13 +17,16 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  signIn(@Body() _: LoginDto, @Request() req) {
-    return this.authService.login(req.user);
+  signIn(@Body() _: LoginDto, @CurrentUser() user: User) {
+    return this.authService.login(user);
   }
 
   @Post('register')
   signUp(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto)
+    return this.userService.create({
+      ...createUserDto,
+      role: UserRole.user,
+    })
       .then(user => {
         const { password, ...result } = user;
         return this.authService.login(result);

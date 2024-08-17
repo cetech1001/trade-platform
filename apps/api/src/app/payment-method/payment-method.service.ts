@@ -5,18 +5,18 @@ import {PaginationOptions} from "@coinvant/types";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {paginate, Pagination} from "nestjs-typeorm-paginate";
-import {PaymentMethod} from "./entities/payment-method.entity";
+import {PaymentMethodEntity} from "./entities/payment-method.entity";
 
 @Injectable()
 export class PaymentMethodService {
-  constructor(@InjectRepository(PaymentMethod) private readonly paymentMethodRepo: Repository<PaymentMethod>) {
+  constructor(@InjectRepository(PaymentMethodEntity) private readonly paymentMethodRepo: Repository<PaymentMethodEntity>) {
   }
 
   create(createPaymentMethodDto: CreatePaymentMethodDto) {
     return this.paymentMethodRepo.save(createPaymentMethodDto);
   }
 
-  findAll(options: PaginationOptions): Promise<Pagination<PaymentMethod>> {
+  findAll(options: PaginationOptions): Promise<Pagination<PaymentMethodEntity>> {
     return paginate(this.paymentMethodRepo, options);
   }
 

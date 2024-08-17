@@ -1,4 +1,7 @@
 import {OmitType} from "@nestjs/swagger";
-import {User} from "../entities/user.entity";
+import {UserEntity} from "../entities/user.entity";
+import {CreateUser} from "@coinvant/types";
 
-export class CreateUserDto extends OmitType(User, ['id']) {}
+export class CreateUserDto
+	extends OmitType(UserEntity, ['id'])
+	implements CreateUser{}

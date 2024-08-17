@@ -1,11 +1,14 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 import {IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString} from "class-validator";
-import {UserRole, UserStatus} from "@coinvant/types";
+import {Deposit, Trade, User, UserRole, UserStatus, Withdrawal} from "@coinvant/types";
 import {Transform} from "class-transformer";
+import {DepositEntity} from "../../deposit/entities/deposit.entity";
+import {TradeEntity} from "../../trade/entities/trade.entity";
+import {WithdrawalEntity} from "../../withdrawal/entities/withdrawal.entity";
 
 @Entity('users')
-export class User {
+export class UserEntity implements User{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -38,7 +41,12 @@ export class User {
   })
   @IsOptional()
   @IsIn(Object.values(UserStatus))
-  @ApiProperty({ type: String, enum: UserStatus, default: UserStatus.active })
+  @ApiProperty({
+    type: String,
+    required: false,
+    enum: UserStatus,
+    default: UserStatus.active
+  })
   status: UserStatus;
 
   @Column('decimal', {
@@ -57,4 +65,19 @@ export class User {
   @IsString()
   @ApiProperty({ type: String, required: true, example: 'Pa$$word1' })
   password: string;
+
+  @OneToMany(() => DepositEntity, (deposit) => deposit.user, { onDelete: 'CASCADE' })
+  deposits: Deposit[];
+
+  @OneToMany(() => TradeEntity, (trade) => trade.user, { onDelete: 'CASCADE' })
+  trades: Trade[];
+
+  @OneToMany(() => WithdrawalEntity, (withdrawal) => withdrawal.user, { onDelete: 'CASCADE' })
+  withdrawals: Withdrawal[];
+
+  @CreateDateColumn()
+  createdAt: string;
+
+  @UpdateDateColumn()
+  updatedAt: string;
 }

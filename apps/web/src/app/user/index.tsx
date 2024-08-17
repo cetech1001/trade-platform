@@ -1,18 +1,27 @@
 import {Nav} from "./components/nav";
-// import {Assets} from "./components/assets";
 import {CreateTrade} from "./components/create-trade";
 import {Chart} from "./components/chart";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Trades} from "./components/trades";
 import {USER_ROUTES} from "../../routes";
 import {TradeHistory} from "./components/trade-history";
 import {Settings} from "./components/settings";
 import {Payments} from "./components/payments";
 import {connect} from "react-redux";
-import {closeModal, logout, RootState, openModal, editUser, showAlert, refreshUserProfile} from "@coinvant/store";
-import {AlertState, AuthUser, Modals, UpdateUser} from "@coinvant/types";
+import {
+    closeModal,
+    logout,
+    RootState,
+    openModal,
+    editUser,
+    showAlert,
+    refreshUserProfile,
+    fetchPaymentMethods, addDeposit
+} from "@coinvant/store";
+import {AlertState, AuthUser, Modals, PaymentMethod, UpdateUser} from "@coinvant/types";
 import {UpdateProfile} from "./components/update-profile";
 import {UpdatePassword} from "./components/update-password";
+import {Deposit} from "./components/deposit";
 
 
 interface IProps {
@@ -24,11 +33,15 @@ interface IProps {
   editUser: (id: string, payload: UpdateUser) => Promise<void>;
   showAlert: (payload: AlertState) => void;
   refreshUserProfile: () => Promise<void>;
+  paymentMethods: PaymentMethod[];
+  fetchPaymentMethods: () => void;
+  addDeposit: (payload: FormData) => Promise<void>;
 }
 
 const mapStateToProps = (state: RootState) => ({
-  user: state.auth.user,
-  activeModal: state.modal.activeModal,
+    user: state.auth.user,
+    activeModal: state.modal.activeModal,
+    paymentMethods: state.paymentMethod.list,
 });
 
 const actions = {
@@ -38,10 +51,16 @@ const actions = {
     editUser,
     showAlert,
     refreshUserProfile,
+    fetchPaymentMethods,
+    addDeposit,
 };
 
 export const User = connect(mapStateToProps, actions)((props: IProps) => {
     const [activeNav, setActiveNav] = useState<USER_ROUTES>(USER_ROUTES.home);
+
+    useEffect(() => {
+        props.fetchPaymentMethods();
+    }, []);
 
     const toggleNav = (route: USER_ROUTES) => {
         setActiveNav(route);
@@ -51,7 +70,6 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
         <div className={'main'}>
             <Nav activeTab={activeNav} toggleNav={toggleNav} logout={props.logout}
                  openModal={props.openModal} activeModal={props.activeModal}/>
-            {/*{activeNav === USER_ROUTES.home && <Assets/>}*/}
             {activeNav === USER_ROUTES.trades && <Trades toggleNav={toggleNav}/>}
             {activeNav === USER_ROUTES.history && <TradeHistory toggleNav={toggleNav}/>}
             <Chart/>
@@ -67,6 +85,9 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
             <UpdatePassword activeModal={props.activeModal} openModal={props.openModal}
                             closeModal={props.closeModal} user={props.user}
                             editUser={props.editUser} showAlert={props.showAlert}/>
+            <Deposit activeModal={props.activeModal} openModal={props.openModal}
+                     closeModal={props.closeModal} showAlert={props.showAlert}
+                     paymentMethods={props.paymentMethods} addDeposit={props.addDeposit} />
         </div>
     );
 });

@@ -5,7 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  Delete, Request, UseGuards, Query, UnauthorizedException, ForbiddenException,
+  Delete, UseGuards, Query, ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -13,8 +13,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {JwtAuthGuard} from "../../guards";
 import {PaginationOptionsDto} from "../../dto/pagination.dto";
-import {UserRole} from "@coinvant/types";
-import {Roles} from "../../decorators";
+import {User, UserRole} from "@coinvant/types";
+import {CurrentUser, Roles} from "../../decorators";
 
 @ApiTags('User Controller')
 @ApiBearerAuth()
@@ -30,8 +30,8 @@ export class UserController {
   }
 
   @Get('profile')
-  getProfile(@Request() req) {
-    return this.userService.findOne({ id: req.user.id });
+  getProfile(@CurrentUser() user: User) {
+    return this.userService.findOne({ id: user.id });
   }
 
   @Get()
@@ -47,9 +47,14 @@ export class UserController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Request() req) {
-    if (req.user.role !== 'admin' && req.user.id !== id) {
-      throw new ForbiddenException('You can only access your own data');
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @CurrentUser() user: User) {
+    if (user.role !== 'admin') {
+      if (user.id !== id) {
+        throw new ForbiddenException('You can only access your own data');
+      }
+      if (updateUserDto.role) {
+        delete updateUserDto.role;
+      }
     }
     return this.userService.update(id, updateUserDto);
   }

@@ -18,7 +18,8 @@ export const Payments: FC<IProps> = (props) => {
              onClick={props.closeModal}></i>
         </div>
         <div className={"flex-column"} style={{gap: "1rem"}}>
-          <div className={"sidebar-option"} style={{ padding: "24px 16px", backgroundColor: "rgba(0, 148, 255, 1)" }}>
+          <div className={"sidebar-option"} onClick={() => props.openModal(Modals.deposit)}
+               style={{ padding: "24px 16px", backgroundColor: "rgba(0, 148, 255, 1)" }}>
             <i className="fa-solid fa-wallet"></i>
             <div className={"info"}>
               <h5>Deposit</h5>

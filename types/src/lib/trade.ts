@@ -1,4 +1,4 @@
-import {TradeAsset} from "./trade-asset";
+import {User} from "./user";
 
 export enum TradeStatus {
   pending = 'pending',
@@ -24,9 +24,12 @@ export interface UpdateTrade extends Pick<Trade, 'status' | 'upperLimit' | 'lowe
 export interface Trade extends Omit<CreateTrade, 'assetID'> {
   id: string;
   status: TradeStatus;
-  asset: TradeAsset;
+  asset: string;
   startTime: string;
   endTime: string;
   upperLimit: number;
   lowerLimit: number;
+  user: User;
+  createdAt: string;
+  updatedAt: string;
 }

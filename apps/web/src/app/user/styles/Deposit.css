@@ -1,0 +1,35 @@
+.qr-code {
+    display: flex;
+    justify-content: center;
+}
+
+.amount {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.payment-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.payment-info .info {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    border-bottom: 0.5px solid #9cb0c2;
+}
+
+.payment-info .info .lead {
+    color: #9cb0c2;
+    font-size: 12px;
+}
+
+.payment-info .info .sub {
+    color: #FFFFFF;
+    font-size: 12px;
+}

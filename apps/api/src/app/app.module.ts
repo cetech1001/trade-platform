@@ -4,8 +4,10 @@ import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { environment } from '../environment/environment';
 import { TradeModule } from './trade/trade.module';
-import { TradeAssetModule } from './trade-asset/trade-asset.module';
 import { PaymentMethodModule } from './payment-method/payment-method.module';
+import { DepositModule } from './deposit/deposit.module';
+import { WithdrawalModule } from './withdrawal/withdrawal.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -13,8 +15,10 @@ import { PaymentMethodModule } from './payment-method/payment-method.module';
     UserModule,
     TypeOrmModule.forRoot(environment.db),
     TradeModule,
-    TradeAssetModule,
     PaymentMethodModule,
+    DepositModule,
+    WithdrawalModule,
+    TransactionModule,
   ],
 })
 export class AppModule {}
