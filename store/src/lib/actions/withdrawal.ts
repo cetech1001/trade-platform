@@ -1,0 +1,97 @@
+import {AppDispatch, showAlert} from "@coinvant/store";
+import {WithdrawalService} from "../services";
+import {WithdrawalActions} from "../types";
+import {CreateWithdrawal, PaginationOptions, UpdateWithdrawal, Withdrawal} from "@coinvant/types";
+
+export const fetchWithdrawals = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
+	try {
+		const data = await WithdrawalService.getWithdrawals(options);
+		dispatch({
+			type: WithdrawalActions.LIST,
+			payload: {
+				list: data.items,
+				count: data.meta.totalItems,
+			},
+		});
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to fetch withdrawals.',
+			type: 'error',
+			show: true,
+		}));
+	}
+}
+
+export const addWithdrawal = (payload: CreateWithdrawal) => async (dispatch: AppDispatch) => {
+	try {
+		const data = await WithdrawalService.createWithdrawal(payload);
+		dispatch({
+			type: WithdrawalActions.CREATE,
+			payload: {
+				currentWithdrawal: data,
+			},
+		});
+		console.log(data);
+		dispatch(showAlert({
+			message: 'Withdrawal created successfully.',
+			type: 'success',
+			show: true,
+		}));
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to create withdrawal.',
+			type: 'error',
+			show: true,
+		}));
+	}
+}
+
+export const editWithdrawal = (id: string, payload: UpdateWithdrawal) => async (dispatch: AppDispatch) => {
+	try {
+		const data = await WithdrawalService.updateWithdrawal(id, payload);
+		dispatch({
+			type: WithdrawalActions.UPDATE,
+			payload: {
+				currentWithdrawal: data,
+			},
+		});
+		dispatch(showAlert({
+			message: 'Withdrawal updated successfully.',
+			type: 'success',
+			show: true,
+		}));
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to update withdrawal.',
+			type: 'error',
+			show: true,
+		}));
+	}
+}
+
+export const removeWithdrawal = (id: string) => async (dispatch: AppDispatch) => {
+	try {
+		await WithdrawalService.deleteWithdrawal(id);
+		dispatch({
+			type: WithdrawalActions.DELETE,
+		});
+		dispatch(showAlert({
+			message: 'Withdrawal deleted successfully.',
+			type: 'success',
+			show: true,
+		}));
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to delete withdrawal.',
+			type: 'error',
+			show: true,
+		}));
+	}
+}
+
+export const setCurrentWithdrawal = (withdrawal: Withdrawal) => async (dispatch: AppDispatch) => {
+	dispatch({
+		type: WithdrawalActions.SET_CURRENT_WITHDRAWAL,
+		payload: { currentWithdrawal: withdrawal },
+	});
+}

@@ -20,3 +20,9 @@ export enum WithdrawalStatus {
 
 export interface CreateWithdrawal extends Pick<Withdrawal, 'amount' | 'paymentMethod' | 'walletAddress' | 'network'> {}
 export interface UpdateWithdrawal extends Pick<Withdrawal, 'status'> {}
+
+export interface WithdrawalState {
+	list: Withdrawal[];
+	count: number;
+	currentWithdrawal: Withdrawal | null;
+}

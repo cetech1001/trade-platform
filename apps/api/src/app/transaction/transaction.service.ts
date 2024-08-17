@@ -3,8 +3,7 @@ import {
   CreateTransaction,
   PaginationOptions,
   Transaction,
-  UpdateTransaction, User,
-  UserRole
+  UpdateTransaction, User
 } from "@coinvant/types";
 import {Repository} from "typeorm";
 import {TransactionEntity} from "./entities/transaction.entity";
@@ -21,13 +20,7 @@ export class TransactionService {
   }
 
   findAll(options: PaginationOptions, user: User): Promise<Pagination<Transaction>> {
-    const searchOptions = {};
-
-    if (user.role === UserRole.user) {
-      searchOptions['where'] = { user: { id: user.id } };
-    }
-
-    return paginate(this.transactionRepo, options, searchOptions);
+    return paginate(this.transactionRepo, options, { where: { user: { id: user.id } } });
   }
 
   findByTransactionID(transactionID: string): Promise<Transaction> {

@@ -5,6 +5,8 @@ import modal from "./modal";
 import user from "./user";
 import paymentMethod from "./payment-method";
 import deposit from "./deposit";
+import withdrawal from "./withdrawal";
+import transaction from "./transaction";
 
 export default combineReducers({
   auth,
@@ -13,4 +15,6 @@ export default combineReducers({
   user,
   paymentMethod,
   deposit,
+  withdrawal,
+  transaction,
 });

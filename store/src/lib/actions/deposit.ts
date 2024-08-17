@@ -25,13 +25,12 @@ export const fetchDeposits = (options?: PaginationOptions) => async (dispatch: A
 export const addDeposit = (payload: FormData) => async (dispatch: AppDispatch) => {
 	try {
 		const data = await DepositService.createDeposit(payload);
-		/*dispatch({
+		dispatch({
 			type: DepositActions.CREATE,
 			payload: {
 				currentDeposit: data,
 			},
-		});*/
-		console.log(data);
+		});
 		dispatch(showAlert({
 			message: 'Deposit created successfully.',
 			type: 'success',
@@ -89,9 +88,9 @@ export const removeDeposit = (id: string) => async (dispatch: AppDispatch) => {
 	}
 }
 
-export const setCurrentDeposit = (paymentMethod: Deposit) => async (dispatch: AppDispatch) => {
+export const setCurrentDeposit = (deposit: Deposit) => async (dispatch: AppDispatch) => {
 	dispatch({
 		type: DepositActions.SET_CURRENT_DEPOSIT,
-		payload: { currentDeposit: paymentMethod },
+		payload: { currentDeposit: deposit },
 	});
 }

@@ -34,3 +34,9 @@ export enum TransactionStatusEnum {
 	open = 'open',
 	closed = 'closed',
 }
+
+export interface TransactionState {
+	list: Transaction[];
+	count: number;
+	currentTransaction: Transaction | null;
+}
