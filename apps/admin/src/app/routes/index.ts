@@ -11,4 +11,5 @@ export enum AdminRoutes {
   deposits = 'dashboard/deposits',
   withdrawals = 'dashboard/withdrawals',
   trades = 'dashboard/trades',
+  profile = 'dashboard/profile',
 }

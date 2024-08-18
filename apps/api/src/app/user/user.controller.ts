@@ -50,7 +50,7 @@ export class UserController {
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @CurrentUser() user: User) {
     if (user.role !== 'admin') {
       if (user.id !== id) {
-        throw new ForbiddenException('You can only access your own data');
+        throw new ForbiddenException('Access Forbidden');
       }
       if (updateUserDto.role) {
         delete updateUserDto.role;

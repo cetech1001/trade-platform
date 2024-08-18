@@ -30,6 +30,8 @@ export const UpdatePassword: FC<IProps> = (props) => {
       setIsSubmitting(true);
       if (props.user) {
         await props.editUser(props.user?.id, { password });
+        setPassword("");
+        setRePassword("");
       } else {
         props.showAlert({
           type: 'error',
