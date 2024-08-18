@@ -1,7 +1,7 @@
 import {AppDispatch, showAlert} from "@coinvant/store";
 import {DepositService} from "../services";
-import {DepositActions} from "../types";
-import {PaginationOptions, UpdateDeposit, Deposit} from "@coinvant/types";
+import {DepositActions, TransactionActions} from "../types";
+import {Deposit, PaginationOptions, UpdateDeposit} from "@coinvant/types";
 
 export const fetchDeposits = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -26,9 +26,9 @@ export const addDeposit = (payload: FormData) => async (dispatch: AppDispatch) =
 	try {
 		const data = await DepositService.createDeposit(payload);
 		dispatch({
-			type: DepositActions.CREATE,
+			type: TransactionActions.ADD,
 			payload: {
-				currentDeposit: data,
+				transaction: data,
 			},
 		});
 		dispatch(showAlert({
@@ -82,6 +82,24 @@ export const removeDeposit = (id: string) => async (dispatch: AppDispatch) => {
 	} catch (error) {
 		dispatch(showAlert({
 			message: 'Failed to delete deposit.',
+			type: 'error',
+			show: true,
+		}));
+	}
+}
+
+export const setTotalDepositAmount = () => async (dispatch: AppDispatch) => {
+	try {
+		const total = await DepositService.fetchTotalDepositAmount();
+		dispatch({
+			type: DepositActions.SET_TOTAL,
+			payload: {
+				total,
+			}
+		});
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to fetch total deposit amount.',
 			type: 'error',
 			show: true,
 		}));

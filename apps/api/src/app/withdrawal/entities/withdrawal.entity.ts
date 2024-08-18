@@ -7,7 +7,7 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn
 } from "typeorm";
-import {DepositStatus, User, Withdrawal, WithdrawalStatus} from "@coinvant/types";
+import {User, Withdrawal, WithdrawalStatus} from "@coinvant/types";
 import {IsIn, IsNotEmpty, IsNumber, IsString} from "class-validator";
 import {Transform} from "class-transformer";
 import {ApiProperty} from "@nestjs/swagger";
@@ -49,11 +49,13 @@ export class WithdrawalEntity implements Withdrawal {
 		enum: WithdrawalStatus,
 		default: WithdrawalStatus.pending,
 	})
-	@IsIn(Object.values(DepositStatus))
-	@ApiProperty({ type: String, enum: DepositStatus })
+	@IsIn(Object.values(WithdrawalStatus))
+	@ApiProperty({ type: String, enum: WithdrawalStatus })
 	status: WithdrawalStatus;
 
-	@ManyToOne(() => UserEntity, (user) => user.withdrawals)
+	@ManyToOne(() => UserEntity, (user) => user.withdrawals, {
+		eager: true,
+	})
 	@JoinColumn({ name: 'userID' })
 	user: User;
 

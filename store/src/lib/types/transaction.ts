@@ -1,4 +1,4 @@
 export enum TransactionActions {
 	LIST = 'transaction.list',
-	SET_CURRENT_TRANSACTION = 'transaction.setCurrentTransaction',
+	ADD = 'transaction.add',
 }

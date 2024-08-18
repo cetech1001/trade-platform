@@ -3,7 +3,7 @@ import {
 	DepositStatus,
 	Modals,
 	PaginationOptions, TradeStatus,
-	Transaction,
+	Transaction, TransactionStatusEnum,
 	TransactionType, WithdrawalStatus
 } from "@coinvant/types";
 import {FilterDropdown} from "./shared/filter-dropdown";
@@ -62,6 +62,7 @@ export const Transactions: FC<IProps> = (props) => {
 		return (
 			<div className={'filters'}>
 				<FilterDropdown title={"All Transaction Types"} options={Object.values(TransactionType)}/>
+				<FilterDropdown title={"Any Status"} options={Object.values(TransactionStatusEnum)}/>
 			</div>
 		);
 	}
@@ -117,7 +118,7 @@ export const Transactions: FC<IProps> = (props) => {
 						{transaction.type === TransactionType.withdrawal
 							&& <i className="fa-solid fa-hand-holding-dollar"></i>}
 						{transaction.type === TransactionType.trade
-							&& <i className="fas fa-arrow-right-arrow-left"></i>}
+							&& <i className="fas fa-chart-line"></i>}
 						<div className={"description"}>
 							<span className={"amount"}>
 								{capitalizeFirstLetter(transaction.type)}

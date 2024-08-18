@@ -2,6 +2,7 @@ import {User} from "./user";
 import {DepositStatus} from "./deposit";
 import {WithdrawalStatus} from "./withdrawal";
 import {TradeStatus} from "./trade";
+import {PaginationOptions} from "./pagination";
 
 export interface Transaction {
 	id: string;
@@ -39,5 +40,9 @@ export enum TransactionStatusEnum {
 export interface TransactionState {
 	list: Transaction[];
 	count: number;
-	currentTransaction: Transaction | null;
+}
+
+export interface TransactionsQuery extends PaginationOptions {
+	type?: TransactionType;
+	status?: TransactionStatus;
 }

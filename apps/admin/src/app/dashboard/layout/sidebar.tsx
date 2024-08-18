@@ -135,7 +135,7 @@ export const Sidebar = connect(null, { logout })((props: IProps) => {
               <NavItem title="Payment Methods" link={`/${AdminRoutes.paymentMethods}`} icon={'credit-card'}/>
               <NavItem title="Trades" link={`/${AdminRoutes.trades}`} icon={'chart-line'}/>
               <NavItem title="Deposits" link={`/${AdminRoutes.deposits}`} icon={'wallet'}/>
-              <NavItem title="Withdrawals" link={`/${AdminRoutes.withdrawals}`} icon={'money-bill'}/>
+              <NavItem title="Withdrawals" link={`/${AdminRoutes.withdrawals}`} icon={'hand-holding-dollar'}/>
               <Button variant="secondary" className="upgrade-to-pro" onClick={handleLogout}>
                 <i className="fa-solid fa-right-from-bracket me-1" /> Logout
               </Button>

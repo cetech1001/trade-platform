@@ -3,7 +3,8 @@ import {
   Paginated,
   PaginationOptions,
   UpdateDeposit,
-  Deposit} from "@coinvant/types";
+  Deposit, Transaction
+} from "@coinvant/types";
 
 export class DepositService {
   static async getDeposits(options?: PaginationOptions): Promise<Paginated<Deposit>> {
@@ -11,7 +12,7 @@ export class DepositService {
     return data;
   }
 
-  static async createDeposit(payload: FormData): Promise<Deposit> {
+  static async createDeposit(payload: FormData): Promise<Transaction> {
     let { data } = await api.post('/deposit', payload, {
       headers: { "Content-Type": "multipart/form-data" }
     });
@@ -20,6 +21,11 @@ export class DepositService {
 
   static async updateDeposit(id: string, payload: UpdateDeposit): Promise<Deposit> {
     let { data } = await api.patch(`/deposit/${id}`, payload);
+    return data;
+  }
+
+  static async fetchTotalDepositAmount(): Promise<number> {
+    let { data } = await api.get('/deposit/total/amount');
     return data;
   }
 

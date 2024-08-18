@@ -1,6 +1,6 @@
 import {AppDispatch, showAlert} from "@coinvant/store";
 import {WithdrawalService} from "../services";
-import {WithdrawalActions} from "../types";
+import {TransactionActions, WithdrawalActions} from "../types";
 import {CreateWithdrawal, PaginationOptions, UpdateWithdrawal, Withdrawal} from "@coinvant/types";
 
 export const fetchWithdrawals = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
@@ -26,12 +26,11 @@ export const addWithdrawal = (payload: CreateWithdrawal) => async (dispatch: App
 	try {
 		const data = await WithdrawalService.createWithdrawal(payload);
 		dispatch({
-			type: WithdrawalActions.CREATE,
+			type: TransactionActions.ADD,
 			payload: {
-				currentWithdrawal: data,
+				transaction: data,
 			},
 		});
-		console.log(data);
 		dispatch(showAlert({
 			message: 'Withdrawal created successfully.',
 			type: 'success',
@@ -83,6 +82,24 @@ export const removeWithdrawal = (id: string) => async (dispatch: AppDispatch) =>
 	} catch (error) {
 		dispatch(showAlert({
 			message: 'Failed to delete withdrawal.',
+			type: 'error',
+			show: true,
+		}));
+	}
+}
+
+export const setTotalWithdrawalAmount = () => async (dispatch: AppDispatch) => {
+	try {
+		const total = await WithdrawalService.fetchTotalWithdrawalAmount();
+		dispatch({
+			type: WithdrawalActions.SET_TOTAL,
+			payload: {
+				total,
+			}
+		});
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to fetch total withdrawal amount.',
 			type: 'error',
 			show: true,
 		}));

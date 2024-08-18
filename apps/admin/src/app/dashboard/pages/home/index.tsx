@@ -1,21 +1,39 @@
 import {Col, Row} from "@themesberg/react-bootstrap";
 import {CounterWidget} from "./partials/counter-widget";
 import {connect} from "react-redux";
-import {fetchUsers, RootState} from "@coinvant/store";
-import {PaginationOptions, UserState} from "@coinvant/types";
-import {useEffect, useState} from "react";
+import {
+  fetchUsers,
+  RootState,
+  setTotalDepositAmount,
+  setTotalWithdrawalAmount
+} from "@coinvant/store";
+import {PaginationOptions} from "@coinvant/types";
+import React, {useEffect, useState} from "react";
 import {UsersTable} from "../users/partials/users-table";
+import {formatCurrency} from "../../../helpers";
 
 interface IProps {
   userCount: number;
+  totalDepositAmount: number;
+  totalWithdrawalAmount: number;
   fetchUsers: (options?: PaginationOptions) => void;
+  setTotalDepositAmount: () => void;
+  setTotalWithdrawalAmount: () => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
   userCount: state.user.count,
+  totalDepositAmount: state.deposit.total,
+  totalWithdrawalAmount: state.withdrawal.total,
 });
 
-export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) => {
+const actions = {
+  fetchUsers,
+  setTotalDepositAmount,
+  setTotalWithdrawalAmount,
+}
+
+export const Home = connect(mapStateToProps, actions) ((props: IProps) => {
   const [options, setOptions] = useState<PaginationOptions>({
     limit: 10,
     page: 1,
@@ -23,6 +41,8 @@ export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) =>
 
   useEffect(() => {
     props.fetchUsers(options);
+    props.setTotalDepositAmount();
+    props.setTotalWithdrawalAmount();
   }, []);
 
   return (
@@ -38,17 +58,17 @@ export const Home = connect(mapStateToProps, { fetchUsers }) ((props: IProps) =>
 
         <Col xs={12} sm={6} xl={4} className="mb-4">
           <CounterWidget
-            category="Deposits"
-            title="$43,594"
-            icon={'wallet'}
+              category="Deposits"
+              title={formatCurrency(props.totalDepositAmount)}
+              icon={'wallet'}
           />
         </Col>
 
         <Col xs={12} sm={6} xl={4} className="mb-4">
           <CounterWidget
             category="Withdrawals"
-            title="$43,594"
-            icon={'money-bill'}
+            title={formatCurrency(props.totalWithdrawalAmount)}
+            icon={'hand-holding-dollar'}
           />
         </Col>
       </Row>

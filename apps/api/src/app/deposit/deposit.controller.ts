@@ -46,6 +46,12 @@ export class DepositController {
     return this.depositService.findAll(options, user);
   }
 
+  @Get('total/amount')
+  @Roles(UserRole.admin)
+  fetchTotalDepositAmount() {
+    return this.depositService.fetchTotalDepositAmount();
+  }
+
   @Patch(':id')
   @Roles(UserRole.admin)
   update(@Param('id') id: string, @Body() updateDepositDto: UpdateDepositDto) {

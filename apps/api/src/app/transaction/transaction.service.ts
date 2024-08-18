@@ -1,8 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {
   CreateTransaction,
-  PaginationOptions,
-  Transaction,
+  Transaction, TransactionsQuery,
   UpdateTransaction, User
 } from "@coinvant/types";
 import {Repository} from "typeorm";
@@ -19,8 +18,21 @@ export class TransactionService {
     return this.transactionRepo.save(createTransaction);
   }
 
-  findAll(options: PaginationOptions, user: User): Promise<Pagination<Transaction>> {
-    return paginate(this.transactionRepo, options, { where: { user: { id: user.id } } });
+  findAll(query: TransactionsQuery, user: User): Promise<Pagination<Transaction>> {
+    const { status, type, ...options } = query;
+    const queryBuilder = this.transactionRepo.createQueryBuilder('T');
+
+    if (status) {
+      queryBuilder.andWhere('T.status = :status', { status });
+    }
+
+    if (type) {
+      queryBuilder.andWhere('T.type = :type', { type });
+    }
+
+    queryBuilder.orderBy('T.createdAt', 'DESC');
+
+    return paginate(queryBuilder, options);
   }
 
   findByTransactionID(transactionID: string): Promise<Transaction> {

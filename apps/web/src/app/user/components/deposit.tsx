@@ -71,7 +71,7 @@ export const Deposit: FC<IProps> = (props) => {
       formData.append("amount", `${amount}`);
 
       await props.addDeposit(formData);
-      props.closeModal();
+      props.openModal(Modals.transactions);
       reset();
     } else {
       props.showAlert({

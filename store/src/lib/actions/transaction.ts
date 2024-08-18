@@ -1,7 +1,7 @@
 import {AppDispatch, showAlert} from "@coinvant/store";
 import {TransactionService} from "../services";
 import {TransactionActions} from "../types";
-import {PaginationOptions, Transaction} from "@coinvant/types";
+import {PaginationOptions} from "@coinvant/types";
 
 export const fetchTransactions = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -20,11 +20,4 @@ export const fetchTransactions = (options?: PaginationOptions) => async (dispatc
 			show: true,
 		}));
 	}
-}
-
-export const setCurrentTransaction = (transaction: Transaction) => async (dispatch: AppDispatch) => {
-	dispatch({
-		type: TransactionActions.SET_CURRENT_TRANSACTION,
-		payload: { currentTransaction: transaction },
-	});
 }

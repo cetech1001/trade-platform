@@ -37,7 +37,9 @@ export class DepositEntity implements Deposit {
 	@ApiProperty({ type: String, required: true })
 	paymentMethod: string;
 
-	@ManyToOne(() => UserEntity, (user) => user.deposits)
+	@ManyToOne(() => UserEntity, (user) => user.deposits, {
+		eager: true,
+	})
 	@JoinColumn({ name: 'userID' })
 	user: User;
 

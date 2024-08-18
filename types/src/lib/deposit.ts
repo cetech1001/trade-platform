@@ -25,4 +25,5 @@ export interface DepositState {
 	list: Deposit[];
 	count: number;
 	currentDeposit: Deposit | null;
+	total: number;
 }

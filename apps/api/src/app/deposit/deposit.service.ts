@@ -2,7 +2,9 @@ import {Injectable} from '@nestjs/common';
 import {
   CreateDeposit,
   Deposit,
+  DepositStatus,
   PaginationOptions,
+  Transaction,
   TransactionType,
   UpdateDeposit,
   User,
@@ -14,16 +16,18 @@ import {DepositEntity} from "./entities/deposit.entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {TransactionService} from "../transaction/transaction.service";
 import {PaymentMethodService} from "../payment-method/payment-method.service";
+import {UserService} from "../user/user.service";
 
 @Injectable()
 export class DepositService {
   constructor(
       @InjectRepository(DepositEntity) private readonly depositRepo:
           Repository<DepositEntity>,
+      private readonly userService: UserService,
       private readonly paymentMethodService: PaymentMethodService,
       private readonly transactionService: TransactionService) {}
 
-  async create(file: Express.Multer.File, createDeposit: CreateDeposit, user: User): Promise<Deposit> {
+  async create(file: Express.Multer.File, createDeposit: CreateDeposit, user: User): Promise<Transaction> {
     const paymentMethod = await this.paymentMethodService.findOne(createDeposit.paymentMethod);
     const deposit = await this.depositRepo.save({
       ...createDeposit,
@@ -31,14 +35,13 @@ export class DepositService {
       user,
       proof: file.filename,
     });
-    await this.transactionService.create({
+    return this.transactionService.create({
       amount: deposit.amount,
       type: TransactionType.deposit,
       status: deposit.status,
       transactionID: deposit.id,
       user,
     });
-    return deposit;
   }
 
   findAll(options: PaginationOptions, user: User): Promise<Pagination<Deposit>> {
@@ -51,14 +54,30 @@ export class DepositService {
     return paginate(this.depositRepo, options, searchOptions);
   }
 
+  async fetchTotalDepositAmount(): Promise<number> {
+    const deposits = await this.depositRepo.find();
+    return deposits.reduce((prev, curr) => {
+      if (curr.status === DepositStatus.confirmed) {
+        prev += curr.amount;
+      }
+      return prev;
+    }, 0);
+  }
+
   findOne(id: string): Promise<Deposit> {
     return this.depositRepo.findOne({ where: { id } });
   }
 
   async update(id: string, updateDeposit: UpdateDeposit): Promise<Deposit> {
     await this.depositRepo.update(id, updateDeposit);
+    const deposit = await this.findOne(id);
+    if (updateDeposit.status === DepositStatus.confirmed) {
+      await this.userService.update(deposit.user.id, {
+        walletBalance: +deposit.user.walletBalance + (+deposit.amount),
+      });
+    }
     await this.transactionService.update(id, updateDeposit);
-    return this.findOne(id);
+    return deposit;
   }
 
   async remove(id: string) {

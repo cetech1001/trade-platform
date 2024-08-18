@@ -35,6 +35,12 @@ export class WithdrawalController {
     return this.withdrawalService.findAll(options, user);
   }
 
+  @Get('total/amount')
+  @Roles(UserRole.admin)
+  fetchTotalWithdrawalAmount() {
+    return this.withdrawalService.fetchTotalWithdrawalAmount();
+  }
+
   @Patch(':id')
   @Roles(UserRole.admin)
   update(

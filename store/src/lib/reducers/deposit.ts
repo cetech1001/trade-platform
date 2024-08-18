@@ -1,4 +1,4 @@
-import {DepositState} from "@coinvant/types";
+import {DepositState, DepositStatus} from "@coinvant/types";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {DepositActions} from "../types";
 
@@ -6,6 +6,7 @@ const initialState: DepositState = {
 	list: [],
 	count: 0,
 	currentDeposit: null,
+	total: 0,
 }
 
 const reducer = (state = initialState, action: PayloadAction<DepositState>) => {
@@ -16,31 +17,37 @@ const reducer = (state = initialState, action: PayloadAction<DepositState>) => {
 				list: action.payload.list,
 				count: action.payload.count
 			};
-		case DepositActions.CREATE:
-			return {
-				...state,
-				list: [ ...state.list, action.payload.currentDeposit! ],
-				count: state.count + 1,
-			};
 		case DepositActions.UPDATE:
+			const { currentDeposit } = action.payload;
+			const prevDeposit = state.list.find(deposit =>
+				deposit.id === currentDeposit?.id);
 			return {
 				...state,
 				list: [
-					...state.list.map(user => {
-						if (user.id === state.currentDeposit?.id) {
-							return action.payload.currentDeposit!;
+					...state.list.map(deposit => {
+						if (deposit.id === state.currentDeposit?.id) {
+							return currentDeposit!;
 						}
-						return user;
+						return deposit;
 					})
-				]
+				],
+				total: currentDeposit?.status === DepositStatus.confirmed
+				&& prevDeposit?.status !== DepositStatus.confirmed
+					? state.total + (+currentDeposit.amount) : state.total,
 			};
 		case DepositActions.DELETE:
 			return {
 				...state,
 				list: [
-					...state.list.filter(user => user.id !== state.currentDeposit?.id)
+					...state.list.filter(deposit =>
+						deposit.id !== state.currentDeposit?.id)
 				],
 				count: state.count - 1,
+			};
+		case DepositActions.SET_TOTAL:
+			return {
+				...state,
+				total: action.payload.total,
 			};
 		case DepositActions.SET_CURRENT_DEPOSIT:
 			return {

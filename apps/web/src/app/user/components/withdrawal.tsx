@@ -77,11 +77,6 @@ export const Withdrawal: FC<IProps> = (props) => {
     return true
   }
 
-  const goForward = () => {
-    props.closeModal();
-    reset();
-  }
-
   const goBack = () => {
     props.openModal(Modals.payments);
   }
@@ -104,7 +99,8 @@ export const Withdrawal: FC<IProps> = (props) => {
     if (step === 1) {
       await submit();
     } else {
-      goForward();
+      props.openModal(Modals.transactions);
+      reset();
     }
   }
 

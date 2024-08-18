@@ -1,10 +1,10 @@
 import {Controller, Get, Query, UseGuards} from '@nestjs/common';
 import { TransactionService } from './transaction.service';
-import {PaginationOptionsDto} from "../../dto/pagination.dto";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {JwtAuthGuard} from "../../guards";
 import {CurrentUser, Roles} from "../../decorators";
 import {User, UserRole} from "@coinvant/types";
+import {TransactionsQueryDto} from "./dto/transactions-query.dto";
 
 @ApiTags('Transaction Controller')
 @ApiBearerAuth()
@@ -15,7 +15,7 @@ export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Get()
-  findAll(@Query() options: PaginationOptionsDto, @CurrentUser() user: User) {
+  findAll(@Query() options: TransactionsQueryDto, @CurrentUser() user: User) {
     return this.transactionService.findAll(options, user);
   }
 }

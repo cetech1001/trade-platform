@@ -1,14 +1,13 @@
-import {TransactionState} from "@coinvant/types";
+import {Transaction, TransactionState} from "@coinvant/types";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {TransactionActions} from "../types";
 
 const initialState: TransactionState = {
 	list: [],
 	count: 0,
-	currentTransaction: null,
 }
 
-const reducer = (state = initialState, action: PayloadAction<TransactionState>) => {
+const reducer = (state = initialState, action: PayloadAction<TransactionState & { transaction: Transaction }>) => {
 	switch (action.type) {
 		case TransactionActions.LIST:
 			return {
@@ -16,11 +15,12 @@ const reducer = (state = initialState, action: PayloadAction<TransactionState>) 
 				list: action.payload.list,
 				count: action.payload.count
 			};
-		case TransactionActions.SET_CURRENT_TRANSACTION:
+		case TransactionActions.ADD:
 			return {
 				...state,
-				currentTransaction: action.payload.currentTransaction,
-			}
+				list: [ action.payload.transaction, ...state.list ],
+				count: state.count + 1,
+			};
 		default:
 			return state;
 	}

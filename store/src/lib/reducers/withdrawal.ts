@@ -1,4 +1,4 @@
-import {WithdrawalState} from "@coinvant/types";
+import {WithdrawalState, WithdrawalStatus} from "@coinvant/types";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {WithdrawalActions} from "../types";
 
@@ -6,6 +6,7 @@ const initialState: WithdrawalState = {
 	list: [],
 	count: 0,
 	currentWithdrawal: null,
+	total: 0,
 }
 
 const reducer = (state = initialState, action: PayloadAction<WithdrawalState>) => {
@@ -16,32 +17,37 @@ const reducer = (state = initialState, action: PayloadAction<WithdrawalState>) =
 				list: action.payload.list,
 				count: action.payload.count
 			};
-		case WithdrawalActions.CREATE:
-			return {
-				...state,
-				list: [ ...state.list, action.payload.currentWithdrawal! ],
-				count: state.count + 1,
-			};
 		case WithdrawalActions.UPDATE:
+			const { currentWithdrawal } = action.payload;
+			const prevWithdrawal = state.list.find(withdrawal =>
+				withdrawal.id === currentWithdrawal?.id);
 			return {
 				...state,
 				list: [
-					...state.list.map(user => {
-						if (user.id === state.currentWithdrawal?.id) {
+					...state.list.map(withdrawal => {
+						if (withdrawal.id === state.currentWithdrawal?.id) {
 							return action.payload.currentWithdrawal!;
 						}
-						return user;
+						return withdrawal;
 					})
-				]
+				],
+				total: currentWithdrawal?.status === WithdrawalStatus.paid
+				&& prevWithdrawal?.status !== WithdrawalStatus.paid
+					? state.total + (+currentWithdrawal.amount) : state.total,
 			};
 		case WithdrawalActions.DELETE:
 			return {
 				...state,
 				list: [
-					...state.list.filter(user => user.id !== state.currentWithdrawal?.id)
+					...state.list.filter(withdrawal => withdrawal.id !== state.currentWithdrawal?.id)
 				],
 				count: state.count - 1,
 			};
+		case WithdrawalActions.SET_TOTAL:
+			return {
+				...state,
+				total: action.payload.total,
+			}
 		case WithdrawalActions.SET_CURRENT_WITHDRAWAL:
 			return {
 				...state,

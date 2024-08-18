@@ -56,7 +56,7 @@ export const Nav: FC<IProps> = (props) => {
             <div className={'badge'}>
               <p>1</p>
             </div>
-            <i className="fas fa-arrow-right-arrow-left"></i>
+            <i className="fas fa-chart-line"></i>
           </div>
           <p>Trades</p>
         </Link>

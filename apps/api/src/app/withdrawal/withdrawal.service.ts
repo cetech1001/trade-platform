@@ -5,35 +5,38 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {
   CreateWithdrawal,
   PaginationOptions,
+  Transaction,
   TransactionType,
   UpdateWithdrawal,
   User,
   UserRole,
-  Withdrawal
+  Withdrawal,
+  WithdrawalStatus
 } from "@coinvant/types";
 import {paginate, Pagination} from "nestjs-typeorm-paginate";
 import {TransactionService} from "../transaction/transaction.service";
+import {UserService} from "../user/user.service";
 
 @Injectable()
 export class WithdrawalService {
   constructor(
       @InjectRepository(WithdrawalEntity) private readonly withdrawalRepo:
           Repository<WithdrawalEntity>,
+      private readonly userService: UserService,
       private readonly transactionService: TransactionService) {}
 
-  async create(createWithdrawal: CreateWithdrawal, user: User): Promise<Withdrawal> {
+  async create(createWithdrawal: CreateWithdrawal, user: User): Promise<Transaction> {
     const withdrawal = await this.withdrawalRepo.save({
       ...createWithdrawal,
       user,
     });
-    await this.transactionService.create({
+    return this.transactionService.create({
       amount: withdrawal.amount,
       type: TransactionType.withdrawal,
       status: withdrawal.status,
       transactionID: withdrawal.id,
       user,
     });
-    return withdrawal;
   }
 
   findAll(options: PaginationOptions, user: User): Promise<Pagination<Withdrawal>> {
@@ -46,6 +49,16 @@ export class WithdrawalService {
     return paginate(this.withdrawalRepo, options, searchOptions);
   }
 
+  async fetchTotalWithdrawalAmount() {
+    const withdrawals = await this.withdrawalRepo.find();
+    return withdrawals.reduce((prev, curr) => {
+      if (curr.status === WithdrawalStatus.paid) {
+        prev += curr.amount;
+      }
+      return prev;
+    }, 0);
+  }
+
   findOne(id: string): Promise<Withdrawal> {
     return this.withdrawalRepo.findOne({ where: { id } });
   }
@@ -53,6 +66,11 @@ export class WithdrawalService {
   async update(id: string, updateWithdrawal: UpdateWithdrawal): Promise<Withdrawal> {
     await this.withdrawalRepo.update(id, updateWithdrawal);
     const withdrawal = await this.findOne(id);
+    if (updateWithdrawal.status === WithdrawalStatus.paid) {
+      await this.userService.update(withdrawal.user.id, {
+        walletBalance: +withdrawal.user.walletBalance - (+withdrawal.amount),
+      });
+    }
     await this.transactionService.update(withdrawal.id, updateWithdrawal);
     return withdrawal;
   }

@@ -1,37 +1,24 @@
 import {Button, Col, Row} from "@themesberg/react-bootstrap";
 import {connect} from "react-redux";
-import {addUser, closeModal, editUser, fetchUsers, openModal, removeUser, RootState} from "@coinvant/store";
-import {CreateUser, Modals, PaginationOptions, UpdateUser, UserState} from "@coinvant/types";
+import {addUser, fetchUsers, openModal} from "@coinvant/store";
+import {CreateUser, Modals, PaginationOptions} from "@coinvant/types";
 import {useEffect, useState} from "react";
 import {UsersTable} from "./partials/users-table";
 import {AddUserModal} from "./partials/add-user";
 
 interface IProps {
-  user: UserState;
-  activeModal: Modals | null;
   fetchUsers: (options?: PaginationOptions) => void;
   addUser: (payload: CreateUser) => void;
-  editUser: (id: string, payload: UpdateUser) => void;
-  removeUser: (id: string) => void;
   openModal: (activeModal: Modals) => void;
-  closeModal: () => void;
 }
-
-const mapStateToProps = (state: RootState) => ({
-  user: state.user,
-  activeModal: state.modal.activeModal,
-});
 
 const actions = {
   fetchUsers,
   addUser,
-  editUser,
-  removeUser,
   openModal,
-  closeModal,
 }
 
-export const Users = connect(mapStateToProps, actions) ((props: IProps) => {
+export const Users = connect(null, actions) ((props: IProps) => {
   const [options, setOptions] = useState<PaginationOptions>({
     limit: 10,
     page: 1,

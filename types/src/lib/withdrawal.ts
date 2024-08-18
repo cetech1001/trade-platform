@@ -25,4 +25,5 @@ export interface WithdrawalState {
 	list: Withdrawal[];
 	count: number;
 	currentWithdrawal: Withdrawal | null;
+	total: number;
 }

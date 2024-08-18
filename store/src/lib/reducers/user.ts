@@ -19,7 +19,7 @@ const reducer = (state = initialState, action: PayloadAction<UserState>) => {
 		case UserActions.CREATE:
 			return {
 				...state,
-				list: [ ...state.list, action.payload.currentUser! ],
+				list: [ action.payload.currentUser!, ...state.list ],
 				count: state.count + 1,
 			};
 		case UserActions.UPDATE:

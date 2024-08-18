@@ -8,6 +8,8 @@ import {AuthUser} from "@coinvant/types";
 import {AdminRoutes, AuthRoutes} from "../routes";
 import {Users} from "./pages/users";
 import {PaymentMethods} from "./pages/payment-methods";
+import {Deposits} from "./pages/deposits";
+import {Withdrawals} from "./pages/withdrawals";
 
 interface IProps {
     authUser: AuthUser | null;
@@ -37,6 +39,10 @@ export const Dashboard = connect(mapStateToProps)((props: IProps) => {
                            element={<Users/>}/>
                     <Route path={removeDashboardFromUrl(AdminRoutes.paymentMethods)}
                            element={<PaymentMethods/>}/>
+                    <Route path={removeDashboardFromUrl(AdminRoutes.deposits)}
+                           element={<Deposits/>}/>
+                    <Route path={removeDashboardFromUrl(AdminRoutes.withdrawals)}
+                           element={<Withdrawals/>}/>
                 </Routes>
             </main>
         </>
