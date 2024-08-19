@@ -44,11 +44,11 @@ export const Nav: FC<IProps> = (props) => {
             </g>
           </svg>
         </div>
-        {/*<Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.home)}
+        <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.home)}
               className={`nav-item ${props.activeTab === USER_ROUTES.home && 'nav-item-active'}`}>
           <i className="fas fa-house"></i>
           <p>Home</p>
-        </Link>*/}
+        </Link>
         <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
               className={`nav-item ${[USER_ROUTES.trades, USER_ROUTES.history].includes(props.activeTab)
               && 'nav-item-active'}`}>

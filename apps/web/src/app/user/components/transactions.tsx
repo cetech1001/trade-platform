@@ -3,7 +3,7 @@ import {
 	DepositStatus,
 	Modals,
 	PaginationOptions, TradeStatus,
-	Transaction, TransactionStatusEnum,
+	Transaction, TransactionsQuery, TransactionStatus, TransactionStatusEnum,
 	TransactionType, WithdrawalStatus
 } from "@coinvant/types";
 import {FilterDropdown} from "./shared/filter-dropdown";
@@ -15,7 +15,7 @@ interface IProps {
 	closeModal: () => void;
 	transactions: Transaction[];
 	totalTransactions: number;
-	fetchTransactions: (options?: PaginationOptions) => void;
+	fetchTransactions: (query?: TransactionsQuery) => void;
 }
 
 export const Transactions: FC<IProps> = (props) => {
@@ -23,11 +23,21 @@ export const Transactions: FC<IProps> = (props) => {
 		page: 1,
 		limit: 5,
 	});
+	const [status, setStatus] = useState<TransactionStatus | "">("");
+	const [type, setType] = useState<TransactionType | "">("");
 	const [transactionBlocks, setTransactionBlocks] = useState<Transaction[][]>([]);
 
 	useEffect(() => {
 		setTransactionBlocks(groupTransactionsByDate(props.transactions));
 	}, [props.transactions]);
+
+	useEffect(() => {
+		props.fetchTransactions({
+			...options,
+			type: type || undefined,
+			status: status || undefined,
+		})
+	}, [type, status]);
 
 	const totalPages = useMemo(() => {
 		return Math.ceil(props.totalTransactions / options.limit);
@@ -58,11 +68,25 @@ export const Transactions: FC<IProps> = (props) => {
 		}
 	}
 
+	const onTypeSelect = (value: string) => {
+		if (value !== type) {
+			setType(value as TransactionType);
+		}
+	}
+
+	const onStatusSelect = (value: string) => {
+		if (value !== status) {
+			setStatus(value as TransactionStatus);
+		}
+	}
+
 	const TransactionFilters = () => {
 		return (
 			<div className={'filters'}>
-				<FilterDropdown title={"All Transaction Types"} options={Object.values(TransactionType)}/>
-				<FilterDropdown title={"Any Status"} options={Object.values(TransactionStatusEnum)}/>
+				<FilterDropdown title={"All Transaction Types"} options={Object.values(TransactionType)}
+				                default={"All"} action={onTypeSelect}/>
+				<FilterDropdown title={"Any Status"} options={Object.values(TransactionStatusEnum)}
+				                default={"All"} action={onStatusSelect}/>
 			</div>
 		);
 	}
@@ -152,11 +176,11 @@ export const Transactions: FC<IProps> = (props) => {
 					<div className={'assets-body'}>
 					<TransactionFilters/>
 					<div className={"trades"}>
-						{transactionBlocks.map(block => (
-							<div className="history-block">
+						{transactionBlocks.map((block, i) => (
+							<div className="history-block" key={i}>
 								<span className={"text"}>{formatDate(block[0].createdAt)}</span>
 								{block.map(transaction => (
-									<Transaction transaction={transaction}/>
+									<Transaction transaction={transaction} key={transaction.id}/>
 								))}
 							</div>
 						))}

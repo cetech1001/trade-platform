@@ -47,6 +47,8 @@ const AssetItem: FC<AssetItemIProps> = (props) => {
 };
 
 const AssetFilters: FC<FilterIProps> = ({ activeTab }) => {
+  const action = (value: string) => {}
+
   const Favorites = () => (
     <div className={'filter'}>Favorites</div>
   );
@@ -63,21 +65,21 @@ const AssetFilters: FC<FilterIProps> = ({ activeTab }) => {
       'Stocks'
     ];
     return (
-      <FilterDropdown title={"All Markets"} options={options}/>
+      <FilterDropdown title={"All Markets"} options={options} default={"ALl"} action={action}/>
     )
   }
 
   const Profitability = () => {
     const options = ['Over 90%', 'Over 80%', 'Over 70%'];
     return (
-      <FilterDropdown title={"Any Profitability"} options={options}/>
+      <FilterDropdown title={"Any Profitability"} options={options} default={"ALl"} action={action}/>
     )
   }
 
   const Countries = () => {
     const options = ['Europe', 'USA'];
     return (
-      <FilterDropdown title={"All Countries"} options={options}/>
+      <FilterDropdown title={"All Countries"} options={options} default={"ALl"} action={action}/>
     )
   }
 
@@ -94,6 +96,7 @@ const AssetFilters: FC<FilterIProps> = ({ activeTab }) => {
 const AssetSorter: FC<FilterIProps> = ({ activeTab }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+
   const options = useMemo(() => {
     const options = ["Name A-Z", "Name Z-A"];
     if (activeTab === 'ft') {
@@ -108,12 +111,14 @@ const AssetSorter: FC<FilterIProps> = ({ activeTab }) => {
     return options;
   }, [activeTab]);
 
+  const action = (value: string) => {}
+
   return (
     <>
       <i className="fa-solid fa-arrow-up-short-wide" style={{ cursor: "pointer" }}
          onClick={() => setIsOpen(!isOpen)}></i>
       {isOpen && (
-        <Dropdown dropdownRef={dropdownRef} options={options} setIsOpen={setIsOpen} title={'Sort by'}/>
+        <Dropdown dropdownRef={dropdownRef} options={options} setIsOpen={setIsOpen} title={'Sort by'} default={"ALl"} action={action}/>
       )}
     </>
   )

@@ -13,6 +13,8 @@ interface TradeFiltersProps {
 }
 
 const TradeFilters: FC<TradeFiltersProps> = (props) => {
+  const action = (value: string) => {}
+
   const Assets = () => {
     const options = [
       'Commodities',
@@ -25,28 +27,28 @@ const TradeFilters: FC<TradeFiltersProps> = (props) => {
       'Stocks'
     ];
     return (
-      <FilterDropdown title={"All Assets"} options={options}/>
+      <FilterDropdown title={"All Assets"} options={options} default={"All"} action={action}/>
     )
   }
 
   const Time = () => {
     const options = ['Over 90%', 'Over 80%', 'Over 70%'];
     return (
-      <FilterDropdown title={"Any Time"} options={options}/>
+      <FilterDropdown title={"Any Time"} options={options} default={"All"} action={action}/>
     )
   }
 
   const Result = () => {
     const options = ['Any Result', 'With Profit', 'With Loss'];
     return (
-      <FilterDropdown title={"Any Result"} options={options}/>
+      <FilterDropdown title={"Any Result"} options={options} default={"All"} action={action}/>
     );
   }
 
   const Status = () => {
     const options = ['Any Status', 'Executed', 'Cancelled'];
     return (
-      <FilterDropdown title={"Any Status"} options={options}/>
+      <FilterDropdown title={"Any Status"} options={options} default={"All"} action={action}/>
     );
   }
 

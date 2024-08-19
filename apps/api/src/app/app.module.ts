@@ -8,7 +8,8 @@ import { PaymentMethodModule } from './payment-method/payment-method.module';
 import { DepositModule } from './deposit/deposit.module';
 import { WithdrawalModule } from './withdrawal/withdrawal.module';
 import { TransactionModule } from './transaction/transaction.module';
-import {ServeStaticModule} from "@nestjs/serve-static";
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { TradeAssetModule } from './trade-asset/trade-asset.module';
 import path from 'path';
 
 @Module({
@@ -24,6 +25,7 @@ import path from 'path';
     DepositModule,
     WithdrawalModule,
     TransactionModule,
+    TradeAssetModule,
   ],
 })
 export class AppModule {}

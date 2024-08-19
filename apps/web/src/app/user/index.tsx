@@ -26,7 +26,7 @@ import {
     AuthUser,
     CreateWithdrawal,
     Modals, PaginationOptions,
-    PaymentMethod, Transaction,
+    PaymentMethod, Transaction, TransactionsQuery,
     UpdateUser
 } from "@coinvant/types";
 import {UpdateProfile} from "./components/update-profile";
@@ -34,6 +34,7 @@ import {UpdatePassword} from "./components/update-password";
 import {Deposit} from "./components/deposit";
 import {Withdrawal} from "./components/withdrawal";
 import {Transactions} from "./components/transactions";
+import {Assets} from "./components/assets";
 
 
 interface IProps {
@@ -51,7 +52,7 @@ interface IProps {
     fetchPaymentMethods: (options?: PaginationOptions) => void;
     addDeposit: (payload: FormData) => Promise<void>;
     addWithdrawal: (payload: CreateWithdrawal) => Promise<void>;
-    fetchTransactions: (options?: PaginationOptions) => void;
+    fetchTransactions: (options?: TransactionsQuery) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -94,6 +95,7 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
         <div className={'main'}>
             <Nav activeTab={activeNav} toggleNav={toggleNav} logout={props.logout}
                  openModal={props.openModal} activeModal={props.activeModal}/>
+            {activeNav === USER_ROUTES.home && <Assets/>}
             {activeNav === USER_ROUTES.trades && <Trades toggleNav={toggleNav}/>}
             {activeNav === USER_ROUTES.history && <TradeHistory toggleNav={toggleNav}/>}
             <Chart/>

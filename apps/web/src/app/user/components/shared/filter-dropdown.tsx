@@ -4,6 +4,8 @@ import {Dropdown} from "./dropdown";
 interface IProps {
   title: string;
   options: string[];
+  default?: string;
+  action: (value: string) => void;
 }
 
 export const FilterDropdown: FC<IProps> = (props) => {
@@ -15,7 +17,8 @@ export const FilterDropdown: FC<IProps> = (props) => {
       {props.title}
       <i className="fa-solid fa-chevron-down"></i>
       {isOpen && (
-        <Dropdown dropdownRef={dropdownRef} options={props.options} setIsOpen={setIsOpen}/>
+        <Dropdown dropdownRef={dropdownRef} options={props.options}
+                  setIsOpen={setIsOpen} default={props.default} action={props.action}/>
       )}
     </div>
   )
