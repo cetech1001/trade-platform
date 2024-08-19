@@ -5,7 +5,7 @@
   align-items: center;
   border: 1px solid rgba(85, 89, 104, 0.35);
   border-radius: 8px;
-  background: rgba(20, 22, 26, 1);
+  background: #1A1D21;
 }
 
 .table-header {
@@ -16,6 +16,11 @@
   font-weight: 400;
   color: #9CB0C2;
   padding: 0 16px;
+}
+
+.table-body {
+  height: 60vh;
+  overflow-y: auto;
 }
 
 .asset-item {
@@ -36,16 +41,16 @@
 }
 
 .flag {
-  flex: 1;
+  width: 20%;
 }
 
 .flag img, .flag i {
-  width: 24px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 
 .name-price {
-  flex: 3;
+  width: 60%;
   display: flex;
   flex-direction: column;
 }
@@ -62,7 +67,7 @@
 }
 
 .change {
-  flex: 2;
+  width: 20%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -80,4 +85,11 @@
   border: 1px solid #9CB0C2;
   font-size: 1rem;
   border-radius: 0.5rem;
+}
+
+.is-loading {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 12px;
 }

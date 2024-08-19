@@ -1,8 +1,8 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import {Stock, StockAssetType, StockExchange} from "@coinvant/types";
+import {StockOption, StockAssetType, StockExchange} from "@coinvant/types";
 
 @Entity('stocks')
-export class StockEntity implements Stock{
+export class StockEntity implements StockOption{
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 

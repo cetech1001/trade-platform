@@ -1,40 +1,3 @@
-/*
-export enum TradeAssetType {
-  forex = 'Forex',
-  stock = 'Stock',
-}
-
-export enum TradeAssetMarket {
-  commodities = 'Commodities',
-  composites = 'Composites',
-  crypto = 'Crypto',
-  currencies = 'Currencies',
-  etf = 'ETF',
-  indices = 'Indices',
-  metals = 'Metals',
-  otc = 'OTC',
-  stock = 'Stock'
-}
-
-export enum TradeAssetCountry {
-  europe = 'Europe',
-  usa = 'USA',
-}
-
-export interface TradeAsset {
-  id: string;
-  name: string;
-  changeRate: number;
-  currentPrice: number;
-  type: TradeAssetType;
-  profitability: number;
-  market: TradeAssetMarket;
-  country: TradeAssetCountry;
-  openingTime?: string;
-  closingTime?: string;
-  symbol: string;
-}
-*/
 import {PaginationOptions} from "./pagination";
 
 export interface CryptoCurrency {
@@ -44,11 +7,11 @@ export interface CryptoCurrency {
   image: string;
 }
 
-export interface CreateCrypto extends Omit<CryptoCurrency, 'id'> {}
+export interface CreateCryptoCurrency extends Omit<CryptoCurrency, 'id'> {}
 
-export interface FindCryptoCurrencies extends PaginationOptions, Omit<CryptoCurrency, 'id' | 'image'> {}
+export interface FindCryptoCurrencies extends PaginationOptions, Partial<Omit<CryptoCurrency, 'id' | 'image'>> {}
 
-export interface Forex {
+export interface ForexPair {
   id: string;
   base: string;
   term: string;
@@ -62,11 +25,11 @@ export enum ForexType {
   emergingMarket =  'Emerging Market',
 }
 
-export interface CreateForex extends Omit<Forex, 'id'> {}
+export interface CreateForex extends Omit<ForexPair, 'id'> {}
 
-export interface FindForexPairs extends PaginationOptions, Omit<Forex, 'id'> {}
+export interface FindForexPairs extends PaginationOptions, Partial<Omit<ForexPair, 'id'>> {}
 
-export interface Stock {
+export interface StockOption {
   id: string;
   symbol: string;
   name: string;
@@ -87,7 +50,13 @@ export enum StockAssetType {
   ETF = 'ETF',
 }
 
-export interface CreateStock extends Omit<Stock, 'id'> {}
+export interface CreateStock extends Omit<StockOption, 'id'> {}
 
-export interface FindStockOptions extends PaginationOptions, Omit<Stock, 'id'> {
+export interface FindStockOptions extends PaginationOptions, Partial<Omit<StockOption, 'id'>> {
+}
+
+export enum TradeAssetType {
+  forex = 'Forex',
+  crypto = 'Crypto',
+  stocks = 'Stocks',
 }

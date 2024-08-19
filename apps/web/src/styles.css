@@ -107,7 +107,7 @@ table {
   background-color: rgba(14, 15, 18, 1);
   color: rgba(255, 255, 255, 1);
   height: 100vh;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
 }
 
 .asset-list {

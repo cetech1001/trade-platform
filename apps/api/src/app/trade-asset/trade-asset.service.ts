@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {StockEntity} from "./entities/stock.entity";
-import {Repository} from "typeorm";
+import {Brackets, Repository} from "typeorm";
 import {ForexEntity} from "./entities/forex.entity";
 import {CryptoEntity} from "./entities/crypto.entity";
 import {
-	CreateCrypto,
+	CreateCryptoCurrency,
 	CreateForex,
 	CreateStock,
 	FindCryptoCurrencies,
 	FindForexPairs,
 	FindStockOptions,
 	ForexType,
-	Stock
+	StockOption
 } from "@coinvant/types";
 import fs from 'fs';
 import path from "path";
@@ -30,7 +30,7 @@ export class TradeAssetService {
 
 	importStockOptions() {
 		const stocks: CreateStock[] = [];
-		return new Promise<Stock[]>((resolve, reject) => {
+		return new Promise<StockOption[]>((resolve, reject) => {
 			const filePath = path.join(process.cwd(), 'apps', 'api', 'src', 'assets', 'stocks.csv');
 			fs.createReadStream(filePath)
 				.pipe(csv())
@@ -100,7 +100,7 @@ export class TradeAssetService {
 
 	async importCryptoCurrencies() {
 		const {data} = await axios.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd");
-		const currencies: CreateCrypto = data.map(c => ({
+		const currencies: CreateCryptoCurrency = data.map(c => ({
 			symbol: c.symbol,
 			name: c.name,
 			image: c.image,
@@ -117,17 +117,23 @@ export class TradeAssetService {
 			...options
 		} = query;
 		const queryBuilder = this.stockRepo.createQueryBuilder('S');
-		if (symbol) {
-			queryBuilder.andWhere(
-				'LOWER(S.symbol) LIKE :symbol',
-				{ symbol: `%${symbol}%` }
-			);
-		}
-		if (name) {
-			queryBuilder.andWhere(
-				'LOWER(S.name) LIKE :name',
-				{ name: `%${name}%` }
-			);
+		if (symbol || name) {
+			queryBuilder.where(
+				new Brackets(qb => {
+					if (symbol) {
+						qb.orWhere(
+							'LOWER(S.symbol) LIKE :symbol',
+							{ symbol: `%${symbol}%` }
+						);
+					}
+					if (name) {
+						qb.orWhere(
+							'LOWER(S.name) LIKE :name',
+							{ name: `%${name}%` }
+						);
+					}
+				})
+			)
 		}
 		if (exchange) {
 			queryBuilder.andWhere('S.exchange = :exchange', { exchange });
@@ -146,14 +152,20 @@ export class TradeAssetService {
 			...options
 		} = query;
 		const queryBuilder = this.cryptoRepo.createQueryBuilder('C');
-		if (symbol) {
-			queryBuilder.andWhere(
-				'LOWER(C.symbol) LIKE :symbol',
-				{ symbol: `%${symbol}%` }
+		if (symbol || name) {
+			queryBuilder.where(
+				new Brackets(qb => {
+					if (symbol) {
+						qb.orWhere(
+							'LOWER(C.symbol) LIKE :symbol',
+							{ symbol: `%${symbol}%` }
+						);
+					}
+					if (name) {
+						qb.orWhere('LOWER(C.name) LIKE :name', { name: `%${name}%` });
+					}
+				})
 			);
-		}
-		if (name) {
-			queryBuilder.andWhere('LOWER(C.name) LIKE :name', { name: `%${name}%` });
 		}
 
 		return paginate(queryBuilder, options);
@@ -167,11 +179,17 @@ export class TradeAssetService {
 			...options
 		} = query;
 		const queryBuilder = this.forexRepo.createQueryBuilder('F');
-		if (base) {
-			queryBuilder.andWhere('LOWER(F.base) LIKE :base', { base: `%${base}%` });
-		}
-		if (term) {
-			queryBuilder.andWhere('LOWER(F.term) LIKE :term', { term: `%${term}%` });
+		if (base || term) {
+			queryBuilder.where(
+				new Brackets(qb => {
+					if (base) {
+						qb.orWhere('LOWER(F.base) LIKE :base', { base: `%${base}%` });
+					}
+					if (term) {
+						qb.orWhere('LOWER(F.term) LIKE :term', { term: `%${term}%` });
+					}
+				})
+			)
 		}
 		if (type) {
 			queryBuilder.andWhere('F.type = :type', { type });

@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import '../styles/Sidebar.css';
+import '../../styles/Sidebar.css';
 import {Modals} from "@coinvant/types";
 
 interface IProps {

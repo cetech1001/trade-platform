@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
-import "../styles/Nav.css";
+import "../../styles/Nav.css";
 import {FC, useEffect, useState} from "react";
-import {USER_ROUTES} from "../../../routes";
+import {USER_ROUTES} from "../../../../routes";
 import {Modals} from "@coinvant/types";
 
 

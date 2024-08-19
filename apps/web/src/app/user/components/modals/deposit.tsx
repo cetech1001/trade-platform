@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useState} from 'react';
-import '../styles/Sidebar.css';
-import '../styles/Deposit.css';
+import '../../styles/Sidebar.css';
+import '../../styles/Deposit.css';
 import {AlertState, Modals, PaymentMethod} from "@coinvant/types";
 import axios from "axios";
 import QRCode from 'qrcode.react';

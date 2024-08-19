@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
-import '../styles/Sidebar.css';
+import '../../styles/Sidebar.css';
 import {AuthUser, Modals} from "@coinvant/types";
-import {formatCurrency} from "../../helpers";
+import {formatCurrency} from "../../../helpers";
 
 interface IProps {
   user: AuthUser | null;

@@ -1,8 +1,8 @@
 import {FC, useState} from "react";
-import "../styles/Trades.css";
+import "../../../styles/Trades.css";
 import {Link} from "react-router-dom";
-import {Trade} from "./shared/trade";
-import {USER_ROUTES} from "../../../routes";
+import {Trade} from "../../shared/trade";
+import {USER_ROUTES} from "../../../../../routes";
 
 interface IProps {
   toggleNav: (route: USER_ROUTES) => void;
@@ -17,7 +17,7 @@ export const Trades: FC<IProps> = (props) => {
           <h3>Trades</h3>
           <div className={"icons"}>
             <i className="fa-solid fa-xmark"
-               onClick={() => props.toggleNav(USER_ROUTES.home)}></i>
+               onClick={() => props.toggleNav(USER_ROUTES.blank)}></i>
           </div>
         </div>
         <div className="tabs">

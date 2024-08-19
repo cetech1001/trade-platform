@@ -1,8 +1,8 @@
 import React, {FC, useEffect, useState} from 'react';
-import '../styles/Sidebar.css';
-import '../styles/Deposit.css';
+import '../../styles/Sidebar.css';
+import '../../styles/Deposit.css';
 import {AlertState, AuthUser, CreateWithdrawal, Modals, PaymentMethod} from "@coinvant/types";
-import {formatCurrency} from "../../helpers";
+import {formatCurrency} from "../../../helpers";
 
 interface IProps {
   activeModal: Modals | null;

@@ -1,5 +1,5 @@
 import React, {FC, useState} from 'react';
-import '../styles/Sidebar.css';
+import '../../styles/Sidebar.css';
 import {AlertState, AuthUser, Modals, UpdateUser} from "@coinvant/types";
 
 interface IProps {

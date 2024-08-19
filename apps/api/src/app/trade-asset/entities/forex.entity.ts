@@ -1,9 +1,9 @@
 import {Column, Entity, Index, PrimaryGeneratedColumn} from "typeorm";
-import {Forex, ForexType} from "@coinvant/types";
+import {ForexPair, ForexType} from "@coinvant/types";
 
 @Entity('foreign_exchanges')
 @Index(['base', 'term'], { unique: true })
-export class ForexEntity implements Forex {
+export class ForexEntity implements ForexPair {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 

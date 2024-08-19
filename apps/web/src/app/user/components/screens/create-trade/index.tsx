@@ -1,7 +1,7 @@
-import '../styles/CreateTrade.css';
-import {Popup} from "./shared/popup";
+import '../../../styles/CreateTrade.css';
+import {Popup} from "../../shared/popup";
 import {FC, useState} from "react";
-import {StopLossTakeProfitOptions} from "./shared/stop-los-take-profit";
+import {StopLossTakeProfitOptions} from "../../shared/stop-los-take-profit";
 import {Modals} from "@coinvant/types";
 
 interface IProps {

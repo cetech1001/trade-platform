@@ -6,8 +6,8 @@ import {
 	Transaction, TransactionsQuery, TransactionStatus, TransactionStatusEnum,
 	TransactionType, WithdrawalStatus
 } from "@coinvant/types";
-import {FilterDropdown} from "./shared/filter-dropdown";
-import {capitalizeFirstLetter, formatCurrency, formatDate, groupTransactionsByDate} from "../../helpers";
+import {FilterDropdown} from "../shared/filter-dropdown";
+import {capitalizeFirstLetter, formatCurrency, formatDate, groupTransactionsByDate} from "../../../helpers";
 
 interface IProps {
 	activeModal: Modals | null;

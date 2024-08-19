@@ -1,6 +1,6 @@
 import {Transaction} from "@coinvant/types";
 
-export const formatCurrency = (amount: number | string): string => {
+export const formatCurrency = (amount: number | string = 0): string => {
 	return Intl.NumberFormat('en-US', {
 		style: 'currency',
 		currency: 'USD',
@@ -36,4 +36,16 @@ export const formatDate = (dateString: string) => {
 export const capitalizeFirstLetter = (word: string) => {
 	if (!word) return '';
 	return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+export const wrapWord = (word: string) => {
+	const str = word.slice(0, 16);
+	if (word.length > 16) {
+		return str + '...';
+	}
+	return str;
+}
+
+export const roundPercent = (number = 0) => {
+	return number.toFixed(2);
 }
