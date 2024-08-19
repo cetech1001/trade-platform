@@ -3,10 +3,10 @@ import {CryptoCurrency} from "@coinvant/types";
 
 @Entity('crypto_currencies')
 export class CryptoEntity implements CryptoCurrency {
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@Column()
+	@Column({ unique: true })
 	symbol: string;
 
 	@Column()

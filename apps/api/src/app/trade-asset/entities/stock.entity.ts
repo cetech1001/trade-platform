@@ -3,10 +3,10 @@ import {Stock, StockAssetType, StockExchange} from "@coinvant/types";
 
 @Entity('stocks')
 export class StockEntity implements Stock{
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@Column()
+	@Column({ unique: true })
 	symbol: string;
 
 	@Column({ nullable: true })

@@ -1,45 +1,48 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import {Controller, Get, Put, Query, UseGuards} from '@nestjs/common';
 import { TradeAssetService } from './trade-asset.service';
-import { CreateTradeAssetDto } from './dto/create-trade-asset.dto';
-import { UpdateTradeAssetDto } from './dto/update-trade-asset.dto';
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {JwtAuthGuard} from "../../guards";
+import {Roles} from "../../decorators";
+import {UserRole} from "@coinvant/types";
+import {FindCryptoCurrenciesDto, FindForexPairsDto, FindStockOptionsDto} from "./dto/trade-asset.dto";
 
+@ApiTags('Trade Asset Controller')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('trade-asset')
 export class TradeAssetController {
   constructor(private readonly tradeAssetService: TradeAssetService) {}
 
-  @Post()
-  create(@Body() createTradeAssetDto: CreateTradeAssetDto) {
-    return this.tradeAssetService.create(createTradeAssetDto);
+  @Roles(UserRole.admin)
+  @Put('import/stock-options')
+  importStockOptions() {
+    return this.tradeAssetService.importStockOptions();
   }
 
-  @Get()
-  findAll() {
-    return this.tradeAssetService.findAll();
+  @Roles(UserRole.admin)
+  @Put('import/forex-pairs')
+  importForexPairs() {
+    return this.tradeAssetService.importForexPairs();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tradeAssetService.findOne(+id);
+  @Roles(UserRole.admin)
+  @Put('import/crypto-currencies')
+  importCryptoCurrencies() {
+    return this.tradeAssetService.importCryptoCurrencies();
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTradeAssetDto: UpdateTradeAssetDto
-  ) {
-    return this.tradeAssetService.update(+id, updateTradeAssetDto);
+  @Get('stock-options')
+  findStockOptions(@Query() query: FindStockOptionsDto) {
+    return this.tradeAssetService.findStockOptions(query);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tradeAssetService.remove(+id);
+  @Get('forex-pairs')
+  findForexPairs(@Query() query: FindForexPairsDto) {
+    return this.tradeAssetService.findForexPairs(query);
+  }
+
+  @Get('crypto-currencies')
+  findCryptoCurrencies(@Query() query: FindCryptoCurrenciesDto) {
+    return this.tradeAssetService.findCryptoCurrencies(query);
   }
 }

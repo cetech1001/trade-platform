@@ -10,6 +10,4 @@ export * from './payment-method';
 export * from './deposit';
 export * from './withdrawal';
 export * from './transaction';
-export * from './stock';
-export * from './forex';
-export * from './crypto-currency';
+export * from './trade-asset';
