@@ -1,8 +1,9 @@
-import '../../../styles/CreateTrade.css';
 import {Popup} from "../../shared/popup";
-import {FC, useState} from "react";
+import {useState} from "react";
 import {StopLossTakeProfitOptions} from "../../shared/stop-los-take-profit";
 import {Modals} from "@coinvant/types";
+import {closeModal, openModal} from "@coinvant/store";
+import {connect} from "react-redux";
 
 interface IProps {
   openModal: (payload: Modals) => void;
@@ -98,7 +99,12 @@ const EnableOrdersOptions = () => {
   );
 };
 
-export const CreateTrade: FC<IProps> = (props) => {
+const actions = {
+    openModal,
+    closeModal,
+};
+
+export const CreateTrade = connect(null, actions)((props: IProps) => {
   return (
     <div className="create-trade">
       <div className={'top-buttons'}>
@@ -135,4 +141,4 @@ export const CreateTrade: FC<IProps> = (props) => {
       </div>
     </div>
   );
-};
+});

@@ -112,8 +112,8 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 
 		useEffect(() => {
 			if (asset) {
-				axios.get(`https://v6.exchangerate-api.com/v6/b9beab34621d8b21eec90969/pair/${asset.base}/${asset.term}`)
-					.then(({ data }) => setRate(data.conversion_rate));
+				axios.get(`https://api.frankfurter.app/latest?amount=1&from=${asset.base}&to=${asset.term}`)
+					.then(({ data }) => setRate(data.rates[asset.term]));
 			}
 		}, [asset]);
 

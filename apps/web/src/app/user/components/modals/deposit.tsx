@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {AlertState, Modals, PaginationOptions, PaymentMethod} from "@coinvant/types";
 import axios from "axios";
 import QRCode from 'qrcode.react';
@@ -45,7 +45,9 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
   }, [paymentMethod]);
 
   useEffect(() => {
-    props.fetchPaymentMethods();
+    if (props.paymentMethods.length === 0) {
+      props.fetchPaymentMethods();
+    }
   }, []);
 
   const reset = () => {

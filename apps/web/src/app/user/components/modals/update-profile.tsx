@@ -1,18 +1,39 @@
-import React, {FC, useState} from 'react';
-import '../../styles/Sidebar.css';
+import {useState} from 'react';
 import {AlertState, AuthUser, Modals, UpdateUser} from "@coinvant/types";
+import {
+  closeModal,
+  editUser,
+  openModal,
+  refreshUserProfile,
+  RootState,
+  showAlert
+} from "@coinvant/store";
+import {connect} from "react-redux";
 
 interface IProps {
   activeModal: Modals | null;
+  user: AuthUser | null;
   openModal: (payload: Modals) => void;
   closeModal: () => void;
-  user: AuthUser | null;
   editUser: (id: string, payload: UpdateUser) => Promise<void>;
   showAlert: (payload: AlertState) => void;
   refreshUserProfile: () => Promise<void>;
 }
 
-export const UpdateProfile: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+  activeModal: state.modal.activeModal,
+  user: state.auth.user,
+});
+
+const actions = {
+  openModal,
+  closeModal,
+  editUser,
+  showAlert,
+  refreshUserProfile,
+};
+
+export const UpdateProfile = connect(mapStateToProps, actions)((props: IProps) => {
   const [name, setName] = useState(props.user?.name);
   const [email, setEmail] = useState(props.user?.email);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,4 +107,4 @@ export const UpdateProfile: FC<IProps> = (props) => {
       </div>
     </div>
   );
-};
+});

@@ -1,17 +1,30 @@
-import React, {FC, useState} from 'react';
-import '../../styles/Sidebar.css';
+import {useState} from 'react';
 import {AlertState, AuthUser, Modals, UpdateUser} from "@coinvant/types";
+import {connect} from "react-redux";
+import {closeModal, editUser, openModal, RootState, showAlert} from "@coinvant/store";
 
 interface IProps {
   activeModal: Modals | null;
+  user: AuthUser | null;
   openModal: (payload: Modals) => void;
   closeModal: () => void;
   editUser: (id: string, payload: UpdateUser) => Promise<void>;
   showAlert: (payload: AlertState) => void;
-  user: AuthUser | null;
 }
 
-export const UpdatePassword: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+  activeModal: state.modal.activeModal,
+  user: state.auth.user,
+});
+
+const actions = {
+  openModal,
+  closeModal,
+  editUser,
+  showAlert,
+};
+
+export const UpdatePassword = connect(mapStateToProps, actions)((props: IProps) => {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -98,4 +111,4 @@ export const UpdatePassword: FC<IProps> = (props) => {
       </div>
     </div>
   );
-};
+});

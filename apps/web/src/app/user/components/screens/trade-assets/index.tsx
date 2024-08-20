@@ -1,15 +1,9 @@
 import {useState} from "react";
 import {USER_ROUTES} from "../../../../../routes";
 import {
-	CryptoCurrency,
-	FindCryptoCurrencies,
-	FindForexPairs,
-	FindStockOptions,
-	ForexPair,
 	ForexType,
 	StockAssetType,
 	StockExchange,
-	StockOption,
 	TradeAssetType
 } from "@coinvant/types";
 import {Filters} from "./partials/filters";
@@ -18,11 +12,7 @@ import {ForexPairs} from "./partials/forex-pairs";
 import {CryptoCurrencies} from "./partials/crypto-currencies";
 
 interface IProps {
-	stockOptions: StockOption[];
-	forexPairs: ForexPair[];
-	cryptoCurrencies: CryptoCurrency[];
 	toggleNav: (route: USER_ROUTES) => void;
-	fetchStockOptions: (query: FindStockOptions) => void;
 }
 
 export const Assets = (props: IProps) => {
@@ -75,7 +65,7 @@ export const Assets = (props: IProps) => {
 					</div>
 					<Filters activeTab={activeTab} pairType={pairType} assetType={assetType} exchange={exchange}
 					         setPairType={setPairType} setAssetType={setAssetType} setExchange={setExchange}/>
-					{activeTab === TradeAssetType.stocks && (<StockOptions assets={props.stockOptions}/>)}
+					{activeTab === TradeAssetType.stocks && (<StockOptions symbol={cryptoSymbol} name={cryptoName}/>)}
 					{activeTab === TradeAssetType.forex && (<ForexPairs base={base} term={term}/>)}
 					{activeTab === TradeAssetType.crypto && (<CryptoCurrencies symbol={cryptoSymbol} name={cryptoName}/>)}
 				</div>

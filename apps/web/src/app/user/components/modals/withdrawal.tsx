@@ -45,7 +45,9 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
   }, [paymentMethod]);
 
   useEffect(() => {
-    props.fetchPaymentMethods();
+    if (props.paymentMethods.length === 0) {
+      props.fetchPaymentMethods();
+    }
   }, []);
 
   const reset = () => {

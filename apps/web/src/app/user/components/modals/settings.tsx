@@ -1,17 +1,28 @@
-import React, {FC} from 'react';
-import '../../styles/Sidebar.css';
 import {AuthUser, Modals} from "@coinvant/types";
 import {formatCurrency} from "../../../helpers";
+import {closeModal, logout, openModal, RootState} from "@coinvant/store";
+import {connect} from "react-redux";
 
 interface IProps {
   user: AuthUser | null;
-  logout: () => void;
   activeModal: Modals | null;
+  logout: () => void;
   openModal: (payload: Modals) => void;
   closeModal: () => void;
 }
 
-export const Settings: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+  user: state.auth.user,
+  activeModal: state.modal.activeModal,
+});
+
+const actions = {
+  openModal,
+  closeModal,
+  logout,
+};
+
+export const Settings = connect(mapStateToProps, actions)((props: IProps) => {
   return (
     <div className={`sidebar ${props.activeModal === Modals.settings ? 'open' : ''}`}>
       <div>
@@ -53,4 +64,4 @@ export const Settings: FC<IProps> = (props) => {
       </div>
     </div>
   );
-};
+});

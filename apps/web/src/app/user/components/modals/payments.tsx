@@ -1,6 +1,6 @@
-import React, {FC} from 'react';
-import '../../styles/Sidebar.css';
 import {Modals} from "@coinvant/types";
+import {closeModal, openModal, RootState} from "@coinvant/store";
+import {connect} from "react-redux";
 
 interface IProps {
   activeModal: Modals | null;
@@ -8,7 +8,16 @@ interface IProps {
   closeModal: () => void;
 }
 
-export const Payments: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+  activeModal: state.modal.activeModal,
+});
+
+const actions = {
+  openModal,
+  closeModal,
+};
+
+export const Payments = connect(mapStateToProps, actions)((props: IProps) => {
   return (
     <div className={`sidebar ${props.activeModal === Modals.payments ? 'open' : ''}`}>
       <div>
@@ -43,4 +52,4 @@ export const Payments: FC<IProps> = (props) => {
       </div>
     </div>
   );
-};
+});

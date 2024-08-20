@@ -1,21 +1,31 @@
 import {Link} from "react-router-dom";
-import "../../styles/Nav.css";
-import {FC, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {USER_ROUTES} from "../../../../routes";
 import {Modals} from "@coinvant/types";
+import {logout, openModal, RootState} from "@coinvant/store";
+import {connect} from "react-redux";
 
 
 interface IProps {
   activeTab: USER_ROUTES;
+  activeModal: Modals | null;
   toggleNav: (route: USER_ROUTES) => void;
   logout: () => void;
   openModal: (activeModal: Modals) => void;
-  activeModal: Modals | null;
 }
 
 let intervalID: NodeJS.Timeout;
 
-export const Nav: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+  activeModal: state.modal.activeModal,
+});
+
+const actions = {
+  openModal,
+  logout,
+};
+
+export const Nav = connect(mapStateToProps, actions)((props: IProps) => {
   const [activeUsers, setActiveUsers] = useState(0);
 
   useEffect(() => {
@@ -81,4 +91,4 @@ export const Nav: FC<IProps> = (props) => {
       </div>
     </div>
   );
-}
+});
