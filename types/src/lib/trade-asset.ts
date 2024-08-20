@@ -16,6 +16,7 @@ export interface ForexPair {
   base: string;
   term: string;
   type: ForexType;
+  image?: string;
 }
 
 export enum ForexType {

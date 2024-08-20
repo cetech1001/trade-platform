@@ -16,7 +16,6 @@ export const Chart = connect(mapStateToProps)((props: IProps) => {
     const widgetRef = useRef<any>(null);
 
   useEffect(() => {
-      console.log(props);
       if (container.current) {
           container.current.innerHTML = '';
       }
@@ -38,7 +37,6 @@ export const Chart = connect(mapStateToProps)((props: IProps) => {
           "calendar": false,
           "support_host": "https://www.tradingview.com",
       });
-      console.log(script.innerHTML);
 
       container.current?.appendChild(script);
     }, [props.symbol]);

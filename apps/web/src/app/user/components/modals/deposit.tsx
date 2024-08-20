@@ -1,21 +1,35 @@
-import React, {FC, useEffect, useState} from 'react';
-import '../../styles/Sidebar.css';
-import '../../styles/Deposit.css';
-import {AlertState, Modals, PaymentMethod} from "@coinvant/types";
+import React, {useEffect, useState} from 'react';
+import {AlertState, Modals, PaginationOptions, PaymentMethod} from "@coinvant/types";
 import axios from "axios";
 import QRCode from 'qrcode.react';
 import {Form} from "react-bootstrap";
+import {connect} from "react-redux";
+import {addDeposit, closeModal, fetchPaymentMethods, openModal, RootState, showAlert} from "@coinvant/store";
 
 interface IProps {
   activeModal: Modals | null;
+  paymentMethods: PaymentMethod[];
   openModal: (payload: Modals) => void;
   closeModal: () => void;
   showAlert: (payload: AlertState) => void;
-  paymentMethods: PaymentMethod[];
   addDeposit: (payload: FormData) => Promise<void>;
+  fetchPaymentMethods: (options?: PaginationOptions) => void;
 }
 
-export const Deposit: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+  activeModal: state.modal.activeModal,
+  paymentMethods: state.paymentMethod.list,
+});
+
+const actions = {
+  openModal,
+  closeModal,
+  addDeposit,
+  showAlert,
+  fetchPaymentMethods,
+};
+
+export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState(10);
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -29,6 +43,10 @@ export const Deposit: FC<IProps> = (props) => {
           id === paymentMethod));
     }
   }, [paymentMethod]);
+
+  useEffect(() => {
+    props.fetchPaymentMethods();
+  }, []);
 
   const reset = () => {
     setStep(1);
@@ -191,4 +209,4 @@ export const Deposit: FC<IProps> = (props) => {
       </div>
     </div>
   );
-};
+});

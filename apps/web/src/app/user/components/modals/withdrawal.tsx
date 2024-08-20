@@ -1,20 +1,35 @@
-import React, {FC, useEffect, useState} from 'react';
-import '../../styles/Sidebar.css';
-import '../../styles/Deposit.css';
-import {AlertState, AuthUser, CreateWithdrawal, Modals, PaymentMethod} from "@coinvant/types";
+import React, {useEffect, useState} from 'react';
+import {AlertState, AuthUser, CreateWithdrawal, Modals, PaginationOptions, PaymentMethod} from "@coinvant/types";
 import {formatCurrency} from "../../../helpers";
+import {connect} from "react-redux";
+import {addWithdrawal, closeModal, fetchPaymentMethods, openModal, RootState, showAlert} from "@coinvant/store";
 
 interface IProps {
   activeModal: Modals | null;
+  paymentMethods: PaymentMethod[];
+  user: Omit<AuthUser, 'password'> | null;
   openModal: (payload: Modals) => void;
   closeModal: () => void;
   showAlert: (payload: AlertState) => void;
-  paymentMethods: PaymentMethod[];
   addWithdrawal: (payload: CreateWithdrawal) => Promise<void>;
-  user: Omit<AuthUser, 'password'> | null;
+  fetchPaymentMethods: (options?: PaginationOptions) => void;
 }
 
-export const Withdrawal: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+  activeModal: state.modal.activeModal,
+  paymentMethods: state.paymentMethod.list,
+  user: state.auth.user,
+});
+
+const actions = {
+  openModal,
+  closeModal,
+  addWithdrawal,
+  showAlert,
+  fetchPaymentMethods,
+};
+
+export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState(10);
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -28,6 +43,10 @@ export const Withdrawal: FC<IProps> = (props) => {
           id === paymentMethod));
     }
   }, [paymentMethod]);
+
+  useEffect(() => {
+    props.fetchPaymentMethods();
+  }, []);
 
   const reset = () => {
     setStep(1);
@@ -218,4 +237,4 @@ export const Withdrawal: FC<IProps> = (props) => {
       </div>
     </div>
   );
-};
+});

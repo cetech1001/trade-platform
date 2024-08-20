@@ -15,4 +15,7 @@ export class ForexEntity implements ForexPair {
 
 	@Column({ type: 'enum', enum: ForexType })
 	type: ForexType;
+
+	@Column({ nullable: true })
+	image: string;
 }

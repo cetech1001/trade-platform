@@ -23,23 +23,28 @@ interface IProps {
 	cryptoCurrencies: CryptoCurrency[];
 	toggleNav: (route: USER_ROUTES) => void;
 	fetchStockOptions: (query: FindStockOptions) => void;
-	fetchCryptoCurrencies: (query: FindCryptoCurrencies) => Promise<void>;
-	fetchForexPairs: (query: FindForexPairs) => void;
 }
 
 export const Assets = (props: IProps) => {
-	const [activeTab, setActiveTab] = useState<TradeAssetType>(TradeAssetType.crypto);
+	const [activeTab, setActiveTab] = useState<TradeAssetType>(TradeAssetType.forex);
 	const [search, setSearch] = useState("");
 
-	const [symbol, setSymbol] = useState("");
-	const [name, setName] = useState("");
+	const [base, setBase] = useState("");
+	const [term, setTerm] = useState("");
+	const [cryptoSymbol, setCryptoSymbol] = useState("");
+	const [cryptoName, setCryptoName] = useState("");
 	const [pairType, setPairType] = useState<ForexType | "">("");
 	const [exchange, setExchange] = useState<StockExchange | "">("");
 	const [assetType, setAssetType] = useState<StockAssetType | "">("");
 
 	const onSearch = () => {
-		setSymbol(search);
-		setName(search);
+		if (activeTab === TradeAssetType.forex) {
+			setBase(search);
+			setTerm(search);
+		} else if (activeTab === TradeAssetType.crypto) {
+			setCryptoSymbol(search);
+			setCryptoName(search);
+		}
 	}
 
 	return (
@@ -71,8 +76,8 @@ export const Assets = (props: IProps) => {
 					<Filters activeTab={activeTab} pairType={pairType} assetType={assetType} exchange={exchange}
 					         setPairType={setPairType} setAssetType={setAssetType} setExchange={setExchange}/>
 					{activeTab === TradeAssetType.stocks && (<StockOptions assets={props.stockOptions}/>)}
-					{activeTab === TradeAssetType.forex && (<ForexPairs assets={props.forexPairs}/>)}
-					{activeTab === TradeAssetType.crypto && (<CryptoCurrencies symbol={symbol} name={name}/>)}
+					{activeTab === TradeAssetType.forex && (<ForexPairs base={base} term={term}/>)}
+					{activeTab === TradeAssetType.crypto && (<CryptoCurrencies symbol={cryptoSymbol} name={cryptoName}/>)}
 				</div>
 			</div>
 		</div>

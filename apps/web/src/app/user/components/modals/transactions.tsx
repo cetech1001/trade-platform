@@ -8,17 +8,31 @@ import {
 } from "@coinvant/types";
 import {FilterDropdown} from "../shared/filter-dropdown";
 import {capitalizeFirstLetter, formatCurrency, formatDate, groupTransactionsByDate} from "../../../helpers";
+import {connect} from "react-redux";
+import {closeModal, fetchTransactions, openModal, RootState} from "@coinvant/store";
 
 interface IProps {
 	activeModal: Modals | null;
-	openModal: (payload: Modals) => void;
-	closeModal: () => void;
 	transactions: Transaction[];
 	totalTransactions: number;
+	openModal: (payload: Modals) => void;
+	closeModal: () => void;
 	fetchTransactions: (query?: TransactionsQuery) => void;
 }
 
-export const Transactions: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+	transactions: state.transaction.list,
+	totalTransactions: state.transaction.count,
+	activeModal: state.modal.activeModal,
+});
+
+const actions = {
+	openModal,
+	closeModal,
+	fetchTransactions,
+};
+
+export const Transactions = connect(mapStateToProps, actions)((props: IProps) => {
 	const [options, setOptions] = useState<PaginationOptions>({
 		page: 1,
 		limit: 5,
@@ -197,4 +211,4 @@ export const Transactions: FC<IProps> = (props) => {
 			</div>
 		</div>
 	);
-};
+});

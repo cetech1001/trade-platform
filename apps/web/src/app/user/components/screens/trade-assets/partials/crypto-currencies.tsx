@@ -61,7 +61,6 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 		};
 	}, [handleScroll]);
 
-
 	useEffect(() => {
 		setIsLoading(true);
 		props.fetchCryptoCurrencies(query)
@@ -69,13 +68,8 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 	}, [query]);
 
 	useEffect(() => {
-		setIsLoading(true);
-		Promise.all([
-			props.fetchCryptoCurrencies(query),
-			axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd')
-		])
-			.then(([_, response]) => setCoins(response.data))
-			.finally(() => setIsLoading(false));
+		axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd')
+			.then((response) => setCoins(response.data));
 	}, []);
 
 	useEffect(() => {
@@ -86,16 +80,17 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 	}, [props.assets]);
 
 	useEffect(() => {
-		let page = query.page;
-		if (props.symbol !== query.symbol || props.name !== query.name) {
-			page = 1;
+		const queryOptions = {
+			...query,
+			symbol: props.symbol || undefined,
+			name: props.name || undefined,
 		}
-		setQuery(prevState => ({
-			...prevState,
-			symbol: props.symbol,
-			name: props.name,
-			page,
-		}));
+		if (query.symbol !== queryOptions.symbol || query.name !== queryOptions.name) {
+			setQuery({
+				...queryOptions,
+				page: 1,
+			});
+		}
 	}, [props.symbol, props.name]);
 
 	const setAsActive = (currency: CryptoCurrency) => {

@@ -18,7 +18,10 @@ const reducer = (state = initialState, action: PayloadAction<TransactionState & 
 		case TransactionActions.ADD:
 			return {
 				...state,
-				list: [ action.payload.transaction, ...state.list ],
+				list: [
+					action.payload.transaction,
+					...state.list.filter((_, i) => i < 9),
+				],
 				count: state.count + 1,
 			};
 		default:

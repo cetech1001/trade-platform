@@ -46,17 +46,21 @@ export class FindStockOptionsDto extends PaginationOptionsDto implements FindSto
 export class FindForexPairsDto extends PaginationOptionsDto implements FindForexPairs {
 	@IsOptional()
 	@IsString()
-	@Transform(v => v.value.toLowerCase())
-	@MinLength(3)
-	@MaxLength(3)
+	@Transform(v => {
+		if (v && v.value) {
+			return v.value.toLowerCase();
+		}
+	})
 	@ApiProperty({ type: String, required: false })
 	base: string;
 
 	@IsOptional()
 	@IsString()
-	@Transform(v => v.value.toLowerCase())
-	@MinLength(3)
-	@MaxLength(3)
+	@Transform(v => {
+		if (v && v.value) {
+			return v.value.toLowerCase();
+		}
+	})
 	@ApiProperty({ type: String, required: false })
 	term: string;
 

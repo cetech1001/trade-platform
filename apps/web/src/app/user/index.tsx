@@ -19,7 +19,7 @@ import {
 	fetchPaymentMethods,
 	addDeposit,
 	addWithdrawal,
-	fetchTransactions, fetchStockOptions, fetchCryptoCurrencies, fetchForexPairs
+	fetchTransactions, fetchStockOptions
 } from "@coinvant/store";
 import {
 	AlertState,
@@ -68,8 +68,6 @@ interface IProps {
 	addWithdrawal: (payload: CreateWithdrawal) => Promise<void>;
 	fetchTransactions: (options?: TransactionsQuery) => void;
 	fetchStockOptions: (query: FindStockOptions) => void;
-	fetchCryptoCurrencies: (query: FindCryptoCurrencies) => Promise<void>;
-	fetchForexPairs: (query: FindForexPairs) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -95,8 +93,6 @@ const actions = {
 	addWithdrawal,
 	fetchTransactions,
 	fetchStockOptions,
-	fetchCryptoCurrencies,
-	fetchForexPairs
 };
 
 export const User = connect(mapStateToProps, actions)((props: IProps) => {
@@ -104,10 +100,6 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
 
 	useEffect(() => {
 		props.fetchPaymentMethods();
-		props.fetchTransactions({
-			page: 1,
-			limit: 5,
-		});
 	}, []);
 
 	const toggleNav = (route: USER_ROUTES) => {
@@ -121,8 +113,6 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
 			{activeNav === USER_ROUTES.home
 				&& <Assets toggleNav={toggleNav} cryptoCurrencies={props.cryptoCurrencies}
 				           forexPairs={props.forexPairs} stockOptions={props.stockOptions}
-				           fetchCryptoCurrencies={props.fetchCryptoCurrencies}
-				           fetchForexPairs={props.fetchForexPairs}
 				           fetchStockOptions={props.fetchStockOptions}/>}
 			{activeNav === USER_ROUTES.trades && <Trades toggleNav={toggleNav}/>}
 			{activeNav === USER_ROUTES.history && <TradeHistory toggleNav={toggleNav}/>}
@@ -139,16 +129,9 @@ export const User = connect(mapStateToProps, actions)((props: IProps) => {
 			<UpdatePassword activeModal={props.activeModal} openModal={props.openModal}
 			                closeModal={props.closeModal} user={props.user}
 			                editUser={props.editUser} showAlert={props.showAlert}/>
-			<Deposit activeModal={props.activeModal} openModal={props.openModal}
-			         closeModal={props.closeModal} showAlert={props.showAlert}
-			         paymentMethods={props.paymentMethods} addDeposit={props.addDeposit} />
-			<Withdrawal activeModal={props.activeModal} openModal={props.openModal}
-			            closeModal={props.closeModal} showAlert={props.showAlert} user={props.user}
-			            paymentMethods={props.paymentMethods} addWithdrawal={props.addWithdrawal}/>
-			<Transactions activeModal={props.activeModal} openModal={props.openModal}
-			              closeModal={props.closeModal} transactions={props.transactions}
-			              fetchTransactions={props.fetchTransactions}
-			              totalTransactions={props.totalTransactions}/>
+			<Deposit/>
+			<Withdrawal/>
+			<Transactions/>
 		</div>
 	);
 });
