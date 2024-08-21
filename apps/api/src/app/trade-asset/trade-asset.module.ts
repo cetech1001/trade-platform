@@ -7,14 +7,15 @@ import {ForexEntity} from "./entities/forex.entity";
 import {CryptoEntity} from "./entities/crypto.entity";
 
 @Module({
-  imports: [
-      TypeOrmModule.forFeature([
-          StockEntity,
-          ForexEntity,
-          CryptoEntity,
-      ]),
-  ],
-  controllers: [TradeAssetController],
-  providers: [TradeAssetService],
+	imports: [
+		TypeOrmModule.forFeature([
+			StockEntity,
+			ForexEntity,
+			CryptoEntity,
+		]),
+	],
+	controllers: [TradeAssetController],
+	providers: [TradeAssetService],
+	exports: [TradeAssetService],
 })
 export class TradeAssetModule {}

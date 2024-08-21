@@ -1,4 +1,5 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateTradeDto } from './create-trade.dto';
+import {PickType} from '@nestjs/swagger';
+import {UpdateTrade} from "@coinvant/types";
+import {TradeEntity} from "../entities/trade.entity";
 
-export class UpdateTradeDto extends PartialType(CreateTradeDto) {}
+export class UpdateTradeDto extends PickType(TradeEntity, ['status']) implements UpdateTrade {}

@@ -61,3 +61,9 @@ export enum TradeAssetType {
   crypto = 'Crypto',
   stocks = 'Stocks',
 }
+
+export interface CurrentAsset {
+  symbol: string;
+  id: string;
+  type: TradeAssetType;
+}

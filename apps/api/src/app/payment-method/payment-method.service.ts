@@ -16,6 +16,10 @@ export class PaymentMethodService {
     return this.paymentMethodRepo.save(createPaymentMethodDto);
   }
 
+  find() {
+    return this.paymentMethodRepo.find();
+  }
+
   findAll(options: PaginationOptions): Promise<Pagination<PaymentMethodEntity>> {
     return paginate(this.paymentMethodRepo, options);
   }

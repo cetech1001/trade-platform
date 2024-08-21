@@ -1,5 +1,6 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import {CryptoCurrency} from "@coinvant/types";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {CryptoCurrency, Trade} from "@coinvant/types";
+import {TradeEntity} from "../../trade/entities/trade.entity";
 
 @Entity('crypto_currencies')
 export class CryptoEntity implements CryptoCurrency {
@@ -14,4 +15,7 @@ export class CryptoEntity implements CryptoCurrency {
 
 	@Column()
 	image: string;
+
+	@OneToMany(() => TradeEntity, ({ crypto }) => crypto)
+	trades: Trade[];
 }

@@ -7,3 +7,4 @@ export * from './deposit';
 export * from './withdrawal';
 export * from './transaction';
 export * from './trade-asset';
+export * from './trade';

@@ -1,4 +1,26 @@
 import {User} from "./user";
+import {CryptoCurrency, ForexPair, StockOption, TradeAssetType} from "./trade-asset";
+import {PaginationOptions} from "./pagination";
+
+export interface Trade {
+  id: string;
+  bidAmount: number;
+  targetPrice?: number;
+  multiplier?: number;
+  executeAt?: Date;
+  isExecuted: boolean;
+  takeProfit?: number;
+  stopLoss?: number;
+  isShort?: boolean;
+  assetType: TradeAssetType;
+  status: TradeStatus;
+  user: User;
+  stock: StockOption;
+  forex: ForexPair;
+  crypto: CryptoCurrency;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export enum TradeStatus {
   pending = 'pending',
@@ -7,29 +29,20 @@ export enum TradeStatus {
   cancelled = 'cancelled',
 }
 
-export interface CreateTrade {
+export interface CreateTrade
+    extends Pick<Trade,
+        'bidAmount'
+        | 'targetPrice'
+        | 'multiplier'
+        | 'executeAt'
+        | 'assetType'
+        | 'takeProfit'
+        | 'stopLoss'
+        | 'isShort'> {
   assetID: string;
-  amount: number;
-  leverage?: number;
-  stopLoss?: number;
-  takeProfit?: number;
-  enableByPrice?: number;
-  enableByTime?: string;
-  duration?: string;
 }
 
-export interface UpdateTrade extends Pick<Trade, 'status' | 'upperLimit' | 'lowerLimit'> {
-}
+export interface UpdateTrade extends Pick<Trade, 'status'> {}
 
-export interface Trade extends Omit<CreateTrade, 'assetID'> {
-  id: string;
-  status: TradeStatus;
-  asset: string;
-  startTime: string;
-  endTime: string;
-  upperLimit: number;
-  lowerLimit: number;
-  user: User;
-  createdAt: string;
-  updatedAt: string;
+export interface FindTradeQueryParams extends PaginationOptions, Partial<Pick<Trade, 'status' | 'assetType'>>{
 }

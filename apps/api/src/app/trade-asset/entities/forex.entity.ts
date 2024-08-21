@@ -1,5 +1,6 @@
-import {Column, Entity, Index, PrimaryGeneratedColumn} from "typeorm";
-import {ForexPair, ForexType} from "@coinvant/types";
+import {Column, Entity, Index, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {ForexPair, ForexType, Trade} from "@coinvant/types";
+import {TradeEntity} from "../../trade/entities/trade.entity";
 
 @Entity('foreign_exchanges')
 @Index(['base', 'term'], { unique: true })
@@ -18,4 +19,7 @@ export class ForexEntity implements ForexPair {
 
 	@Column({ nullable: true })
 	image: string;
+
+	@OneToMany(() => TradeEntity, ({ forex }) => forex)
+	trades: Trade[];
 }

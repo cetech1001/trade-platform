@@ -4,13 +4,12 @@ import {CreateTrade} from "@coinvant/types";
 import {IsNotEmpty, IsString} from "class-validator";
 
 export class CreateTradeDto extends PickType(TradeEntity, [
-  'amount',
-  'leverage',
-  'stopLoss',
-  'takeProfit',
-  'enableByPrice',
-  'enableByTime',
-  'duration']) implements CreateTrade {
+    'bidAmount',
+    'targetPrice',
+    'multiplier',
+    'executeAt',
+    'assetType'
+]) implements CreateTrade {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ type: String, required: true })

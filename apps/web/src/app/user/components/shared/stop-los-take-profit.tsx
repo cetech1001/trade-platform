@@ -2,25 +2,41 @@ import {Popup} from "./popup";
 import {Dispatch, FC, SetStateAction, useEffect, useState} from "react";
 
 interface IProps {
-  fullName?: boolean;
+  showFullName?: boolean;
   top?: number;
   left?: number;
+  showButtons?: boolean;
+  stopLoss: number;
+  setStopLoss: Dispatch<SetStateAction<number>>;
+  takeProfit: number;
+  setTakeProfit: Dispatch<SetStateAction<number>>;
 }
 
 interface SlTpOptionsProps {
+  showButtons?: boolean;
   setClosePopup: Dispatch<SetStateAction<boolean>>;
+  stopLoss: number;
+  setStopLoss: Dispatch<SetStateAction<number>>;
+  takeProfit: number;
+  setTakeProfit: Dispatch<SetStateAction<number>>;
 }
 
-const SlTp: FC<IProps> = (props) => (
+interface SlTpProps {
+  showFullName?: boolean;
+  stopLoss: number;
+  takeProfit: number;
+}
+
+const SlTp = (props: SlTpProps) => (
   <div className={'multiplier'}>
-    <span>{props.fullName ? 'Stop Loss / Take Profit' : 'SL / TP'}</span>
+    <span>{props.showFullName ? 'Stop Loss / Take Profit' : 'SL / TP'}</span>
     <p className={'option'}>
-      -- / --
+      {props.stopLoss || '--'} / {props.takeProfit || '--'}
     </p>
   </div>
 );
 
-const SlTpOptions: FC<SlTpOptionsProps> = (props) => (
+const SlTpOptions = (props: SlTpOptionsProps) => (
   <div className={'trade-options'}>
     <p>Stop Loss and Take Profit</p>
     <div className={'options-block'}>
@@ -29,7 +45,8 @@ const SlTpOptions: FC<SlTpOptionsProps> = (props) => (
           <span>Stop Loss</span>
           <div className={'input-field'}>
             <span>-</span>
-            <input type={'number'} step={0.00000001}/>
+            <input type={'number'} step={0.00000001} value={props.stopLoss}
+                   onChange={e => props.setStopLoss(+e.target.value)}/>
           </div>
         </div>
         <div className={'symbol'}>
@@ -41,7 +58,8 @@ const SlTpOptions: FC<SlTpOptionsProps> = (props) => (
           <span>Take Profit</span>
           <div className={'input-field'}>
             <span>+</span>
-            <input type={'number'} step={0.00000001}/>
+            <input type={'number'} step={0.00000001} value={props.takeProfit}
+                   onChange={e => props.setTakeProfit(+e.target.value)}/>
           </div>
         </div>
         <div className={'symbol'}>
@@ -49,18 +67,20 @@ const SlTpOptions: FC<SlTpOptionsProps> = (props) => (
         </div>
       </div>
     </div>
-    <div className={"flex-row-space-between"} style={{ gap: 4 }}>
-      <button className={"button bg-light-grey"} onClick={() => props.setClosePopup(true)}>
-        Cancel
-      </button>
-      <button className={"button bg-primary"} onClick={() => props.setClosePopup(true)}>
-        Save
-      </button>
-    </div>
+    {props.showButtons && (
+        <div className={"flex-row-space-between"} style={{gap: 4}}>
+          <button className={"button bg-light-grey"} onClick={() => props.setClosePopup(true)}>
+            Cancel
+          </button>
+          <button className={"button bg-primary"} onClick={() => props.setClosePopup(true)}>
+            Save
+          </button>
+        </div>
+    )}
   </div>
 );
 
-let timeoutID:  NodeJS.Timeout;
+let timeoutID: NodeJS.Timeout;
 
 export const StopLossTakeProfitOptions: FC<IProps> = (props) => {
   const [closePopup, setClosePopup] = useState(false);
@@ -75,8 +95,10 @@ export const StopLossTakeProfitOptions: FC<IProps> = (props) => {
   }, [closePopup]);
 
   return (
-    <Popup popupLauncher={<SlTp fullName={props.fullName}/>}
-           popupContent={<SlTpOptions setClosePopup={setClosePopup}/>}
+    <Popup popupLauncher={<SlTp showFullName={props.showFullName} stopLoss={props.stopLoss} takeProfit={props.takeProfit}/>}
+           popupContent={<SlTpOptions stopLoss={props.stopLoss} setStopLoss={props.setStopLoss}
+                                      takeProfit={props.takeProfit} setTakeProfit={props.setTakeProfit}
+                                      setClosePopup={setClosePopup} showButtons={props.showButtons}/>}
            left={props.left} top={props.top} closePopup={closePopup}/>
   );
 };

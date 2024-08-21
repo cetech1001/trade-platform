@@ -8,6 +8,7 @@ import deposit from "./deposit";
 import withdrawal from "./withdrawal";
 import transaction from "./transaction";
 import tradeAsset from "./trade-asset";
+import trade from "./trade";
 
 export default combineReducers({
   auth,
@@ -19,4 +20,5 @@ export default combineReducers({
   withdrawal,
   transaction,
   tradeAsset,
+  trade,
 });

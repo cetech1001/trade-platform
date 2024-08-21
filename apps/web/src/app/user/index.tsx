@@ -1,5 +1,5 @@
 import {Nav} from "./components/layout/nav";
-import {CreateTrade} from "./components/screens/create-trade";
+import {PlaceBid} from "./components/screens/place-bid";
 import {Chart} from "./components/screens/chart";
 import {useState} from "react";
 import {Trades} from "./components/screens/trades";
@@ -39,7 +39,7 @@ export const User = () => {
 			{activeNav === USER_ROUTES.trades && <Trades toggleNav={toggleNav}/>}
 			{activeNav === USER_ROUTES.history && <TradeHistory toggleNav={toggleNav}/>}
 			<Chart/>
-			<CreateTrade/>
+			<PlaceBid/>
 			<Settings/>
 			<Payments/>
 			<UpdateProfile/>

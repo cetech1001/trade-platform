@@ -4,11 +4,11 @@ import {connect} from "react-redux";
 import {RootState} from "@coinvant/store";
 
 interface IProps {
-    symbol: string | null;
+    symbol: string | undefined;
 }
 
 const mapStateToProps = (state: RootState) => ({
-    symbol: state.tradeAsset.currentAsset,
+    symbol: state.tradeAsset.currentAsset?.symbol,
 })
 
 export const Chart = connect(mapStateToProps)((props: IProps) => {

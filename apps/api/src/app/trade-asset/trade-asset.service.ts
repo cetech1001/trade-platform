@@ -12,7 +12,7 @@ import {
 	FindForexPairs,
 	FindStockOptions,
 	ForexType,
-	StockOption
+	StockOption, TradeAssetType
 } from "@coinvant/types";
 import fs from 'fs';
 import path from "path";
@@ -196,6 +196,17 @@ export class TradeAssetService {
 		}
 
 		return paginate(queryBuilder, options);
+	}
+
+	findAsset(id: string, assetType: TradeAssetType) {
+		switch (assetType) {
+			case TradeAssetType.crypto:
+				return this.cryptoRepo.findOneBy({ id });
+			case TradeAssetType.forex:
+				return this.forexRepo.findOneBy({ id });
+			default:
+				return this.stockRepo.findOneBy({ id });
+		}
 	}
 
 }

@@ -1,4 +1,4 @@
-import {ForexPair, FindForexPairs} from "@coinvant/types";
+import {CurrentAsset, FindForexPairs, ForexPair, TradeAssetType} from "@coinvant/types";
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
@@ -10,7 +10,7 @@ interface IProps {
 	assets: ForexPair[];
 	totalPages: number;
 	fetchForexPairs: (query: FindForexPairs) => Promise<void>;
-	setCurrentAsset: (symbol: string) => void;
+	setCurrentAsset: (asset: CurrentAsset) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -100,7 +100,11 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 			}
 			return asset;
 		}));
-		props.setCurrentAsset(`${pair.base}/${pair.term}`);
+		props.setCurrentAsset({
+			id: pair.id,
+			symbol: `${pair.base}/${pair.term}`,
+			type: TradeAssetType.forex,
+		});
 	}
 
 	const AssetItem = (

@@ -1,4 +1,4 @@
-import {CryptoCurrency, FindCryptoCurrencies} from "@coinvant/types";
+import {CryptoCurrency, CurrentAsset, FindCryptoCurrencies, TradeAssetType} from "@coinvant/types";
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {formatCurrency, roundPercent} from "../../../../../helpers";
@@ -11,7 +11,7 @@ interface IProps {
 	assets: CryptoCurrency[];
 	totalPages: number;
 	fetchCryptoCurrencies: (query: FindCryptoCurrencies) => Promise<void>;
-	setCurrentAsset: (symbol: string) => void;
+	setCurrentAsset: (asset: CurrentAsset) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -106,7 +106,11 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 			}
 			return asset;
 		}));
-		props.setCurrentAsset(currency.symbol);
+		props.setCurrentAsset({
+			id: currency.id,
+			symbol: currency.symbol,
+			type: TradeAssetType.crypto,
+		});
 	}
 
 	const AssetItem = (

@@ -5,26 +5,33 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  Delete, UseGuards, Query,
 } from '@nestjs/common';
 import { TradeService } from './trade.service';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
-import {ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {JwtAuthGuard} from "../../guards";
+import {CurrentUser, Roles} from "../../decorators";
+import {User, UserRole} from "@coinvant/types";
+import {FindTradeQueryParamsDto} from "./dto/find-trade-query-params.dto";
 
-@Controller('trade')
 @ApiTags('Trade Controller')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
+@Controller('trade')
 export class TradeController {
   constructor(private readonly tradeService: TradeService) {}
 
+  @Roles(UserRole.user)
   @Post()
-  create(@Body() createTradeDto: CreateTradeDto) {
-    return this.tradeService.create(createTradeDto);
+  create(@Body() createTradeDto: CreateTradeDto, @CurrentUser() user: User) {
+    return this.tradeService.create(createTradeDto, user);
   }
 
   @Get()
-  findAll() {
-    return this.tradeService.findAll();
+  findAll(@Query() query: FindTradeQueryParamsDto) {
+    return this.tradeService.findAll(query);
   }
 
   @Get(':id')

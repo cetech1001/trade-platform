@@ -31,7 +31,10 @@ export class PaymentMethodController {
 
   @Get()
   findAll(@Query() options: PaginationOptionsDto) {
-    return this.paymentMethodService.findAll(options);
+    if (options) {
+      return this.paymentMethodService.findAll(options);
+    }
+    return this.paymentMethodService.find();
   }
 
   @Get(':id')

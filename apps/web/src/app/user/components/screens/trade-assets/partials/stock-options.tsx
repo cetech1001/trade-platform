@@ -1,4 +1,4 @@
-import {StockOption, FindStockOptions} from "@coinvant/types";
+import {CurrentAsset, FindStockOptions, StockOption, TradeAssetType} from "@coinvant/types";
 import {useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import {fetchStockOptions, RootState, setCurrentAsset} from "@coinvant/store";
@@ -10,7 +10,7 @@ interface IProps {
 	assets: StockOption[];
 	totalPages: number;
 	fetchStockOptions: (query: FindStockOptions) => Promise<void>;
-	setCurrentAsset: (symbol: string) => void;
+	setCurrentAsset: (asset: CurrentAsset) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -87,7 +87,7 @@ export const StockOptions = connect(mapStateToProps, actions)((props: IProps) =>
 		}
 	}, [props.symbol, props.name]);
 
-	const setAsActive = (pair: StockOption) => {
+	const setAsActive = (stock: StockOption) => {
 		const items = stockOptions.map(asset => {
 			if (asset.isActive) {
 				return { ...asset, isActive: false };
@@ -95,12 +95,16 @@ export const StockOptions = connect(mapStateToProps, actions)((props: IProps) =>
 			return asset;
 		});
 		setStockOptions(items.map(asset => {
-			if (asset.id === pair.id) {
+			if (asset.id === stock.id) {
 				return { ...asset, isActive: true };
 			}
 			return asset;
 		}));
-		props.setCurrentAsset(`${pair.symbol}`);
+		props.setCurrentAsset({
+			id: stock.id,
+			symbol: stock.symbol,
+			type: TradeAssetType.stocks,
+		});
 	}
 
 	const AssetItem = (

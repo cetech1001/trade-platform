@@ -1,4 +1,9 @@
-import {FindCryptoCurrencies, FindForexPairs, FindStockOptions} from "@coinvant/types";
+import {
+	CurrentAsset,
+	FindCryptoCurrencies,
+	FindForexPairs,
+	FindStockOptions,
+} from "@coinvant/types";
 import {AppDispatch, showAlert} from "../../index";
 import {TradeAssetService} from "../services";
 import {TradeAssetActions} from "../types";
@@ -61,9 +66,9 @@ export const fetchCryptoCurrencies = (query: FindCryptoCurrencies) => async (dis
 	}
 }
 
-export const setCurrentAsset = (symbol: string) => async (dispatch: AppDispatch) => {
+export const setCurrentAsset = (asset: CurrentAsset) => async (dispatch: AppDispatch) => {
 	dispatch({
 		type: TradeAssetActions.setCurrentAsset,
-		payload: { symbol },
+		payload: { asset },
 	});
 }

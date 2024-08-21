@@ -1,123 +1,131 @@
 import {
-  Column,
-  CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
-import {Trade, TradeStatus, User} from "@coinvant/types";
-import {IsNotEmpty, IsNumber, IsOptional, IsString} from "class-validator";
-import {ApiProperty} from "@nestjs/swagger";
-import {Transform} from "class-transformer";
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn
+} from 'typeorm';
 import {UserEntity} from "../../user/entities/user.entity";
+import {
+  CryptoCurrency,
+  ForexPair,
+  StockOption,
+  Trade,
+  TradeAssetType,
+  TradeStatus,
+  User
+} from "@coinvant/types";
+import {StockEntity} from "../../trade-asset/entities/stock.entity";
+import {ForexEntity} from "../../trade-asset/entities/forex.entity";
+import {CryptoEntity} from "../../trade-asset/entities/crypto.entity";
+import {IsBoolean, IsDate, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive} from "class-validator";
+import {Transform} from "class-transformer";
+import {ApiProperty} from "@nestjs/swagger";
 
 @Entity('trades')
-export class TradeEntity implements Trade {
+export class TradeEntity implements Trade{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('decimal', {
-    precision: 8,
-    scale: 2,
-    default: 0,
-  })
   @IsNotEmpty()
-  @Transform(v => +v)
+  @Transform(v => +v.value)
   @IsNumber()
+  @IsPositive()
   @ApiProperty({ type: Number, required: true })
-  amount: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  bidAmount: number;
 
-  @Column()
-  asset: string;
-
-  @Column()
   @IsOptional()
-  @IsString()
-  @ApiProperty({ type: String, required: false })
-  duration: string;
-
-  @Column('decimal', {
-    precision: 8,
-    scale: 2,
-    default: 0,
-  })
-  @IsOptional()
-  @Transform(v => +v)
+  @Transform(v => +v.value)
   @IsNumber()
   @ApiProperty({ type: Number, required: false })
-  enableByPrice: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  targetPrice: number;
 
-  @Column()
   @IsOptional()
-  @IsString()
-  @ApiProperty({ type: String, required: false })
-  enableByTime: string;
-
-  @Column()
-  endTime: string;
-
-  @Column('decimal', {
-    precision: 8,
-    scale: 2,
-    default: 0,
-  })
-  @IsOptional()
-  @Transform(v => +v)
+  @Transform(v => +v.value)
   @IsNumber()
+  @IsPositive()
   @ApiProperty({ type: Number, required: false })
-  leverage: number;
+  @Column({ type: 'decimal', precision: 5, scale: 2, default: 1.00 })
+  multiplier: number;
 
-  @Column('decimal', {
-    precision: 8,
-    scale: 2,
-    default: 0,
-  })
-  lowerLimit: number;
-
-  @Column()
-  startTime: string;
-
-  @Column({
-    type: 'enum',
-    enum: TradeStatus,
-    default: TradeStatus.pending,
-  })
-  status: TradeStatus;
-
-  @Column('decimal', {
-    precision: 8,
-    scale: 2,
-    default: 0,
-  })
   @IsOptional()
-  @Transform(v => +v)
-  @IsNumber()
-  @ApiProperty({ type: Number, required: false })
-  stopLoss: number;
+  @IsDate()
+  @ApiProperty({ type: Date, required: false })
+  @Column({ type: 'timestamp', nullable: true })
+  executeAt: Date;
 
-  @Column('decimal', {
-    precision: 8,
-    scale: 2,
-    default: 0,
-  })
+  @Column({ default: false })
+  isExecuted: boolean;
+
   @IsOptional()
-  @Transform(v => +v)
+  @Transform(v => +v.value)
   @IsNumber()
+  @IsPositive()
   @ApiProperty({ type: Number, required: false })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   takeProfit: number;
 
-  @Column('decimal', {
-    precision: 8,
-    scale: 2,
-    default: 0,
-  })
-  upperLimit: number;
+  @IsOptional()
+  @Transform(v => +v.value)
+  @IsNumber()
+  @IsPositive()
+  @ApiProperty({ type: Number, required: false })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  stopLoss: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.trades)
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean, required: false })
+  @Column({ default: false })
+  isShort: boolean;
+
+  @IsNotEmpty()
+  @IsIn(Object.values(TradeAssetType))
+  @ApiProperty({ type: String, required: true, enum: TradeAssetType })
+  @Column({ type: 'enum', enum: TradeAssetType })
+  assetType: TradeAssetType;
+
+  @IsOptional()
+  @IsIn(Object.values(TradeStatus))
+  @ApiProperty({ type: String, required: false, enum: TradeStatus })
+  @Column({ type: 'enum', enum: TradeStatus, default: TradeStatus.pending })
+  status: TradeStatus;
+
+  @ManyToOne(
+      () => UserEntity,
+          user => user.trades,
+      { eager: true }
+  )
   @JoinColumn({ name: 'userID' })
   user: User;
+
+  @ManyToOne(
+      () => StockEntity,
+          ({ trades }) => trades,
+      { nullable: true, eager: true }
+  )
+  @JoinColumn({ name: 'stockID' })
+  stock: StockOption;
+
+  @ManyToOne(
+      () => ForexEntity,
+          ({ trades }) => trades,
+      { nullable: true, eager: true }
+  )
+  @JoinColumn({ name: 'forexID' })
+  forex: ForexPair;
+
+  @ManyToOne(
+      () => CryptoEntity,
+          ({ trades }) => trades,
+      { nullable: true, eager: true }
+  )
+  @JoinColumn({ name: 'cryptoID' })
+  crypto: CryptoCurrency;
 
   @CreateDateColumn()
   createdAt: string;
