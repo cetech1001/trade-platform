@@ -22,4 +22,8 @@ export class ForexEntity implements ForexPair {
 
 	@OneToMany(() => TradeEntity, ({ forex }) => forex)
 	trades: Trade[];
+
+	get symbol(): string {
+		return `${this.base}/${this.term}`;
+	}
 }

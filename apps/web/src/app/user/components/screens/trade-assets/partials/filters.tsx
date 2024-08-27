@@ -37,11 +37,11 @@ export const Filters = (props: IProps) => {
 				<FilterDropdown title={"All Pair Types"} options={Object.values(ForexType)}
 				                default={"All"} action={pairTypeAction}/>
 			)}
-			{props.activeTab === TradeAssetType.stocks && (
+			{props.activeTab === TradeAssetType.stock && (
 				<FilterDropdown title={"All Exchanges"} options={Object.values(StockExchange)}
 				                default={"All"} action={exchangeAction}/>
 			)}
-			{props.activeTab === TradeAssetType.stocks && (
+			{props.activeTab === TradeAssetType.stock && (
 				<FilterDropdown title={"All Asset Types"} options={Object.values(StockAssetType)}
 				                default={"All"} action={assetTypeAction}/>
 			)}

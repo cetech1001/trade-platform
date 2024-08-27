@@ -1,15 +1,90 @@
-import {FC, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import "../../../styles/Trades.css";
 import {Link} from "react-router-dom";
-import {Trade} from "../../shared/trade";
+import {TradeItem} from "../../shared/trade";
 import {USER_ROUTES} from "../../../../../routes";
+import {FindTradeQueryParams, Trade, TradeAssetType, TradeStatus} from "@coinvant/types";
+import {fetchTrades, RootState} from "@coinvant/store";
+import {connect} from "react-redux";
+import {capitalizeFirstLetter, formatCurrency} from "../../../../helpers";
 
 interface IProps {
+  trades: Trade[];
+  limit: number;
+  totalCount: number;
   toggleNav: (route: USER_ROUTES) => void;
+  fetchTrades: (query: FindTradeQueryParams) => void;
 }
 
-export const Trades: FC<IProps> = (props) => {
-  const [activeTab, setActiveTab] = useState<'ft' | 'fx' | 'st'>('fx');
+const mapStateToProps = (state: RootState) => ({
+  trades: state.trade.list,
+  limit: state.trade.limit,
+  totalCount: state.trade.totalCount,
+});
+
+const actions = {
+  fetchTrades,
+};
+
+export const Trades = connect(mapStateToProps, actions)((props: IProps) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab]
+      = useState<TradeAssetType>(TradeAssetType.forex);
+  const [totalPL, setTotalPL] = useState(0);
+  const [query, setQuery] = useState<FindTradeQueryParams>({
+    page: 1,
+    limit: props.limit,
+    assetType: activeTab,
+  });
+  const [activeTradeCount, setActiveTradeCount] = useState(0);
+  const [activeAmount, setActiveAmount] = useState(0);
+  // const [sortedTrades, setSortedTrades] = useState<Trade[]>([]);
+
+  const handleScroll = () => {
+    /*const container = scrollContainerRef.current;
+    if (container) {
+      const bottom =
+          container.scrollHeight - container.scrollTop <= container.clientHeight + 500;
+      if (bottom && !isLoading && query.page < props.totalPages) {
+        setQuery(prevState => ({
+          ...prevState,
+          page: prevState.page + 1,
+        }))
+      }
+    }*/
+  };
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [handleScroll]);
+
+  useEffect(() => {
+    props.fetchTrades(query);
+  }, [query]);
+
+  useEffect(() => {
+    if (props.trades.length > 0) {
+      const activeTrades = props.trades.filter(t => t.status === TradeStatus.active);
+      setActiveTradeCount(activeTrades.length);
+      setActiveAmount(() => activeTrades.reduce((acc, curr) => acc + (+curr.bidAmount), 0));
+    }
+  }, [props.trades]);
+
+  useEffect(() => {
+    setQuery(prevState => ({
+      ...prevState,
+      assetType: activeTab,
+    }));
+  }, [activeTab]);
+
   return (
     <div className={"assets"}>
       <div className="asset-list">
@@ -21,33 +96,46 @@ export const Trades: FC<IProps> = (props) => {
           </div>
         </div>
         <div className="tabs">
-          <button className={`${activeTab === 'ft' && 'active'}`}
-                  onClick={() => setActiveTab('ft')}>Fixed Time</button>
-          <button className={`${activeTab === 'fx' && 'active'}`}
-                  onClick={() => setActiveTab('fx')}>
-            <span>Forex</span>
-            <span>•</span>
-            <span>1</span>
-          </button>
-          <button className={`${activeTab === 'st' && 'active'}`}
-                  onClick={() => setActiveTab('st')}>Stocks</button>
+          {Object.values(TradeAssetType).map((assetType, i) => (
+              <button key={i} className={`${activeTab === assetType && 'active'}`}
+                      onClick={() => {
+                        setTotalPL(0);
+                        setActiveAmount(0);
+                        setActiveTradeCount(0);
+                        setActiveTab(assetType);
+                      }}>
+                <span>{capitalizeFirstLetter(assetType)}</span>
+                {activeTab === assetType && activeTradeCount > 0 && (
+                    <>
+                      <span>•</span>
+                      <span>{activeTradeCount}</span>
+                    </>
+                )}
+              </button>
+          ))}
         </div>
-        <div className={'assets-body'}>
+        <div className={'assets-body'} style={{ height: "80vh", overflowY: "auto" }} ref={scrollContainerRef}>
           <div className={"title"}>
             <h5>Active Trades</h5>
           </div>
           <div className={"subtitle"}>
             <div>
               <span className={"text"}>Total Amount</span>
-              <span>$0.00</span>
+              <span>{formatCurrency(activeAmount)}</span>
             </div>
             <div>
               <span className={"text"}>Profit and loss</span>
-              <span className={"negative"} style={{textAlign: 'right'}}>-$1.00</span>
+              <span className={totalPL >= 0 ? "positive" : "negative"} style={{textAlign: 'right'}}>
+                {formatCurrency(totalPL)}
+              </span>
             </div>
           </div>
           <div className={"trades"}>
-            <Trade isActive={true}/>
+            {props.trades
+                .filter((_, i) => i < activeTradeCount)
+                .map((trade) => (
+                <TradeItem trade={trade} isActive={true} key={trade.id}/>
+            ))}
           </div>
           <div className={"title"} style={{ marginTop: 16 }}>
             <h5>History</h5>
@@ -57,11 +145,9 @@ export const Trades: FC<IProps> = (props) => {
             </Link>
           </div>
           <div className={"trades"} style={{ marginTop: -8 }}>
-            <Trade/>
-            <Trade/>
-            <Trade/>
-            <Trade/>
-            <Trade/>
+            {props.trades.slice(activeTradeCount).map((trade) => (
+                <TradeItem trade={trade} key={trade.id}/>
+            ))}
             <div className={"history-button"} onClick={() => props.toggleNav(USER_ROUTES.history)}>
               Open Full History
             </div>
@@ -70,4 +156,4 @@ export const Trades: FC<IProps> = (props) => {
       </div>
     </div>
   );
-}
+});

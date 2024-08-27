@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import path from "path";
 dotenv.config();
 
 export const environment = {
@@ -20,5 +21,6 @@ export const environment = {
   jwt: {
     secret: process.env.JWT_SECRET || 'secret',
     expiresIn: process.env.JWT_TOKEN_EXPIRE || '1h',
-  }
+  },
+  assetsPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
 }

@@ -150,7 +150,7 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 			</div>
 			<div className={"table-body"} style={{ height: '55vh' }} ref={scrollContainerRef}>
 				{pairs.map((asset) => (
-					<AssetItem asset={asset}/>
+					<AssetItem asset={asset} key={asset.id}/>
 				))}
 			</div>
 			<div className={"is-loading"}>

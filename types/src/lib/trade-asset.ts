@@ -5,6 +5,7 @@ export interface CryptoCurrency {
   symbol: string;
   name: string;
   image: string;
+  currencyID: string;
 }
 
 export interface CreateCryptoCurrency extends Omit<CryptoCurrency, 'id'> {}
@@ -17,6 +18,7 @@ export interface ForexPair {
   term: string;
   type: ForexType;
   image?: string;
+  symbol: string;
 }
 
 export enum ForexType {
@@ -26,7 +28,7 @@ export enum ForexType {
   emergingMarket =  'Emerging Market',
 }
 
-export interface CreateForex extends Omit<ForexPair, 'id'> {}
+export interface CreateForex extends Omit<ForexPair, 'id' | 'symbol'> {}
 
 export interface FindForexPairs extends PaginationOptions, Partial<Omit<ForexPair, 'id'>> {}
 
@@ -57,13 +59,14 @@ export interface FindStockOptions extends PaginationOptions, Partial<Omit<StockO
 }
 
 export enum TradeAssetType {
-  forex = 'Forex',
-  crypto = 'Crypto',
-  stocks = 'Stocks',
+  forex = 'forex',
+  crypto = 'crypto',
+  stock = 'stock',
 }
 
 export interface CurrentAsset {
   symbol: string;
   id: string;
   type: TradeAssetType;
+  currencyID?: string;
 }

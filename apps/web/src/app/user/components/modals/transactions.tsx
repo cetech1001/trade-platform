@@ -133,7 +133,7 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 			if ([
 				DepositStatus.confirmed,
 				WithdrawalStatus.paid,
-				TradeStatus.completed,
+				TradeStatus.closed,
 				TradeStatus.active].includes(transaction.status)) {
 				return '#1B985E';
 			}

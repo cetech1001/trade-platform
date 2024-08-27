@@ -16,6 +16,9 @@ export class CryptoEntity implements CryptoCurrency {
 	@Column()
 	image: string;
 
+	@Column({ unique: true })
+	currencyID: string;
+
 	@OneToMany(() => TradeEntity, ({ crypto }) => crypto)
 	trades: Trade[];
 }

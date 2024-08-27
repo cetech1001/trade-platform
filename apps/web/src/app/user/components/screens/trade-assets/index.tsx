@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {USER_ROUTES} from "../../../../../routes";
 import {
 	ForexType,
@@ -23,6 +23,8 @@ export const Assets = (props: IProps) => {
 	const [term, setTerm] = useState("");
 	const [cryptoSymbol, setCryptoSymbol] = useState("");
 	const [cryptoName, setCryptoName] = useState("");
+	const [stockSymbol, setStockSymbol] = useState("");
+	const [stockName, setStockName] = useState("");
 	const [pairType, setPairType] = useState<ForexType | "">("");
 	const [exchange, setExchange] = useState<StockExchange | "">("");
 	const [assetType, setAssetType] = useState<StockAssetType | "">("");
@@ -34,7 +36,27 @@ export const Assets = (props: IProps) => {
 		} else if (activeTab === TradeAssetType.crypto) {
 			setCryptoSymbol(search);
 			setCryptoName(search);
+		} else {
+			setStockSymbol(search);
+			setStockName(search);
 		}
+	}
+
+	const changeActiveTab = (activeTab: TradeAssetType) => {
+		setActiveTab(prevState => {
+			setSearch("");
+			if (prevState === TradeAssetType.forex) {
+				setBase("");
+				setTerm("");
+			} else if (prevState === TradeAssetType.crypto) {
+				setCryptoSymbol("");
+				setCryptoName("");
+			} else {
+				setStockSymbol("");
+				setStockName("");
+			}
+			return activeTab;
+		});
 	}
 
 	return (
@@ -49,11 +71,13 @@ export const Assets = (props: IProps) => {
 				</div>
 				<div className="tabs">
 					<button className={`${activeTab === TradeAssetType.forex && 'active'}`}
-					        onClick={() => setActiveTab(TradeAssetType.forex)}>Forex</button>
+					        onClick={() => changeActiveTab(TradeAssetType.forex)}>Forex</button>
 					<button className={`${activeTab === TradeAssetType.crypto && 'active'}`}
-					        onClick={() => setActiveTab(TradeAssetType.crypto)}>Cryptocurrencies</button>
-					<button className={`${activeTab === TradeAssetType.stocks && 'active'}`}
-					        onClick={() => setActiveTab(TradeAssetType.stocks)}>Stocks</button>
+					        onClick={() => changeActiveTab(TradeAssetType.crypto)}>
+						Cryptocurrencies
+					</button>
+					<button className={`${activeTab === TradeAssetType.stock && 'active'}`}
+					        onClick={() => changeActiveTab(TradeAssetType.stock)}>Stocks</button>
 				</div>
 				<div className={'assets-body'}>
 					<div style={{ padding: '0 16px' }}>
@@ -65,7 +89,7 @@ export const Assets = (props: IProps) => {
 					</div>
 					<Filters activeTab={activeTab} pairType={pairType} assetType={assetType} exchange={exchange}
 					         setPairType={setPairType} setAssetType={setAssetType} setExchange={setExchange}/>
-					{activeTab === TradeAssetType.stocks && (<StockOptions symbol={cryptoSymbol} name={cryptoName}/>)}
+					{activeTab === TradeAssetType.stock && (<StockOptions symbol={stockSymbol} name={stockName}/>)}
 					{activeTab === TradeAssetType.forex && (<ForexPairs base={base} term={term}/>)}
 					{activeTab === TradeAssetType.crypto && (<CryptoCurrencies symbol={cryptoSymbol} name={cryptoName}/>)}
 				</div>

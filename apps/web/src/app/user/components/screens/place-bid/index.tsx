@@ -2,7 +2,7 @@ import {Popup} from "../../shared/popup";
 import {ChangeEvent, useState} from "react";
 import {StopLossTakeProfitOptions} from "../../shared/stop-los-take-profit";
 import {AlertState, CreateTrade, CurrentAsset, Modals} from "@coinvant/types";
-import {closeModal, openModal, placeBid, RootState, showAlert} from "@coinvant/store";
+import {closeModal, openModal, placeBid, refreshUserProfile, RootState, showAlert} from "@coinvant/store";
 import {connect} from "react-redux";
 
 interface IProps {
@@ -11,6 +11,7 @@ interface IProps {
 	closeModal: () => void;
 	showAlert: (payload: AlertState) => void;
 	placeBid: (payload: CreateTrade) => Promise<void>;
+	refreshUserProfile: () => Promise<void>;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -22,23 +23,24 @@ const actions = {
 	closeModal,
 	showAlert,
 	placeBid,
+	refreshUserProfile,
 };
 
 export const PlaceBid = connect(mapStateToProps, actions)((props: IProps) => {
 	const [bidAmount, setBidAmount] = useState(0);
-	const [multiplier, setMultiplier] = useState(1);
+	const [leverage, setLeverage] = useState(1);
 	const [stopLoss, setStopLoss] = useState(0);
 	const [takeProfit, setTakeProfit] = useState(0);
-	const [targetPrice, setTargetPrice] = useState(0);
-	const [executeAt, setExecuteAt] = useState<Date>();
+	const [openingPrice, setOpeningPrice] = useState(0);
+	const [executeAt, setExecuteAt] = useState<string>();
 	const [time, setTime] = useState("");
 
 	const reset = () => {
 		setBidAmount(0);
-		setMultiplier(1);
+		setLeverage(1);
 		setStopLoss(0);
 		setTakeProfit(0);
-		setTargetPrice(0);
+		setOpeningPrice(0);
 		setExecuteAt(undefined);
 		setTime("");
 	}
@@ -72,7 +74,7 @@ export const PlaceBid = connect(mapStateToProps, actions)((props: IProps) => {
 		selectedDateTime.setSeconds(0);
 
 		if (selectedDateTime > currentDate) {
-			setExecuteAt(selectedDateTime);
+			setExecuteAt(selectedDateTime.toDateString());
 		} else {
 			props.showAlert({
 				show: true,
@@ -86,16 +88,17 @@ export const PlaceBid = connect(mapStateToProps, actions)((props: IProps) => {
 		if (props.asset) {
 			const payload: CreateTrade = {
 				bidAmount,
-				multiplier,
+				leverage,
 				stopLoss: stopLoss || undefined,
 				takeProfit: takeProfit || undefined,
-				isShort,
-				targetPrice: targetPrice || undefined,
+				isShort: !!isShort,
+				openingPrice: openingPrice || undefined,
 				executeAt: executeAt || undefined,
 				assetType: props.asset.type,
 				assetID: props.asset.id,
 			}
 			await props.placeBid(payload);
+			await props.refreshUserProfile();
 			reset();
 		} else {
 			props.showAlert({
@@ -107,10 +110,10 @@ export const PlaceBid = connect(mapStateToProps, actions)((props: IProps) => {
 	}
 
 	const Multiplier = () => (
-		<div className={'multiplier'}>
+		<div className={'leverage'}>
 			<span>Multiplier</span>
 			<p className={'option'}>
-				<span className={'x-sign'}>x</span>{multiplier}
+				<span className={'x-sign'}>x</span>{leverage}
 			</p>
 		</div>
 	);
@@ -127,22 +130,22 @@ export const PlaceBid = connect(mapStateToProps, actions)((props: IProps) => {
 			<p>Multiplier</p>
 			<div className={'options-block'}>
 				<div className={'options'}>
-					<div className={`option ${multiplier === 1 && 'active'}`}
-					     onClick={() => setMultiplier(1)}>
+					<div className={`option ${leverage === 1 && 'active'}`}
+					     onClick={() => setLeverage(1)}>
 						<span className={'x-sign'}>x</span>1
 					</div>
-					<div className={`option ${multiplier === 10 && 'active'}`}
-					     onClick={() => setMultiplier(10)}>
+					<div className={`option ${leverage === 10 && 'active'}`}
+					     onClick={() => setLeverage(10)}>
 						<span className={'x-sign'}>x</span>10
 					</div>
 				</div>
 				<div className={'options'}>
-					<div className={`option ${multiplier === 25 && 'active'}`}
-					     onClick={() => setMultiplier(25)}>
+					<div className={`option ${leverage === 25 && 'active'}`}
+					     onClick={() => setLeverage(25)}>
 						<span className={'x-sign'}>x</span>25
 					</div>
-					<div className={`option ${multiplier === 50 && 'active'}`}
-					     onClick={() => setMultiplier(50)}>
+					<div className={`option ${leverage === 50 && 'active'}`}
+					     onClick={() => setLeverage(50)}>
 						<span className={'x-sign'}>x</span>50
 					</div>
 				</div>
@@ -168,9 +171,9 @@ export const PlaceBid = connect(mapStateToProps, actions)((props: IProps) => {
 						<div className={'input'}>
 							<span>Opening Price</span>
 							<div className={'input-field'}>
-								<input type={'number'} step={0.00000001} value={targetPrice}
+								<input type={'number'} step={0.00000001} value={openingPrice}
 								       onChange={e =>
-									       setTargetPrice(+e.target.value)}/>
+									       setOpeningPrice(+e.target.value)}/>
 							</div>
 						</div>
 					)}

@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
   api: {
-    baseURL: 'https://api.coinvant.com',
+    baseURL: 'https://api.trendpanther.com',
   },
 }

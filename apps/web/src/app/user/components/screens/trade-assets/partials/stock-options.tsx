@@ -103,7 +103,7 @@ export const StockOptions = connect(mapStateToProps, actions)((props: IProps) =>
 		props.setCurrentAsset({
 			id: stock.id,
 			symbol: stock.symbol,
-			type: TradeAssetType.stocks,
+			type: TradeAssetType.stock,
 		});
 	}
 
@@ -138,7 +138,7 @@ export const StockOptions = connect(mapStateToProps, actions)((props: IProps) =>
 			</div>
 			<div className={"table-body"} style={{ height: '55vh' }} ref={scrollContainerRef}>
 				{stockOptions.map((asset) => (
-					<AssetItem asset={asset}/>
+					<AssetItem asset={asset} key={asset.id}/>
 				))}
 			</div>
 			<div className={"is-loading"}>

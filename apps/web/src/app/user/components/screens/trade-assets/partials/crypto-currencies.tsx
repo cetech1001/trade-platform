@@ -110,6 +110,7 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 			id: currency.id,
 			symbol: currency.symbol,
 			type: TradeAssetType.crypto,
+			currencyID: currency.currencyID,
 		});
 	}
 
@@ -124,7 +125,7 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 		const [changeSign, setChangeSign] = useState("");
 
 		useEffect(() => {
-			setCoin(coins.find((c: any) => c.symbol === asset.symbol));
+			setCoin(coins.find((c: any) => c.id === asset.currencyID));
 		}, []);
 
 		useEffect(() => {
@@ -166,7 +167,7 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 			</div>
 			<div className={"table-body"} ref={scrollContainerRef}>
 				{coins.length > 0 && currencies.map((asset) => (
-					<AssetItem asset={asset} coins={coins}/>
+					<AssetItem asset={asset} coins={coins} key={asset.id}/>
 				))}
 			</div>
 			<div className={"is-loading"}>

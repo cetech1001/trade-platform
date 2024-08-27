@@ -8,7 +8,7 @@
     "start:api": "nx serve api",
     "build:web": "nx build web && cd dist/apps/web && zip -rX archive.zip .",
     "build:admin": "nx build admin && cd dist/apps/admin && zip -rX archive.zip .",
-    "build:api": "nx build api && cd dist/apps/api && zip -rX archive.zip ."
+    "build:api": "nx build api --configuration=production && cd dist/apps/api && zip -rX archive.zip ."
   },
   "private": true,
   "devDependencies": {

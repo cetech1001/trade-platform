@@ -1,9 +1,8 @@
 import {BadRequestException, Injectable} from '@nestjs/common';
-import {UpdateUserDto} from './dto/update-user.dto';
-import {Repository} from "typeorm";
+import {QueryRunner, Repository} from "typeorm";
 import {UserEntity} from "./entities/user.entity";
 import {InjectRepository} from "@nestjs/typeorm";
-import {CreateUser, PaginationOptions, User, UserRole} from "@coinvant/types";
+import {CreateUser, PaginationOptions, UpdateUser, User, UserRole} from "@coinvant/types";
 import {paginate, Pagination} from "nestjs-typeorm-paginate";
 
 @Injectable()
@@ -27,15 +26,19 @@ export class UserService {
     return this.userRepo.findOne({ where: condition });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: string, updateUserDto: UpdateUser, queryRunner?: QueryRunner): Promise<User> {
     if (updateUserDto.email) {
       const user = await this.findOne({email: updateUserDto.email});
       if (user && user.id !== id) {
         throw new BadRequestException("Email address already exists");
       }
     }
-    await this.userRepo.update(id, updateUserDto);
-    return await this.findOne({id});
+    if (queryRunner) {
+      await queryRunner.manager.update(UserEntity, id, updateUserDto);
+    } else {
+      await this.userRepo.update(id, updateUserDto);
+    }
+    return this.findOne({id});
   }
 
   remove(id: string) {

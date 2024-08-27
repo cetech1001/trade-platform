@@ -22,14 +22,12 @@ export class AuthController {
   }
 
   @Post('register')
-  signUp(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create({
+  async signUp(@Body() createUserDto: CreateUserDto) {
+    const user = await this.userService.create({
       ...createUserDto,
       role: UserRole.user,
-    })
-      .then(user => {
-        const { password, ...result } = user;
-        return this.authService.login(result);
-      });
+    });
+    const {password, ...result} = user;
+    return await this.authService.login(result);
   }
 }

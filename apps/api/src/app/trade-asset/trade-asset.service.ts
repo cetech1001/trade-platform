@@ -19,6 +19,7 @@ import path from "path";
 import csv from 'csv-parser';
 import axios from "axios";
 import {paginate} from "nestjs-typeorm-paginate";
+import {environment} from "../../environments/environment";
 
 @Injectable()
 export class TradeAssetService {
@@ -31,7 +32,8 @@ export class TradeAssetService {
 	importStockOptions() {
 		const stocks: CreateStock[] = [];
 		return new Promise<StockOption[]>((resolve, reject) => {
-			const filePath = path.join(process.cwd(), 'apps', 'api', 'src', 'assets', 'stocks.csv');
+			console.error("Assets path", environment.assetsPath);
+			const filePath = path.join(environment.assetsPath, 'stocks.csv');
 			fs.createReadStream(filePath)
 				.pipe(csv())
 				.on('data', (row) => {
@@ -104,6 +106,7 @@ export class TradeAssetService {
 			symbol: c.symbol,
 			name: c.name,
 			image: c.image,
+			currencyID: c.id,
 		}));
 		return await this.cryptoRepo.save(currencies);
 	}
@@ -171,7 +174,7 @@ export class TradeAssetService {
 		return paginate(queryBuilder, options);
 	}
 
-	findForexPairs(query: FindForexPairs) {
+	async findForexPairs(query: FindForexPairs) {
 		const {
 			base,
 			term,

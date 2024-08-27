@@ -62,10 +62,10 @@ export const Nav = connect(mapStateToProps, actions)((props: IProps) => {
         <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
               className={`nav-item ${[USER_ROUTES.trades, USER_ROUTES.history].includes(props.activeTab)
               && 'nav-item-active'}`}>
-          <div className={'has-badge'}>
-            <div className={'badge'}>
+          <div>
+            {/*<div className={'badge'}>
               <p>1</p>
-            </div>
+            </div>*/}
             <i className="fas fa-chart-line"></i>
           </div>
           <p>Trades</p>

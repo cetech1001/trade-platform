@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Repository} from "typeorm";
+import {DataSource, Repository} from "typeorm";
 import {WithdrawalEntity} from "./entities/withdrawal.entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {
@@ -22,21 +22,31 @@ export class WithdrawalService {
   constructor(
       @InjectRepository(WithdrawalEntity) private readonly withdrawalRepo:
           Repository<WithdrawalEntity>,
+      private readonly dataSource: DataSource,
       private readonly userService: UserService,
       private readonly transactionService: TransactionService) {}
 
   async create(createWithdrawal: CreateWithdrawal, user: User): Promise<Transaction> {
-    const withdrawal = await this.withdrawalRepo.save({
-      ...createWithdrawal,
-      user,
-    });
-    return this.transactionService.create({
-      amount: withdrawal.amount,
-      type: TransactionType.withdrawal,
-      status: withdrawal.status,
-      transactionID: withdrawal.id,
-      user,
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      const withdrawal = await queryRunner.manager.save(WithdrawalEntity, {
+        ...createWithdrawal,
+        user,
+      });
+      return this.transactionService.create({
+        amount: withdrawal.amount,
+        type: TransactionType.withdrawal,
+        status: withdrawal.status,
+        transactionID: withdrawal.id,
+        user,
+      }, queryRunner);
+    } catch (e) {
+      console.error(e);
+      await queryRunner.rollbackTransaction();
+      throw e;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   findAll(options: PaginationOptions, user: User): Promise<Pagination<Withdrawal>> {
@@ -64,15 +74,24 @@ export class WithdrawalService {
   }
 
   async update(id: string, updateWithdrawal: UpdateWithdrawal): Promise<Withdrawal> {
-    await this.withdrawalRepo.update(id, updateWithdrawal);
-    const withdrawal = await this.findOne(id);
-    if (updateWithdrawal.status === WithdrawalStatus.paid) {
-      await this.userService.update(withdrawal.user.id, {
-        walletBalance: +withdrawal.user.walletBalance - (+withdrawal.amount),
-      });
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.manager.update(WithdrawalEntity, id, updateWithdrawal);
+      const withdrawal = await this.findOne(id);
+      if (updateWithdrawal.status === WithdrawalStatus.paid) {
+        await this.userService.update(withdrawal.user.id, {
+          walletBalance: +withdrawal.user.walletBalance - (+withdrawal.amount),
+        }, queryRunner);
+      }
+      await this.transactionService.update(withdrawal.id, updateWithdrawal, queryRunner);
+      return withdrawal;
+    } catch (e) {
+      console.error(e);
+      await queryRunner.rollbackTransaction();
+      throw e;
+    } finally {
+      await queryRunner.release();
     }
-    await this.transactionService.update(withdrawal.id, updateWithdrawal);
-    return withdrawal;
   }
 
   async remove(id: string) {

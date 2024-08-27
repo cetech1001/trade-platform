@@ -4,7 +4,7 @@ import {
   Transaction, TransactionsQuery,
   UpdateTransaction, User
 } from "@coinvant/types";
-import {Repository} from "typeorm";
+import {QueryRunner, Repository} from "typeorm";
 import {TransactionEntity} from "./entities/transaction.entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {paginate, Pagination} from "nestjs-typeorm-paginate";
@@ -14,8 +14,8 @@ export class TransactionService {
   constructor(@InjectRepository(TransactionEntity) private readonly transactionRepo:
                   Repository<TransactionEntity>) {}
 
-  create(createTransaction: CreateTransaction) {
-    return this.transactionRepo.save(createTransaction);
+  create(createTransaction: CreateTransaction, queryRunner: QueryRunner) {
+    return queryRunner.manager.save(TransactionEntity, createTransaction);
   }
 
   findAll(query: TransactionsQuery, user: User): Promise<Pagination<Transaction>> {
@@ -39,9 +39,9 @@ export class TransactionService {
     return this.transactionRepo.findOne({ where: { transactionID } });
   }
 
-  async update(transactionID: string, updateTransaction: UpdateTransaction) {
+  async update(transactionID: string, updateTransaction: UpdateTransaction, queryRunner: QueryRunner) {
     const transaction = await this.findByTransactionID(transactionID);
-    return this.transactionRepo.update(transaction.id, updateTransaction);
+    return queryRunner.manager.update(TransactionEntity, transaction.id, updateTransaction);
   }
 
   async remove(transactionID: string) {

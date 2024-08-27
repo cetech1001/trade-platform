@@ -1,6 +1,6 @@
 import {PayloadAction} from "@reduxjs/toolkit";
 import {TradeAssetActions} from "../types";
-import {TradeAssetType} from "@coinvant/types";
+import {CurrentAsset, TradeAssetType} from "@coinvant/types";
 
 const initialState = {
 	currentAsset: null,
@@ -22,11 +22,7 @@ interface Payload {
 	list: any[];
 	totalPages: number;
 	page: number;
-	asset: {
-		symbol: string;
-		id: string;
-		type: TradeAssetType;
-	};
+	asset: CurrentAsset;
 }
 
 const reducer = (state = initialState, action: PayloadAction<Payload>) => {

@@ -1,21 +1,21 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  CreateDateColumn,
-  UpdateDateColumn,
-  JoinColumn
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	ManyToOne,
+	CreateDateColumn,
+	UpdateDateColumn,
+	JoinColumn,
 } from 'typeorm';
 import {UserEntity} from "../../user/entities/user.entity";
 import {
-  CryptoCurrency,
-  ForexPair,
-  StockOption,
-  Trade,
-  TradeAssetType,
-  TradeStatus,
-  User
+	CryptoCurrency,
+	ForexPair,
+	StockOption,
+	Trade,
+	TradeAssetType, TradeClosureReason,
+	TradeStatus,
+	User
 } from "@coinvant/types";
 import {StockEntity} from "../../trade-asset/entities/stock.entity";
 import {ForexEntity} from "../../trade-asset/entities/forex.entity";
@@ -26,110 +26,119 @@ import {ApiProperty} from "@nestjs/swagger";
 
 @Entity('trades')
 export class TradeEntity implements Trade{
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+	@PrimaryGeneratedColumn('uuid')
+	id: string;
 
-  @IsNotEmpty()
-  @Transform(v => +v.value)
-  @IsNumber()
-  @IsPositive()
-  @ApiProperty({ type: Number, required: true })
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  bidAmount: number;
+	@IsNotEmpty()
+	@Transform(v => +v.value)
+	@IsNumber()
+	@IsPositive()
+	@ApiProperty({ type: Number, required: true })
+	@Column({ type: 'decimal', precision: 10, scale: 2 })
+	bidAmount: number;
 
-  @IsOptional()
-  @Transform(v => +v.value)
-  @IsNumber()
-  @ApiProperty({ type: Number, required: false })
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  targetPrice: number;
+	@Column({ type: 'decimal', precision: 16, scale: 8, nullable: true })
+	buyPrice: number;
 
-  @IsOptional()
-  @Transform(v => +v.value)
-  @IsNumber()
-  @IsPositive()
-  @ApiProperty({ type: Number, required: false })
-  @Column({ type: 'decimal', precision: 5, scale: 2, default: 1.00 })
-  multiplier: number;
+	@Column({ type: 'decimal', precision: 16, scale: 8, nullable: true })
+	sellPrice: number;
 
-  @IsOptional()
-  @IsDate()
-  @ApiProperty({ type: Date, required: false })
-  @Column({ type: 'timestamp', nullable: true })
-  executeAt: Date;
+	@Column({ type: 'decimal', precision: 16, scale: 8, nullable: true })
+	units: number;
 
-  @Column({ default: false })
-  isExecuted: boolean;
+	@Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+	profitOrLoss: number;
 
-  @IsOptional()
-  @Transform(v => +v.value)
-  @IsNumber()
-  @IsPositive()
-  @ApiProperty({ type: Number, required: false })
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  takeProfit: number;
+	@IsOptional()
+	@Transform(v => +v.value)
+	@IsNumber()
+	@IsPositive()
+	@ApiProperty({ type: Number, required: false })
+	@Column({ type: 'decimal', precision: 5, scale: 2, default: 1.00 })
+	leverage: number;
 
-  @IsOptional()
-  @Transform(v => +v.value)
-  @IsNumber()
-  @IsPositive()
-  @ApiProperty({ type: Number, required: false })
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  stopLoss: number;
+	@IsOptional()
+	@IsDate()
+	@ApiProperty({ type: Date, required: false })
+	@Column({ type: 'timestamp', nullable: true })
+	executeAt: string;
 
-  @IsOptional()
-  @IsBoolean()
-  @ApiProperty({ type: Boolean, required: false })
-  @Column({ default: false })
-  isShort: boolean;
+	@Column({ type: 'timestamp', nullable: true })
+	closedAt: string;
 
-  @IsNotEmpty()
-  @IsIn(Object.values(TradeAssetType))
-  @ApiProperty({ type: String, required: true, enum: TradeAssetType })
-  @Column({ type: 'enum', enum: TradeAssetType })
-  assetType: TradeAssetType;
+	@IsOptional()
+	@Transform(v => +v.value)
+	@IsNumber()
+	@IsPositive()
+	@ApiProperty({ type: Number, required: false })
+	@Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+	takeProfit: number;
 
-  @IsOptional()
-  @IsIn(Object.values(TradeStatus))
-  @ApiProperty({ type: String, required: false, enum: TradeStatus })
-  @Column({ type: 'enum', enum: TradeStatus, default: TradeStatus.pending })
-  status: TradeStatus;
+	@IsOptional()
+	@Transform(v => +v.value)
+	@IsNumber()
+	@IsPositive()
+	@ApiProperty({ type: Number, required: false })
+	@Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+	stopLoss: number;
 
-  @ManyToOne(
-      () => UserEntity,
-          user => user.trades,
-      { eager: true }
-  )
-  @JoinColumn({ name: 'userID' })
-  user: User;
+	@IsOptional()
+	@IsBoolean()
+	@ApiProperty({ type: Boolean, required: false })
+	@Column({ default: false })
+	isShort: boolean;
 
-  @ManyToOne(
-      () => StockEntity,
-          ({ trades }) => trades,
-      { nullable: true, eager: true }
-  )
-  @JoinColumn({ name: 'stockID' })
-  stock: StockOption;
+	@Column({ type: 'enum', enum: TradeClosureReason })
+	closureReason: TradeClosureReason;
 
-  @ManyToOne(
-      () => ForexEntity,
-          ({ trades }) => trades,
-      { nullable: true, eager: true }
-  )
-  @JoinColumn({ name: 'forexID' })
-  forex: ForexPair;
+	@IsNotEmpty()
+	@IsIn(Object.values(TradeAssetType))
+	@ApiProperty({ type: String, required: true, enum: TradeAssetType })
+	@Column({ type: 'enum', enum: TradeAssetType })
+	assetType: TradeAssetType;
 
-  @ManyToOne(
-      () => CryptoEntity,
-          ({ trades }) => trades,
-      { nullable: true, eager: true }
-  )
-  @JoinColumn({ name: 'cryptoID' })
-  crypto: CryptoCurrency;
+	@Column({ type: 'enum', enum: TradeStatus, default: TradeStatus.pending })
+	status: TradeStatus;
 
-  @CreateDateColumn()
-  createdAt: string;
+	@ManyToOne(
+		() => UserEntity,
+		user => user.trades,
+		{ eager: true }
+	)
+	@JoinColumn({ name: 'userID' })
+	user: User;
 
-  @UpdateDateColumn()
-  updatedAt: string;
+	@ManyToOne(
+		() => StockEntity,
+		({ trades }) => trades,
+		{ nullable: true, eager: true }
+	)
+	@JoinColumn({ name: 'stockID' })
+	stock: StockOption;
+
+	@ManyToOne(
+		() => ForexEntity,
+		({ trades }) => trades,
+		{ nullable: true, eager: true }
+	)
+	@JoinColumn({ name: 'forexID' })
+	forex: ForexPair;
+
+	@ManyToOne(
+		() => CryptoEntity,
+		({ trades }) => trades,
+		{ nullable: true, eager: true }
+	)
+	@JoinColumn({ name: 'cryptoID' })
+	crypto: CryptoCurrency;
+
+	@CreateDateColumn()
+	createdAt: string;
+
+	@UpdateDateColumn()
+	updatedAt: string;
+
+	get asset() {
+		return this.stock || this.forex || this.crypto;
+	}
 }

@@ -42,8 +42,8 @@ export class DepositController {
   }
 
   @Get()
-  findAll(@Query() options: PaginationOptionsDto, @CurrentUser() user: User) {
-    return this.depositService.findAll(options, user);
+  findAll(@Query() query: PaginationOptionsDto, @CurrentUser() user: User) {
+    return this.depositService.findAll(query, user);
   }
 
   @Get('total/amount')

@@ -31,9 +31,9 @@ export enum TransactionStatusEnum {
 	confirmed = 'confirmed',
 	rejected = 'rejected',
 	paid = 'paid',
-	canceled = 'cancelled',
+	cancelled = 'cancelled',
 	active = 'active',
-	completed = 'completed',
+	closed = 'closed',
 
 }
 

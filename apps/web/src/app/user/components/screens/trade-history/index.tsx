@@ -1,5 +1,5 @@
 import {FC, useState} from "react";
-import {Trade} from "../../shared/trade";
+import {TradeItem} from "../../shared/trade";
 import {FilterDropdown} from "../../shared/filter-dropdown";
 import "../../../styles/TradeHistory.css";
 import {USER_ROUTES} from "../../../../../routes";
@@ -87,18 +87,18 @@ export const TradeHistory: FC<IProps> = (props) => {
           <div className={"trades"}>
             <div className="history-block">
               <span className={"text"}>APRIL 10</span>
-              <Trade/>
-              <Trade/>
+              {/*<TradeItem/>
+              <TradeItem/>*/}
             </div>
             <div className="history-block">
               <span className={"text"}>APRIL 5</span>
-              <Trade/>
-              <Trade/>
-              <Trade/>
+              {/*<TradeItem/>
+              <TradeItem/>
+              <TradeItem/>*/}
             </div>
             <div className="history-block">
               <span className={"text"}>FEBRUARY 29</span>
-              <Trade/>
+              {/*<TradeItem/>*/}
             </div>
           </div>
         </div>
