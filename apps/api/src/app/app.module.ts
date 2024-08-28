@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { TradeModule } from './trade/trade.module';
 import { PaymentMethodModule } from './payment-method/payment-method.module';
 import { DepositModule } from './deposit/deposit.module';
@@ -15,7 +15,7 @@ import path from 'path';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
+      rootPath: environment.assetsPath,
     }),
     AuthModule,
     UserModule,

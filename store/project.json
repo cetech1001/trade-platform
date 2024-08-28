@@ -10,8 +10,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "store/src/environments/environment.ts",
-              "with": "store/src/environments/environment.prod.ts"
+              "replace": "store/environments/environment.ts",
+              "with": "store/environments/environment.prod.ts"
             }
           ]
         }

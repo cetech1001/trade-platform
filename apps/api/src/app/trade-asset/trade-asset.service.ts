@@ -19,7 +19,7 @@ import path from "path";
 import csv from 'csv-parser';
 import axios from "axios";
 import {paginate} from "nestjs-typeorm-paginate";
-import {environment} from "../../environments/environment";
+import {environment} from "../../../environments/environment";
 
 @Injectable()
 export class TradeAssetService {

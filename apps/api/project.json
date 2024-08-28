@@ -19,20 +19,14 @@
         "assets": [
           "apps/api/src/assets"
         ],
-        "fileReplacements": [
-          {
-            "replace": "apps/api/src/environments/environment.ts",
-            "with": "apps/api/src/environments/environment.prod.ts"
-          }
-        ],
         "webpackConfig": "apps/api/webpack.config.js"
       },
       "configurations": {
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/api/src/environments/environment.ts",
-              "with": "apps/api/src/environments/environment.prod.ts"
+              "replace": "apps/api/environments/environment.ts",
+              "with": "apps/api/environments/environment.prod.ts"
             }
           ]
         }

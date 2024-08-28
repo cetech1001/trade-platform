@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {environment} from "../../environment/environment";
+import {environment} from "../../../environments/environment";
 import store, {AppDispatch, logout} from "@coinvant/store";
 
 export const api = axios.create({

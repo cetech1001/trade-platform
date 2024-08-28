@@ -1,5 +1,5 @@
 import axios from "axios"
-import {environment} from "../../environment/environment";
+import {environment} from "../../../environments/environment";
 import {LoginRequest, LoginResponse, RegisterRequest} from "@coinvant/types";
 
 export class AuthService {
