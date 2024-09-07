@@ -1,7 +1,7 @@
-import {Injectable} from '@nestjs/common';
-import {DataSource, Repository} from "typeorm";
-import {WithdrawalEntity} from "./entities/withdrawal.entity";
-import {InjectRepository} from "@nestjs/typeorm";
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { WithdrawalEntity } from './entities/withdrawal.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 import {
   CreateWithdrawal,
   PaginationOptions,
@@ -12,10 +12,10 @@ import {
   UserRole,
   Withdrawal,
   WithdrawalStatus
-} from "@coinvant/types";
-import {paginate, Pagination} from "nestjs-typeorm-paginate";
-import {TransactionService} from "../transaction/transaction.service";
-import {UserService} from "../user/user.service";
+} from '@coinvant/types';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { TransactionService } from '../transaction/transaction.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class WithdrawalService {
@@ -33,7 +33,7 @@ export class WithdrawalService {
         ...createWithdrawal,
         user,
       });
-      return this.transactionService.create({
+      return await this.transactionService.create({
         amount: withdrawal.amount,
         type: TransactionType.withdrawal,
         status: withdrawal.status,

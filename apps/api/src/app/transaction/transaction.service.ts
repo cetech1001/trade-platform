@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {
   CreateTransaction,
   Transaction, TransactionsQuery,
-  UpdateTransaction, User
+  UpdateTransaction
 } from "@coinvant/types";
 import {QueryRunner, Repository} from "typeorm";
 import {TransactionEntity} from "./entities/transaction.entity";
@@ -18,7 +18,7 @@ export class TransactionService {
     return queryRunner.manager.save(TransactionEntity, createTransaction);
   }
 
-  findAll(query: TransactionsQuery, user: User): Promise<Pagination<Transaction>> {
+  findAll(query: TransactionsQuery): Promise<Pagination<Transaction>> {
     const { status, type, ...options } = query;
     const queryBuilder = this.transactionRepo.createQueryBuilder('T');
 

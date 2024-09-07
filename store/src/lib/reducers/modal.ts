@@ -3,7 +3,7 @@ import {PayloadAction} from "@reduxjs/toolkit";
 import {ModalActions} from "../types";
 
 const initialState: ModalState = {
-  activeModal: null,
+  activeModal: Modals.settings,
 }
 
 const reducer = (state = initialState, action: PayloadAction<Modals>) => {

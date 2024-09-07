@@ -1,0 +1,54 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -26%;
+  width: 25%;
+  height: 100%;
+  background-color: rgba(14, 15, 18, 1);
+  transition: right 0.3s ease-out;
+  z-index: 999;
+  padding: 1%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+}
+
+.sidebar.open {
+  right: 0;
+}
+
+.close-button {
+  color: #FFFFFF;
+  font-size: 1.25rem;
+  margin-bottom: 16px;
+}
+
+.sidebar-option {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: rgba(94, 105, 120, 0.14);
+  color: #fff;
+  border-radius: 8px;
+}
+
+.sidebar-option:hover {
+  background-color: rgba(94, 105, 120, 0.22);
+  cursor: pointer;
+}
+
+.sidebar-option .info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-option .info h5 {
+  font-size: 1rem;
+}
+
+.sidebar-option .info p {
+  font-size: 0.8625rem;
+}

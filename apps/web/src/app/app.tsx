@@ -1,17 +1,22 @@
 import {Route, Routes, Navigate, Outlet} from "react-router-dom";
 import {User} from "./user";
-import {Landing} from "./landing";
-import {Alert} from "./shared/alert";
+import {Landing} from "./components/auth";
+import {Alert} from "./components/shared/alert";
 import {connect} from "react-redux";
-import {AuthState} from "@coinvant/types";
-import {FC} from "react";
+import { AlertState, AuthState } from '@coinvant/types';
 import {RootState} from "@coinvant/store";
 
 interface IProps {
   auth: AuthState,
+  alert: AlertState,
 }
 
-const Component: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+  auth: state.auth,
+  alert: state.alert,
+})
+
+export const App = connect(mapStateToProps)((props: IProps) => {
   const GuestRoute = () => {
     return !props.auth.user ? <Outlet/> : <Navigate to={'/platform'}/>
   }
@@ -22,7 +27,7 @@ const Component: FC<IProps> = (props) => {
 
   return (
     <>
-      <Alert/>
+      {props.alert.show && <Alert />}
       <Routes>
         <Route path="/" element={<GuestRoute/>}>
           <Route path="/" element={<Landing/>}/>
@@ -33,10 +38,4 @@ const Component: FC<IProps> = (props) => {
       </Routes>
     </>
   );
-}
-
-const mapStateToProps = (state: RootState) => ({
-  auth: state.auth,
-})
-
-export const App = connect(mapStateToProps)(Component);
+});

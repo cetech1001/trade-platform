@@ -2,6 +2,7 @@ export enum Modals {
   settings = 'settings',
   payments = 'payments',
   personal = 'personal',
+  kycVerification = 'kycVerification',
   password = 'password',
   deposit = 'deposit',
   editDeposit = 'editDeposit',

@@ -4,6 +4,7 @@ export interface User {
   email: string;
   password: string;
   walletBalance: number;
+  kycVerified: KYCStatus;
   status: UserStatus;
   role: UserRole;
   createdAt: string;
@@ -26,5 +27,11 @@ export enum UserStatus {
   disabled = 'disabled',
 }
 
-export interface CreateUser extends Omit<User, 'id' | 'createdAt' | 'updatedAt'> {}
-export interface UpdateUser extends Partial<CreateUser> {}
+export enum KYCStatus {
+  pending = 'pending',
+  verified = 'verified',
+  notStarted = 'notStarted',
+}
+
+export type CreateUser = Omit<User, 'id' | 'kycVerified' | 'createdAt' | 'updatedAt'>
+export type UpdateUser = Partial<CreateUser>
