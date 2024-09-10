@@ -132,6 +132,7 @@ export const Sidebar = connect(null, { logout })((props: IProps) => {
             <Nav className="flex-column pt-3 pt-md-0">
               <NavItem title="Overview" link={`/${AdminRoutes.overview}`} icon={'chart-pie'} />
               <NavItem title="Users" link={`/${AdminRoutes.users}`} icon={'users'}/>
+              <NavItem title="KYC" link={`/${AdminRoutes.kyc}`} icon={'file'}/>
               <NavItem title="Payment Methods" link={`/${AdminRoutes.paymentMethods}`} icon={'credit-card'}/>
               <NavItem title="Trades" link={`/${AdminRoutes.trades}`} icon={'chart-line'}/>
               <NavItem title="Deposits" link={`/${AdminRoutes.deposits}`} icon={'wallet'}/>

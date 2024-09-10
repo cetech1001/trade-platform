@@ -1,20 +1,27 @@
+import { Account } from './account';
+import { KYC } from './kyc';
+
 export interface User {
   id: string;
   name: string;
   email: string;
   password: string;
-  walletBalance: number;
-  kycVerified: KYCStatus;
+  kycStatus: KYCStatus;
   status: UserStatus;
   role: UserRole;
+  accounts: Account[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface UserState {
   list: User[];
+  kycList: KYC[];
+  kycCount: number;
   count: number;
   currentUser: User | null;
+  currentAccount: Account | null;
+  currentKYC: KYC | null;
 }
 
 export enum UserRole {
@@ -33,5 +40,5 @@ export enum KYCStatus {
   notStarted = 'notStarted',
 }
 
-export type CreateUser = Omit<User, 'id' | 'kycVerified' | 'createdAt' | 'updatedAt'>
-export type UpdateUser = Partial<CreateUser>
+export type CreateUser = Omit<User, 'id' | 'kycStatus' | 'accounts' | 'createdAt' | 'updatedAt'>
+export interface UpdateUser extends Partial<CreateUser>, Partial<Pick<User, 'kycStatus'>> {}

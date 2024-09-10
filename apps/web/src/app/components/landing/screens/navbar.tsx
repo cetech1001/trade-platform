@@ -1,11 +1,9 @@
-import {FC} from "react";
-
 interface IProps {
-  isOpen: boolean;
+  isSidebarOpen: boolean;
   onToggleSidebar: () => void;
 }
 
-export const Navbar: FC<IProps> = (props) => {
+export const Navbar = (props: IProps) => {
   return (
     <nav className="navbar">
       <div className={'logo'}>
@@ -21,7 +19,7 @@ export const Navbar: FC<IProps> = (props) => {
         </svg>
       </div>
       <div>
-        {!props.isOpen && (
+        {!props.isSidebarOpen && (
           <button className="button bg-primary" onClick={props.onToggleSidebar}>
             Log In / Sign Up
           </button>

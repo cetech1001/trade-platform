@@ -1,11 +1,12 @@
-import {AppDispatch, showAlert} from "@coinvant/store";
+import {AppDispatch} from "../../index";
 import {TransactionService} from "../services";
 import {TransactionActions} from "../types";
-import {PaginationOptions} from "@coinvant/types";
+import { FindTransactionsQueryParams } from '@coinvant/types';
+import { showAlert } from './alert';
 
-export const fetchTransactions = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
+export const fetchTransactions = (query?: FindTransactionsQueryParams) => async (dispatch: AppDispatch) => {
 	try {
-		const data = await TransactionService.getTransactions(options);
+		const data = await TransactionService.getTransactions(query);
 		dispatch({
 			type: TransactionActions.LIST,
 			payload: {

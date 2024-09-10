@@ -62,12 +62,7 @@ export const Nav = connect(mapStateToProps, actions)((props: IProps) => {
         <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
               className={`nav-item ${[USER_ROUTES.trades, USER_ROUTES.history].includes(props.activeTab)
               && 'nav-item-active'}`}>
-          <div>
-            {/*<div className={'badge'}>
-              <p>1</p>
-            </div>*/}
-            <i className="fas fa-chart-line"></i>
-          </div>
+          <i className="fas fa-chart-line"></i>
           <p>Trades</p>
         </Link>
         <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.help)}
@@ -77,8 +72,8 @@ export const Nav = connect(mapStateToProps, actions)((props: IProps) => {
         </Link>
         <Link to={'#'} onClick={() => props.openModal(Modals.settings)}
               className={`nav-item ${props.activeModal === Modals.settings && 'nav-item-active'}`}>
-          <i className="fas fa-user"></i>
-          <p>My Profile</p>
+          <i className="fas fa-cog"></i>
+          <p>Settings</p>
         </Link>
         <Link to={'#'} onClick={props.logout} className={`nav-item text-danger`}>
           <i className="fas fa-sign-out-alt" style={{ color: "red" }}></i>

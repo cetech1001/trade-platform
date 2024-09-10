@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import "../../../../../styles/Chart.css";
 import {connect} from "react-redux";
 import {RootState} from "@coinvant/store";
 

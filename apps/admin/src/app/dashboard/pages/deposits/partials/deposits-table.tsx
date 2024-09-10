@@ -47,7 +47,7 @@ export const DepositsTable = connect(mapStateToProps, actions)((props: IProps) =
 			<tr>
 				<td>
 	              <span className="fw-normal">
-	                {deposit.user.name}
+	                {deposit.account.user?.name}
 	              </span>
 				</td>
 				<td>

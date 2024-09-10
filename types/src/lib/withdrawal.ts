@@ -1,4 +1,5 @@
-import {User} from "./user";
+import { Account } from './account';
+import { PaginationOptions } from './pagination';
 
 export interface Withdrawal {
 	id: string;
@@ -6,7 +7,7 @@ export interface Withdrawal {
 	paymentMethod: string;
 	network: string;
 	walletAddress: string;
-	user: User;
+	account: Account;
 	status: WithdrawalStatus;
 	createdAt: string;
 	updatedAt: string;
@@ -18,12 +19,18 @@ export enum WithdrawalStatus {
 	cancelled = 'cancelled',
 }
 
-export interface CreateWithdrawal extends Pick<Withdrawal, 'amount' | 'paymentMethod' | 'walletAddress' | 'network'> {}
-export interface UpdateWithdrawal extends Pick<Withdrawal, 'status'> {}
+export interface CreateWithdrawal extends Pick<Withdrawal, 'amount' | 'paymentMethod' | 'walletAddress' | 'network'> {
+	accountID: string;
+}
+export type UpdateWithdrawal = Pick<Withdrawal, 'status'>;
 
 export interface WithdrawalState {
 	list: Withdrawal[];
 	count: number;
 	currentWithdrawal: Withdrawal | null;
 	total: number;
+}
+
+export interface FindWithdrawalsQueryParams extends PaginationOptions {
+	accountID?: string;
 }

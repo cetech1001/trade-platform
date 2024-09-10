@@ -11,6 +11,7 @@ import {PaymentMethods} from "./pages/payment-methods";
 import {Deposits} from "./pages/deposits";
 import {Withdrawals} from "./pages/withdrawals";
 import {Profile} from "./pages/profile";
+import { KYC } from './pages/kyc';
 
 interface IProps {
     authUser: AuthUser | null;
@@ -46,6 +47,8 @@ export const Dashboard = connect(mapStateToProps)((props: IProps) => {
                            element={<Withdrawals/>}/>
                     <Route path={removeDashboardFromUrl(AdminRoutes.profile)}
                            element={<Profile/>}/>
+                    <Route path={removeDashboardFromUrl(AdminRoutes.kyc)}
+                           element={<KYC/>}/>
                 </Routes>
             </main>
         </>

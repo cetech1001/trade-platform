@@ -1,3 +1,5 @@
+import { User } from './user';
+
 export interface KYC {
   id: string;
   firstName: string;
@@ -8,6 +10,7 @@ export interface KYC {
   idCard: string;
   proofOfAddress: string;
   photo: string;
+  user: User;
   createdAt: string;
   updatedAt: string;
 }

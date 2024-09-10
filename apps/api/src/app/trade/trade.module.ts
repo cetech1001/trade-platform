@@ -5,14 +5,14 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {TradeEntity} from "./entities/trade.entity";
 import {TradeAssetModule} from "../trade-asset/trade-asset.module";
 import {TransactionModule} from "../transaction/transaction.module";
-import {UserModule} from "../user/user.module";
+import { AccountModule } from '../account/account.module';
 
 @Module({
   imports: [
       TypeOrmModule.forFeature([TradeEntity]),
       TradeAssetModule,
       TransactionModule,
-      UserModule,
+      AccountModule,
   ],
   controllers: [TradeController],
   providers: [TradeService],

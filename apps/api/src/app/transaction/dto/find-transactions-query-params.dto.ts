@@ -1,14 +1,14 @@
 import {PaginationOptionsDto} from "../../../dto/pagination.dto";
-import {IsIn, IsOptional} from "class-validator";
+import { IsIn, IsOptional, IsString } from 'class-validator';
 import {ApiProperty} from "@nestjs/swagger";
 import {
-	TransactionsQuery,
+	FindTransactionsQueryParams,
 	TransactionStatus,
 	TransactionStatusEnum,
 	TransactionType
 } from "@coinvant/types";
 
-export class TransactionsQueryDto extends PaginationOptionsDto implements TransactionsQuery{
+export class FindTransactionsQueryParamsDto extends PaginationOptionsDto implements FindTransactionsQueryParams{
 	@IsOptional()
 	@IsIn(Object.values(TransactionType))
 	@ApiProperty({
@@ -26,4 +26,9 @@ export class TransactionsQueryDto extends PaginationOptionsDto implements Transa
 		enum: TransactionStatusEnum,
 	})
 	status: TransactionStatus;
+
+	@IsOptional()
+	@IsString()
+	@ApiProperty({ type: String, required: false })
+	accountID: string;
 }

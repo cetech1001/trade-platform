@@ -3,8 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { WithdrawalEntity } from './entities/withdrawal.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  CreateWithdrawal,
-  PaginationOptions,
+  CreateWithdrawal, FindWithdrawalsQueryParams,
   Transaction,
   TransactionType,
   UpdateWithdrawal,
@@ -15,7 +14,7 @@ import {
 } from '@coinvant/types';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { TransactionService } from '../transaction/transaction.service';
-import { UserService } from '../user/user.service';
+import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class WithdrawalService {
@@ -23,22 +22,23 @@ export class WithdrawalService {
       @InjectRepository(WithdrawalEntity) private readonly withdrawalRepo:
           Repository<WithdrawalEntity>,
       private readonly dataSource: DataSource,
-      private readonly userService: UserService,
+      private readonly accountService: AccountService,
       private readonly transactionService: TransactionService) {}
 
-  async create(createWithdrawal: CreateWithdrawal, user: User): Promise<Transaction> {
+  async create(createWithdrawal: CreateWithdrawal): Promise<Transaction> {
     const queryRunner = this.dataSource.createQueryRunner();
     try {
+      const account = await this.accountService.findOne(createWithdrawal.accountID);
       const withdrawal = await queryRunner.manager.save(WithdrawalEntity, {
         ...createWithdrawal,
-        user,
+        account,
       });
       return await this.transactionService.create({
         amount: withdrawal.amount,
         type: TransactionType.withdrawal,
         status: withdrawal.status,
         transactionID: withdrawal.id,
-        user,
+        account,
       }, queryRunner);
     } catch (e) {
       console.error(e);
@@ -49,14 +49,27 @@ export class WithdrawalService {
     }
   }
 
-  findAll(options: PaginationOptions, user: User): Promise<Pagination<Withdrawal>> {
-    const searchOptions = {};
+  findAll(query: FindWithdrawalsQueryParams, user: User): Promise<Pagination<Withdrawal>> {
+    // eslint-disable-next-line prefer-const
+    let { accountID, ...options } = query;
+    const queryBuilder = this.withdrawalRepo.createQueryBuilder('W');
 
-    if (user.role === UserRole.user) {
-      searchOptions['where'] = { user: { id: user.id } };
+    if (user.role === UserRole.admin) {
+      queryBuilder
+        .leftJoinAndSelect('W.account', 'A')
+        .leftJoinAndSelect('A.user', 'U');
     }
 
-    return paginate(this.withdrawalRepo, options, searchOptions);
+    if (user.role === UserRole.user) {
+      if (!accountID) {
+        accountID = user.accounts[0].id;
+      }
+      queryBuilder.where('A.id = :accountID', { accountID });
+    }
+
+    queryBuilder.orderBy('W.createdAt', 'DESC');
+
+    return paginate(queryBuilder, options);
   }
 
   async fetchTotalWithdrawalAmount() {
@@ -79,9 +92,8 @@ export class WithdrawalService {
       await queryRunner.manager.update(WithdrawalEntity, id, updateWithdrawal);
       const withdrawal = await this.findOne(id);
       if (updateWithdrawal.status === WithdrawalStatus.paid) {
-        await this.userService.update(withdrawal.user.id, {
-          walletBalance: +withdrawal.user.walletBalance - (+withdrawal.amount),
-        }, queryRunner);
+        await this.accountService
+          .increaseBalance(withdrawal.account.id, withdrawal.amount, queryRunner);
       }
       await this.transactionService.update(withdrawal.id, updateWithdrawal, queryRunner);
       return withdrawal;

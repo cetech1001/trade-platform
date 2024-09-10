@@ -7,7 +7,7 @@ import {
 	UpdateDateColumn,
 	JoinColumn,
 } from 'typeorm';
-import {UserEntity} from "../../user/entities/user.entity";
+import {AccountEntity} from "../../account/entities/account.entity";
 import {
 	CryptoCurrency,
 	ForexPair,
@@ -15,7 +15,7 @@ import {
 	Trade,
 	TradeAssetType, TradeClosureReason,
 	TradeStatus,
-	User
+	Account
 } from "@coinvant/types";
 import {StockEntity} from "../../trade-asset/entities/stock.entity";
 import {ForexEntity} from "../../trade-asset/entities/forex.entity";
@@ -101,12 +101,12 @@ export class TradeEntity implements Trade{
 	status: TradeStatus;
 
 	@ManyToOne(
-		() => UserEntity,
-		user => user.trades,
+		() => AccountEntity,
+		account => account.trades,
 		{ eager: true }
 	)
-	@JoinColumn({ name: 'userID' })
-	user: User;
+	@JoinColumn({ name: 'accountID' })
+	account: Account;
 
 	@ManyToOne(
 		() => StockEntity,

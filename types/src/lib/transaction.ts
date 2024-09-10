@@ -1,22 +1,22 @@
-import {User} from "./user";
 import {DepositStatus} from "./deposit";
 import {WithdrawalStatus} from "./withdrawal";
 import {TradeStatus} from "./trade";
 import {PaginationOptions} from "./pagination";
+import { Account } from './account';
 
 export interface Transaction {
 	id: string;
 	type: TransactionType;
 	transactionID: string;
 	amount: number;
-	user: User;
+	account: Account;
 	status: TransactionStatus;
 	createdAt: string;
 	updatedAt: string;
 }
 
-export interface CreateTransaction extends Pick<Transaction, 'type' | 'amount' | 'transactionID' | 'status' | 'user'> {}
-export interface UpdateTransaction extends Pick<Transaction, 'status'> {}
+export type CreateTransaction = Pick<Transaction, 'type' | 'amount' | 'transactionID' | 'status' | 'account'>;
+export type UpdateTransaction = Pick<Transaction, 'status'>;
 
 export enum TransactionType {
 	deposit = 'deposit',
@@ -42,7 +42,8 @@ export interface TransactionState {
 	count: number;
 }
 
-export interface TransactionsQuery extends PaginationOptions {
+export interface FindTransactionsQueryParams extends PaginationOptions {
 	type?: TransactionType;
 	status?: TransactionStatus;
+	accountID?: string;
 }

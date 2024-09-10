@@ -15,10 +15,11 @@ import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {JwtAuthGuard} from "../../guards";
 import {Roles} from "../../decorators";
 import {UserRole} from "@coinvant/types";
+import { RolesGuard } from '../../guards/roles.guard';
 
 @ApiTags('Payment Method Controller')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('payment-method')
 export class PaymentMethodController {
   constructor(private readonly paymentMethodService: PaymentMethodService) {}

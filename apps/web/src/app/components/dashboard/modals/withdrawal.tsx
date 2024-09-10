@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {AlertState, AuthUser, CreateWithdrawal, Modals, PaginationOptions, PaymentMethod} from "@coinvant/types";
+import {
+  Account,
+  AlertState,
+  AuthUser,
+  CreateWithdrawal,
+  Modals,
+  PaginationOptions,
+  PaymentMethod
+} from '@coinvant/types';
 import {formatCurrency} from "../../../helpers";
 import {connect} from "react-redux";
 import {addWithdrawal, closeModal, fetchPaymentMethods, openModal, RootState, showAlert} from "@coinvant/store";
@@ -8,6 +16,7 @@ interface IProps {
   activeModal: Modals | null;
   paymentMethods: PaymentMethod[];
   user: Omit<AuthUser, 'password'> | null;
+  account: Account | null;
   openModal: (payload: Modals) => void;
   closeModal: () => void;
   showAlert: (payload: AlertState) => void;
@@ -19,6 +28,7 @@ const mapStateToProps = (state: RootState) => ({
   activeModal: state.modal.activeModal,
   paymentMethods: state.paymentMethod.list,
   user: state.auth.user,
+  account: state.user.currentAccount,
 });
 
 const actions = {
@@ -42,13 +52,13 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
       setMethod(() => props.paymentMethods.find(({ id }) =>
           id === paymentMethod));
     }
-  }, [paymentMethod]);
+  }, [paymentMethod, props.paymentMethods]);
 
   useEffect(() => {
     if (props.paymentMethods.length === 0) {
       props.fetchPaymentMethods();
     }
-  }, []);
+  }, [props]);
 
   const reset = () => {
     setStep(1);
@@ -86,7 +96,7 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
       return false;
     }
 
-    if (+props.user?.walletBalance! < +amount) {
+    if (!props.account || +props.account.walletBalance < +amount) {
       props.showAlert({
         show: true,
         type: "error",
@@ -103,13 +113,14 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
   }
 
   const submit = async () => {
-    if (validateInputs()) {
+    if (validateInputs() && props.account && method) {
       setIsSubmitting(true);
       await props.addWithdrawal({
         amount,
-        paymentMethod: method?.name!,
-        network: method?.network!,
+        paymentMethod: method.name,
+        network: method.network,
         walletAddress,
+        accountID: props.account.id,
       });
       setIsSubmitting(false);
       setStep(2);

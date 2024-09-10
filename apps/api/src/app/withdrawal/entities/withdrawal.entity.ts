@@ -7,11 +7,11 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn
 } from "typeorm";
-import {User, Withdrawal, WithdrawalStatus} from "@coinvant/types";
+import { Account, Withdrawal, WithdrawalStatus } from '@coinvant/types';
 import {IsIn, IsNotEmpty, IsNumber, IsString} from "class-validator";
 import {Transform} from "class-transformer";
 import {ApiProperty} from "@nestjs/swagger";
-import {UserEntity} from "../../user/entities/user.entity";
+import { AccountEntity } from '../../account/entities/account.entity';
 
 @Entity('withdrawals')
 export class WithdrawalEntity implements Withdrawal {
@@ -53,11 +53,13 @@ export class WithdrawalEntity implements Withdrawal {
 	@ApiProperty({ type: String, enum: WithdrawalStatus })
 	status: WithdrawalStatus;
 
-	@ManyToOne(() => UserEntity, (user) => user.withdrawals, {
-		eager: true,
-	})
-	@JoinColumn({ name: 'userID' })
-	user: User;
+	@ManyToOne(
+		() => AccountEntity,
+		(account) => account.withdrawals,
+		{ eager: true }
+	)
+	@JoinColumn({ name: 'accountID' })
+	account: Account;
 
 	@CreateDateColumn()
 	createdAt: string;

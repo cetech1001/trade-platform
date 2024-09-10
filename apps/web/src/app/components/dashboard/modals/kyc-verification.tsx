@@ -6,8 +6,8 @@ import {
   openModal,
   refreshUserProfile,
   RootState,
-  showAlert
-} from "@coinvant/store";
+  showAlert, uploadKYC
+} from '@coinvant/store';
 import {connect} from "react-redux";
 import { Form } from 'react-bootstrap';
 
@@ -19,6 +19,7 @@ interface IProps {
   editUser: (id: string, payload: UpdateUser) => Promise<void>;
   showAlert: (payload: AlertState) => void;
   refreshUserProfile: () => Promise<void>;
+  uploadKYC: (formData: FormData) => Promise<void>;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -32,6 +33,7 @@ const actions = {
   editUser,
   showAlert,
   refreshUserProfile,
+  uploadKYC,
 };
 
 export const KYCVerification = connect(mapStateToProps, actions)((props: IProps) => {
@@ -74,7 +76,9 @@ export const KYCVerification = connect(mapStateToProps, actions)((props: IProps)
         formData.append('photo', photo);
         formData.append('idCard', idCard);
         formData.append('proofOfAddress', proofOfAddress);
+        await props.uploadKYC(formData);
         await props.refreshUserProfile();
+        props.openModal(Modals.settings);
       } else {
         props.showAlert({
           type: 'error',
@@ -104,7 +108,7 @@ export const KYCVerification = connect(mapStateToProps, actions)((props: IProps)
             <div className={'input'}>
               <span>First name</span>
               <div className={'input-field'}>
-                <input type={'text'} value={createKYC.firstName}
+                <input type={'text'} name={"firstName"} value={createKYC.firstName}
                        onChange={onChange} required />
               </div>
             </div>
@@ -113,7 +117,7 @@ export const KYCVerification = connect(mapStateToProps, actions)((props: IProps)
             <div className={'input'}>
               <span>Last name</span>
               <div className={'input-field'}>
-                <input type={'text'} value={createKYC.lastName}
+                <input type={'text'} name={"lastName"} value={createKYC.lastName}
                        onChange={onChange} required />
               </div>
             </div>
@@ -122,7 +126,7 @@ export const KYCVerification = connect(mapStateToProps, actions)((props: IProps)
             <div className={'input'}>
               <span>D.O.B.</span>
               <div className={'input-field'}>
-                <input type={'text'} value={createKYC.dob}
+                <input type={'date'} name={"dob"} value={createKYC.dob}
                        onChange={onChange} required />
               </div>
             </div>
@@ -131,7 +135,8 @@ export const KYCVerification = connect(mapStateToProps, actions)((props: IProps)
             <div className={'input'}>
               <span>Nationality</span>
               <div className={'input-field'}>
-                <input type={'text'} value={createKYC.nationality}
+                <input type={'text'} name={"nationality"}
+                       value={createKYC.nationality}
                        onChange={onChange} required />
               </div>
             </div>
@@ -140,7 +145,8 @@ export const KYCVerification = connect(mapStateToProps, actions)((props: IProps)
             <div className={'input'}>
               <span>Residential address</span>
               <div className={'input-field'}>
-                <input type={'text'} value={createKYC.residentialAddress}
+                <input type={'text'} name={"residentialAddress"}
+                       value={createKYC.residentialAddress}
                        onChange={onChange} required />
               </div>
             </div>
@@ -171,7 +177,7 @@ export const KYCVerification = connect(mapStateToProps, actions)((props: IProps)
       </div>
       <div style={{ display: 'flex' }}>
         <button className={"button bg-primary"} onClick={onSave} style={{ marginBottom: "1rem" }}>
-          {isSubmitting ? "Saving..." : "Save Changes"}
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </div>
     </div>

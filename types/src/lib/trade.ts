@@ -1,6 +1,6 @@
-import {User} from "./user";
 import {CryptoCurrency, ForexPair, StockOption, TradeAssetType} from "./trade-asset";
 import {PaginationOptions} from "./pagination";
+import { Account } from './account';
 
 export interface Trade {
 	id: string;
@@ -18,7 +18,7 @@ export interface Trade {
 	closureReason?: TradeClosureReason;
 	assetType: TradeAssetType;
 	status: TradeStatus;
-	user: User;
+	account: Account;
 	stock: StockOption;
 	forex: ForexPair;
 	crypto: CryptoCurrency;
@@ -41,15 +41,17 @@ export interface CreateTrade
 		| 'assetType'
 		| 'takeProfit'
 		| 'stopLoss'> {
+	accountID: string;
 	assetID: string;
 	executeAt?: string;
 	isShort?: boolean;
 	openingPrice?: number;
 }
 
-export interface UpdateTrade extends Pick<Trade, 'status'> {}
+export type UpdateTrade = Pick<Trade, 'status' | 'stopLoss' | 'takeProfit'>;
 
 export interface FindTradeQueryParams extends PaginationOptions, Partial<Pick<Trade, 'status' | 'assetType'>>{
+	accountID?: string;
 }
 
 export enum TradeClosureReason {

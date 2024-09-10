@@ -2,25 +2,27 @@ import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
 import {
 	DepositStatus,
 	Modals,
-	PaginationOptions, TradeStatus,
-	Transaction, TransactionsQuery, TransactionStatus, TransactionStatusEnum,
-	TransactionType, WithdrawalStatus
-} from "@coinvant/types";
+	TradeStatus,
+	Transaction, FindTransactionsQueryParams, TransactionStatus, TransactionStatusEnum,
+	TransactionType, WithdrawalStatus, Account
+} from '@coinvant/types';
 import {FilterDropdown} from "../shared/filter-dropdown";
 import {capitalizeFirstLetter, formatCurrency, formatDate, groupTransactionsByDate} from "../../../helpers";
 import {connect} from "react-redux";
 import {closeModal, fetchTransactions, openModal, RootState} from "@coinvant/store";
 
 interface IProps {
+	account: Account | null;
 	activeModal: Modals | null;
 	transactions: Transaction[];
 	totalTransactions: number;
 	openModal: (payload: Modals) => void;
 	closeModal: () => void;
-	fetchTransactions: (query?: TransactionsQuery) => void;
+	fetchTransactions: (query?: FindTransactionsQueryParams) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
+	account: state.user.currentAccount,
 	transactions: state.transaction.list,
 	totalTransactions: state.transaction.count,
 	activeModal: state.modal.activeModal,
@@ -33,9 +35,10 @@ const actions = {
 };
 
 export const Transactions = connect(mapStateToProps, actions)((props: IProps) => {
-	const [options, setOptions] = useState<PaginationOptions>({
+	const [options, setOptions] = useState<FindTransactionsQueryParams>({
 		page: 1,
 		limit: 5,
+		accountID: props.account?.id,
 	});
 	const [status, setStatus] = useState<TransactionStatus | "">("");
 	const [type, setType] = useState<TransactionType | "">("");
@@ -51,18 +54,18 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 			type: type || undefined,
 			status: status || undefined,
 		})
-	}, [type, status]);
+	}, [type, status, props, options]);
 
 	const totalPages = useMemo(() => {
 		return Math.ceil(props.totalTransactions / options.limit);
-	}, [props.totalTransactions]);
+	}, [options.limit, props.totalTransactions]);
 
 	const isExhausted = useCallback(() => {
 		if (props.transactions.length <= options.limit) {
 			return true;
 		}
 		return options.page * options.limit === props.totalTransactions;
-	}, [props]);
+	}, [options.limit, options.page, props.totalTransactions, props.transactions.length]);
 
 	const onPrevClick = () => {
 		if (options.page > 1) {
@@ -129,7 +132,6 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 		}, [transaction]);
 
 		const statusColor = useMemo(() => {
-			// @ts-ignore
 			if ([
 				DepositStatus.confirmed,
 				WithdrawalStatus.paid,
@@ -137,7 +139,6 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 				TradeStatus.active].includes(transaction.status)) {
 				return '#1B985E';
 			}
-			// @ts-ignore
 			if ([DepositStatus.rejected,
 				WithdrawalStatus.cancelled,
 				TradeStatus.cancelled].includes(transaction.status)) {

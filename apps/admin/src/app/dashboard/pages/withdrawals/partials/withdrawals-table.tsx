@@ -46,7 +46,7 @@ export const WithdrawalsTable = connect(mapStateToProps, actions)((props: IProps
 			<tr>
 				<td>
 	              <span className="fw-normal">
-	                {withdrawal.user.name}
+	                {withdrawal.account.user?.name}
 	              </span>
 				</td>
 				<td>

@@ -1,7 +1,16 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { KYC } from '@coinvant/types';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm';
+import { KYC, User } from '@coinvant/types';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserEntity } from './user.entity';
 
 @Entity('kyc')
 export class KycEntity implements KYC{
@@ -50,6 +59,13 @@ export class KycEntity implements KYC{
 
   @Column()
   proofOfAddress: string;
+
+  @OneToOne(
+    () => UserEntity,
+    { onDelete: 'CASCADE', onUpdate: 'CASCADE', eager: true }
+  )
+  @JoinColumn({ name: 'userID' })
+  user: User;
 
   @CreateDateColumn()
   createdAt: string;

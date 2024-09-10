@@ -45,7 +45,6 @@ export const EditUserModal = connect(mapStateToProps, actions)((props: IProps) =
 				password: props.user.password,
 				role: props.user.role,
 				status: props.user.status,
-				walletBalance: props.user.walletBalance,
 			});
 		}
 	}, [props.user]);

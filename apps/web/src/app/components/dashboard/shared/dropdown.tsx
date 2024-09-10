@@ -1,5 +1,4 @@
 import {Dispatch, FC, MutableRefObject, SetStateAction, useEffect} from "react";
-import "../../../../styles/Dropdown.css";
 import {capitalizeFirstLetter} from "../../../helpers";
 
 interface IProps {

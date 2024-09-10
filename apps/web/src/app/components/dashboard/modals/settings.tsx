@@ -1,18 +1,21 @@
-import {AuthUser, Modals} from "@coinvant/types";
-import {formatCurrency} from "../../../helpers";
-import {closeModal, logout, openModal, RootState} from "@coinvant/store";
-import {connect} from "react-redux";
+import { Account, AuthUser, KYCStatus, Modals } from '@coinvant/types';
+import { capitalizeFirstLetter, formatCurrency } from '../../../helpers';
+import { closeModal, logout, openModal, RootState, setCurrentAccount } from '@coinvant/store';
+import { connect } from 'react-redux';
 
 interface IProps {
   user: AuthUser | null;
+  account: Account | null;
   activeModal: Modals | null;
   logout: () => void;
   openModal: (payload: Modals) => void;
   closeModal: () => void;
+  setCurrentAccount: (account?: Account) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
   user: state.auth.user,
+  account: state.user.currentAccount,
   activeModal: state.modal.activeModal,
 });
 
@@ -20,6 +23,7 @@ const actions = {
   openModal,
   closeModal,
   logout,
+  setCurrentAccount,
 };
 
 export const Settings = connect(mapStateToProps, actions)((props: IProps) => {
@@ -33,48 +37,61 @@ export const Settings = connect(mapStateToProps, actions)((props: IProps) => {
         </div>
         <div className={"title"} style={{ padding: 0, flexDirection: 'column' }}>
           <h3 style={{ color: "#FFF" }}>{props.user?.name}</h3>
-          <h5 style={{ color: "#FFF" }}>{formatCurrency(props.user?.walletBalance || 0)}</h5>
+          <h5 style={{ color: "#FFF" }}>{formatCurrency(props.account?.walletBalance)}</h5>
         </div>
         <div className={"flex-column"}>
           <div className="title" style={{ padding: 0 }}>
             <h5 style={{ color: "#FFF" }}>Accounts</h5>
           </div>
           <div className={'flex-column'}>
-            <div className={'sidebar-option'}
-                 onClick={() => props.openModal(Modals.personal)}>
-              <i className="fa-solid fa-dollar-sign"></i>
-              <div className={'info'}>
-                <h5>Demo Account</h5>
-                <i>Active</i>
+            {props.user?.accounts.map((account) => (
+              <div className={'sidebar-option'} key={account.id}
+                   onClick={() => props.setCurrentAccount(account)}>
+                <i className="fa-solid fa-dollar-sign"></i>
+                <div className={'info'}>
+                  <h5>{capitalizeFirstLetter(account.type)} Account</h5>
+                  <i>{account.id === props.account?.id
+                    ? 'Active' : 'Switch to this account'}</i>
+                </div>
               </div>
-            </div>
-            <div className={'sidebar-option'}
-                 onClick={() => props.openModal(Modals.personal)}>
-              <i className="fa-solid fa-dollar-sign"></i>
-              <div className={'info'}>
-                <h5>Account #2</h5>
-                <i>Switch to this account</i>
+            ))}
+            {props.user?.accounts.length === 1
+              && props.user.kycStatus === KYCStatus.verified
+              && (
+              <div className={'sidebar-option'}
+                   onClick={() => props.openModal(Modals.personal)}>
+                <i className="fa-solid fa-plus"></i>
+                <div className={'info'}>
+                  <h5>New Account</h5>
+                  <p>Create a Live Trading Account</p>
+                </div>
               </div>
-            </div>
-            <div className={'sidebar-option'}
-                 onClick={() => props.openModal(Modals.personal)}>
-              <i className="fa-solid fa-plus"></i>
-              <div className={'info'}>
-                <h5>New Account</h5>
-                <p>Create USD Account</p>
-              </div>
-            </div>
+            )}
           </div>
           <div className="title" style={{ padding: 0 }}>
             <h5 style={{ color: '#FFF' }}>KYC Verification</h5>
           </div>
           <div className={'flex-column'}>
             <div className={'sidebar-option'}
-                 onClick={() => props.openModal(Modals.kycVerification)}>
+                 onClick={() => {
+                   if (props.user?.kycStatus === KYCStatus.notStarted) {
+                     props.openModal(Modals.kycVerification);
+                   } else {
+                     return;
+                   }
+                 }}>
               <i className="fa-solid fa-user"></i>
               <div className={"info"}>
                 <h5>Identity Verification</h5>
-                <p>Please verify your identity</p>
+                {props.user?.kycStatus === KYCStatus.notStarted && (
+                  <p>Please verify your identity</p>
+                )}
+                {props.user?.kycStatus === KYCStatus.pending && (
+                  <i>Your identity is being verified, we will get back to you shortly</i>
+                )}
+                {props.user?.kycStatus === KYCStatus.verified && (
+                  <p>Your identity has been verified</p>
+                )}
               </div>
             </div>
           </div>

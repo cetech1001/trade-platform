@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {USER_ROUTES} from "../../../../routes";
 import {
 	ForexType,
@@ -18,7 +18,6 @@ interface IProps {
 export const Assets = (props: IProps) => {
 	const [activeTab, setActiveTab] = useState<TradeAssetType>(TradeAssetType.forex);
 	const [search, setSearch] = useState("");
-
 	const [base, setBase] = useState("");
 	const [term, setTerm] = useState("");
 	const [cryptoSymbol, setCryptoSymbol] = useState("");
@@ -83,15 +82,22 @@ export const Assets = (props: IProps) => {
 					<div style={{ padding: '0 16px' }}>
 						<div className={'search'}>
 							<input type="search" placeholder="Search"
-							       onChange={e => setSearch(e.target.value)}/>
-							<i className="fa-solid fa-magnifying-glass cursor-pointer" onClick={onSearch}></i>
+							       onChange={e =>
+								       setSearch(e.target.value)}/>
+							<i className="fa-solid fa-magnifying-glass cursor-pointer"
+							   onClick={onSearch}></i>
 						</div>
 					</div>
-					<Filters activeTab={activeTab} pairType={pairType} assetType={assetType} exchange={exchange}
-					         setPairType={setPairType} setAssetType={setAssetType} setExchange={setExchange}/>
-					{activeTab === TradeAssetType.stock && (<StockOptions symbol={stockSymbol} name={stockName}/>)}
-					{activeTab === TradeAssetType.forex && (<ForexPairs base={base} term={term}/>)}
-					{activeTab === TradeAssetType.crypto && (<CryptoCurrencies symbol={cryptoSymbol} name={cryptoName}/>)}
+					<Filters activeTab={activeTab} pairType={pairType}
+					         assetType={assetType} exchange={exchange}
+					         setPairType={setPairType} setAssetType={setAssetType}
+					         setExchange={setExchange}/>
+					{activeTab === TradeAssetType.stock
+						&& (<StockOptions symbol={stockSymbol} name={stockName}/>)}
+					{activeTab === TradeAssetType.forex
+						&& (<ForexPairs base={base} term={term}/>)}
+					{activeTab === TradeAssetType.crypto
+						&& (<CryptoCurrencies symbol={cryptoSymbol} name={cryptoName}/>)}
 				</div>
 			</div>
 		</div>

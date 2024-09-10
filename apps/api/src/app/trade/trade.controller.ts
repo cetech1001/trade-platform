@@ -5,7 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  Delete, UseGuards, Query,
+  Delete, UseGuards, Query, BadRequestException
 } from '@nestjs/common';
 import { TradeService } from './trade.service';
 import { CreateTradeDto } from './dto/create-trade.dto';
@@ -15,10 +15,11 @@ import {JwtAuthGuard} from "../../guards";
 import {CurrentUser, Roles} from "../../decorators";
 import {User, UserRole} from "@coinvant/types";
 import {FindTradeQueryParamsDto} from "./dto/find-trade-query-params.dto";
+import { RolesGuard } from '../../guards/roles.guard';
 
 @ApiTags('Trade Controller')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('trade')
 export class TradeController {
   constructor(private readonly tradeService: TradeService) {}
@@ -26,12 +27,16 @@ export class TradeController {
   @Roles(UserRole.user)
   @Post()
   create(@Body() createTradeDto: CreateTradeDto, @CurrentUser() user: User) {
-    return this.tradeService.create(createTradeDto, user);
+    const accountIDs = user.accounts.map(a => a.id);
+    if (!accountIDs.includes(createTradeDto.accountID)) {
+      throw new BadRequestException('Account ID is invalid');
+    }
+    return this.tradeService.create(createTradeDto);
   }
 
   @Get()
-  findAll(@Query() query: FindTradeQueryParamsDto) {
-    return this.tradeService.findAll(query);
+  findAll(@Query() query: FindTradeQueryParamsDto, @CurrentUser() user: User) {
+    return this.tradeService.findAll(query, user);
   }
 
   @Get(':id')

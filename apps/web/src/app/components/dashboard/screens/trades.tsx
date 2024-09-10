@@ -1,15 +1,15 @@
 import {useEffect, useRef, useState} from "react";
-import "../../../../../styles/Trades.css";
 import {Link} from "react-router-dom";
 import {TradeItem} from "../shared/trade";
 import {USER_ROUTES} from "../../../../routes";
-import {FindTradeQueryParams, Trade, TradeAssetType, TradeStatus} from "@coinvant/types";
+import { Account, FindTradeQueryParams, Trade, TradeAssetType, TradeStatus } from '@coinvant/types';
 import {fetchTrades, RootState} from "@coinvant/store";
 import {connect} from "react-redux";
 import {capitalizeFirstLetter, formatCurrency} from "../../../helpers";
 
 interface IProps {
   trades: Trade[];
+  account: Account | null;
   limit: number;
   totalCount: number;
   toggleNav: (route: USER_ROUTES) => void;
@@ -17,6 +17,7 @@ interface IProps {
 }
 
 const mapStateToProps = (state: RootState) => ({
+  account: state.user.currentAccount,
   trades: state.trade.list,
   limit: state.trade.limit,
   totalCount: state.trade.totalCount,
@@ -35,10 +36,10 @@ export const Trades = connect(mapStateToProps, actions)((props: IProps) => {
     page: 1,
     limit: props.limit,
     assetType: activeTab,
+    accountID: props.account?.id,
   });
   const [activeTradeCount, setActiveTradeCount] = useState(0);
   const [activeAmount, setActiveAmount] = useState(0);
-  // const [sortedTrades, setSortedTrades] = useState<Trade[]>([]);
 
   const handleScroll = () => {
     /*const container = scrollContainerRef.current;
@@ -68,7 +69,7 @@ export const Trades = connect(mapStateToProps, actions)((props: IProps) => {
 
   useEffect(() => {
     props.fetchTrades(query);
-  }, [query]);
+  }, [props, query]);
 
   useEffect(() => {
     if (props.trades.length > 0) {

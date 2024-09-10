@@ -1,19 +1,12 @@
-import {Nav} from "./components/layout/nav";
-import {PlaceBid} from "./components/screens/place-bid";
-import {Chart} from "./components/screens/chart";
 import {useState} from "react";
-import {Trades} from "./components/screens/trades";
-import {USER_ROUTES} from "../../routes";
-import {TradeHistory} from "./components/screens/trade-history";
-import {Settings} from "./components/modals/settings";
-import {Payments} from "./components/modals/payments";
-import {UpdateProfile} from "./components/modals/update-profile";
-import {UpdatePassword} from "./components/modals/update-password";
-import {Deposit} from "./components/modals/deposit";
-import {Withdrawal} from "./components/modals/withdrawal";
-import {Transactions} from "./components/modals/transactions";
-import {Assets} from "./components/screens/trade-assets";
-
+import { USER_ROUTES } from '../../../routes';
+import { Nav } from './screens/nav';
+import { Assets } from './screens/assets';
+import { Trades } from './screens/trades';
+import { TradeHistory } from './screens/history';
+import { Chart } from './screens/chart';
+import { Order } from './screens/order';
+import { Modals } from './modals';
 import "../../styles/Assets.css";
 import "../../styles/Chart.css";
 import "../../styles/CreateTrade.css";
@@ -24,9 +17,8 @@ import "../../styles/Popup.css";
 import "../../styles/Sidebar.css";
 import "../../styles/TradeHistory.css";
 import "../../styles/Trades.css";
-import { KYCVerification } from './components/modals/kyc-verification';
 
-export const User = () => {
+export const Dashboard = () => {
 	const [activeNav, setActiveNav] = useState<USER_ROUTES>(USER_ROUTES.home);
 
 	const toggleNav = (route: USER_ROUTES) => {
@@ -40,15 +32,8 @@ export const User = () => {
 			{activeNav === USER_ROUTES.trades && <Trades toggleNav={toggleNav}/>}
 			{activeNav === USER_ROUTES.history && <TradeHistory toggleNav={toggleNav}/>}
 			<Chart/>
-			<PlaceBid/>
-			<Settings/>
-			<Payments/>
-			<UpdateProfile/>
-			<UpdatePassword/>
-			<Deposit/>
-			<Withdrawal/>
-			<Transactions/>
-			<KYCVerification/>
+			<Order/>
+			<Modals/>
 		</div>
 	);
 };

@@ -4,13 +4,13 @@ import { WithdrawalController } from './withdrawal.controller';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {WithdrawalEntity} from "./entities/withdrawal.entity";
 import {TransactionModule} from "../transaction/transaction.module";
-import {UserModule} from "../user/user.module";
+import { AccountModule } from '../account/account.module';
 
 @Module({
   imports: [
       TypeOrmModule.forFeature([WithdrawalEntity]),
       TransactionModule,
-      UserModule,
+      AccountModule,
   ],
   controllers: [WithdrawalController],
   providers: [WithdrawalService],

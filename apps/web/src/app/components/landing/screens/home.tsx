@@ -1,10 +1,8 @@
-import {FC} from "react";
-
 interface IProps {
   toggleSidebar(): void;
 }
 
-export const Home: FC<IProps> = (props) => {
+export const Home = (props: IProps) => {
   return (
     <div className="home">
       <div className="content">
@@ -25,7 +23,7 @@ export const Home: FC<IProps> = (props) => {
         </div>
       </div>
       <div className={"image"}>
-        <img src="/assets/home_img_desktop.webp" alt="Desktop image" style={{ height: '350px' }}/>
+        <img src="/assets/home_img_desktop.webp" alt="Desktop" style={{ height: '350px' }}/>
       </div>
     </div>
   );

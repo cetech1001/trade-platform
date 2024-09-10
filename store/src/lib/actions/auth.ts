@@ -1,8 +1,8 @@
-import {AuthService} from "../services";
-import {LoginRequest, LoginResponse, RegisterRequest} from "@coinvant/types";
-import {AppDispatch, showAlert} from "../../index";
-import {AuthActions} from "../types";
-import {getError} from "../helpers";
+import { AuthService } from '../services';
+import { LoginRequest, LoginResponse, RegisterRequest } from '@coinvant/types';
+import { AppDispatch, setCurrentAccount, showAlert } from '../../index';
+import { AuthActions } from '../types';
+import { getDemoAccount, getError } from '../helpers';
 
 const authenticate = async (payload: LoginRequest | RegisterRequest, actionType: 'login' | 'register', dispatch: AppDispatch) => {
   try {
@@ -21,6 +21,8 @@ const authenticate = async (payload: LoginRequest | RegisterRequest, actionType:
       payload: response,
     });
 
+    setCurrentAccount(getDemoAccount(response.user.accounts));
+
     return Promise.resolve();
   } catch (error) {
     const { message, status } = getError(error);
@@ -38,8 +40,6 @@ const authenticate = async (payload: LoginRequest | RegisterRequest, actionType:
         show: true,
       }));
     }
-
-    throw error;
   }
 }
 

@@ -1,6 +1,8 @@
-import {AppDispatch, showAlert} from "@coinvant/store";
+import {AppDispatch} from "../../index";
 import {TradeService} from "../services";
 import {TradeActions} from "../types";
+import { showAlert } from './alert';
+
 import {CreateTrade, UpdateTrade, FindTradeQueryParams} from "@coinvant/types";
 
 export const fetchTrades = (query: FindTradeQueryParams) => async (dispatch: AppDispatch) => {

@@ -12,4 +12,5 @@ export enum AdminRoutes {
   withdrawals = 'dashboard/withdrawals',
   trades = 'dashboard/trades',
   profile = 'dashboard/profile',
+  kyc = 'dashboard/kyc',
 }

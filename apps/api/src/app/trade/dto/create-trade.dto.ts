@@ -18,6 +18,11 @@ export class CreateTradeDto extends PickType(TradeEntity, [
 	@ApiProperty({ type: String, required: true })
 	assetID: string;
 
+	@IsNotEmpty()
+	@IsString()
+	@ApiProperty({ type: String, required: true })
+	accountID: string;
+
 	@IsOptional()
 	@Transform(v => +v.value)
 	@IsNumber()

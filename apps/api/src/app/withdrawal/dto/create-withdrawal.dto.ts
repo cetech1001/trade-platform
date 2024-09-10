@@ -1,6 +1,7 @@
-import {PickType} from "@nestjs/swagger";
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import {WithdrawalEntity} from "../entities/withdrawal.entity";
 import {CreateWithdrawal} from "@coinvant/types";
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateWithdrawalDto
 	extends PickType(WithdrawalEntity, [
@@ -9,4 +10,9 @@ export class CreateWithdrawalDto
 		'network',
 		'walletAddress'
 	])
-	implements CreateWithdrawal {}
+	implements CreateWithdrawal {
+	@IsNotEmpty()
+	@IsString()
+	@ApiProperty({ type: String, required: true })
+	accountID: string;
+}

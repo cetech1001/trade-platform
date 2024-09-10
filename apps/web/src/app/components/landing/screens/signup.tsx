@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import {FC, useState} from "react";
+import {useState} from "react";
 import {connect} from "react-redux";
 import {RegisterRequest} from "@coinvant/types";
 import {register} from "@coinvant/store";
@@ -8,27 +8,21 @@ interface IProps {
   register: (payload: RegisterRequest) => Promise<void>;
 }
 
-const Component: FC<IProps> = (props) => {
+const actions = { register };
+
+export const Signup = connect(null, actions)((props: IProps) => {
   const navigateTo = useNavigate();
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSignup = async () => {
-    try {
-      setIsSubmitting(true);
-      setIsSubmitting(true);
-      props.register({
-        name,
-        email,
-        password,
-      }).then(() => navigateTo('/platform'));
-      navigateTo('/platform');
-    } finally {
-      setIsSubmitting(false);
-    }
+  const onSubmit = () => {
+    setIsSubmitting(true);
+    props.register({ name, email, password })
+      .then(() => navigateTo('/platform'))
+      .finally(() => setIsSubmitting(false));
   };
 
   return (
@@ -67,11 +61,9 @@ const Component: FC<IProps> = (props) => {
           </div>
         </div>
       </div>
-      <button className={"button bg-primary"} onClick={handleSignup} disabled={isSubmitting}>
+      <button className={"button bg-primary"} onClick={onSubmit} disabled={isSubmitting}>
         {isSubmitting ? 'Creating account...' : 'Sign up'}
       </button>
     </div>
   );
-};
-
-export const Signup = connect(null, { register })(Component);
+});

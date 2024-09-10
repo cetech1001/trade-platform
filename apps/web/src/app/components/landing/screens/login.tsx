@@ -8,7 +8,9 @@ interface IProps {
   login: (payload: LoginRequest) => Promise<void>;
 }
 
-export const Login = connect(null, { login })((props: IProps) => {
+const actions = { login };
+
+export const Login = connect(null, actions)((props: IProps) => {
   const navigateTo = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -16,11 +18,10 @@ export const Login = connect(null, { login })((props: IProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = () => {
+  const onSubmit = () => {
     setIsSubmitting(true);
     props.login({email, password})
         .then(() => navigateTo('/platform'))
-        .catch(() => {})
         .finally(() => setIsSubmitting(false));
   };
 
@@ -49,7 +50,7 @@ export const Login = connect(null, { login })((props: IProps) => {
             </div>
           </div>
         </div>
-        <button className={"button bg-primary"} onClick={handleLogin} disabled={isSubmitting}>
+        <button className={"button bg-primary"} onClick={onSubmit} disabled={isSubmitting}>
           {isSubmitting ? 'Signing in...' : 'Sign in'}
         </button>
       </form>

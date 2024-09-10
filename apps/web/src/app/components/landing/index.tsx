@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {Navbar} from './screens/navbar';
 import {Sidebar} from './screens/sidebar';
-import '../../styles/Landing.css';
 import {Home} from "./screens/home";
+import '../../styles/Landing.css';
 
 export const Landing = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,9 +13,9 @@ export const Landing = () => {
 
   return (
     <div className="landing">
-      <Navbar onToggleSidebar={toggleSidebar} isOpen={sidebarOpen}/>
+      <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={sidebarOpen}/>
       <Sidebar
-        isOpen={sidebarOpen}
+        isSidebarOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
       />
       <div className="main-content">

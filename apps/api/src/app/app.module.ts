@@ -11,6 +11,7 @@ import { TransactionModule } from './transaction/transaction.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TradeAssetModule } from './trade-asset/trade-asset.module';
 import { EmailModule } from './email/email.module';
+import { AccountModule } from './account/account.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { EmailModule } from './email/email.module';
     TransactionModule,
     TradeAssetModule,
     EmailModule,
+    AccountModule,
   ],
 })
 export class AppModule {}

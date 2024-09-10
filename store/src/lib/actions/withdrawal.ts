@@ -1,11 +1,18 @@
-import {AppDispatch, showAlert} from "@coinvant/store";
+import {AppDispatch} from "../../index";
 import {WithdrawalService} from "../services";
 import {TransactionActions, WithdrawalActions} from "../types";
-import {CreateWithdrawal, PaginationOptions, UpdateWithdrawal, Withdrawal} from "@coinvant/types";
+import {
+	CreateWithdrawal,
+	FindWithdrawalsQueryParams,
+	UpdateWithdrawal,
+	Withdrawal
+} from '@coinvant/types';
+import { showAlert } from './alert';
 
-export const fetchWithdrawals = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
+
+export const fetchWithdrawals = (query?: FindWithdrawalsQueryParams) => async (dispatch: AppDispatch) => {
 	try {
-		const data = await WithdrawalService.getWithdrawals(options);
+		const data = await WithdrawalService.getWithdrawals(query);
 		dispatch({
 			type: WithdrawalActions.LIST,
 			payload: {

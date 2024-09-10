@@ -5,10 +5,11 @@ import {JwtAuthGuard} from "../../guards";
 import {Roles} from "../../decorators";
 import {UserRole} from "@coinvant/types";
 import {FindCryptoCurrenciesDto, FindForexPairsDto, FindStockOptionsDto} from "./dto/trade-asset.dto";
+import { RolesGuard } from '../../guards/roles.guard';
 
 @ApiTags('Trade Asset Controller')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('trade-asset')
 export class TradeAssetController {
   constructor(private readonly tradeAssetService: TradeAssetService) {}

@@ -1,11 +1,12 @@
-import {AppDispatch, showAlert} from "@coinvant/store";
+import {AppDispatch} from "../../index";
 import {DepositService} from "../services";
 import {DepositActions, TransactionActions} from "../types";
-import {Deposit, PaginationOptions, UpdateDeposit} from "@coinvant/types";
+import { Deposit, FindDepositsQueryParams, UpdateDeposit } from '@coinvant/types';
+import { showAlert } from './alert';
 
-export const fetchDeposits = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
+export const fetchDeposits = (query?: FindDepositsQueryParams) => async (dispatch: AppDispatch) => {
 	try {
-		const data = await DepositService.getDeposits(options);
+		const data = await DepositService.getDeposits(query);
 		dispatch({
 			type: DepositActions.LIST,
 			payload: {

@@ -1,4 +1,4 @@
-import {AuthState} from "@coinvant/types";
+import { AuthState } from '@coinvant/types';
 import {PayloadAction} from "@reduxjs/toolkit";
 import {AuthActions} from "../types";
 
@@ -14,7 +14,10 @@ const reducer = (state = initialState, action: PayloadAction<AuthState>) => {
 
   switch (type) {
     case AuthActions.LOGIN:
-      return { user: payload.user, accessToken: payload.accessToken };
+      return {
+        user: payload.user,
+        accessToken: payload.accessToken
+      };
     case AuthActions.LOGOUT:
       return { user: null, accessToken: '' };
     default:

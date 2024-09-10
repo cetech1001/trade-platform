@@ -1,4 +1,4 @@
-import {ErrorResponse} from "@coinvant/types";
+import { Account, AccountType, ErrorResponse } from '@coinvant/types';
 
 export const getError = (e: unknown | ErrorResponse) => {
   const error = e as ErrorResponse;
@@ -21,3 +21,6 @@ export const getError = (e: unknown | ErrorResponse) => {
     || error.status)!;
   return { status, message };
 }
+
+export const getDemoAccount = (accounts: Account[]) =>
+  accounts.find(({ type }) => type === AccountType.demo);

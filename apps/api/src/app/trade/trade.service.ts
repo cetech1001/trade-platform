@@ -13,14 +13,13 @@ import {
 	TransactionStatus,
 	TransactionStatusEnum,
 	TransactionType,
-	UpdateTrade,
-	User
-} from "@coinvant/types";
+	UpdateTrade, User, UserRole
+} from '@coinvant/types';
 import {paginate} from "nestjs-typeorm-paginate";
 import {Cron, CronExpression} from "@nestjs/schedule";
 import axios from "axios";
 import {TransactionService} from "../transaction/transaction.service";
-import {UserService} from "../user/user.service";
+import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class TradeService {
@@ -29,7 +28,7 @@ export class TradeService {
 		private dataSource: DataSource,
 		private readonly tradeAssetService: TradeAssetService,
 		private readonly transactionService: TransactionService,
-		private readonly userService: UserService
+		private readonly accountService: AccountService,
 	) {}
 
 	private getCurrentPriceForStock = async (symbol: string) => {
@@ -73,7 +72,7 @@ export class TradeService {
 		if (trade.executeAt && new Date() >= new Date(trade.executeAt)) {
 			return true;
 		}
-		// @ts-ignore
+		// @ts-expect-error idk
 		const currentPrice = await this.getCurrentAssetPrice(trade.assetType, trade.asset.currencyID || trade.asset.symbol);
 
 		if (trade.sellPrice && trade.sellPrice >= currentPrice) {
@@ -135,7 +134,7 @@ export class TradeService {
 	private async checkAndCloseTrade(trade: Trade, forceClose?: boolean) {
 		const queryRunner = this.dataSource.createQueryRunner();
 		try {
-			// @ts-ignore
+			// @ts-expect-error idk
 			const currentPrice = await this.getCurrentAssetPrice(trade.assetType, trade.asset.currencyID || trade.asset.symbol);
 			let profitOrLoss = 0;
 			let shouldClose = false;
@@ -178,9 +177,7 @@ export class TradeService {
 				if (profitOrLoss < 0) {
 					remainder = trade.bidAmount + profitOrLoss;
 				}
-				await this.userService.update(trade.user.id, {
-					walletBalance: (+trade.user.walletBalance) + Number(profitOrLoss) + remainder,
-				}, queryRunner);
+				await this.accountService.increaseBalance(trade.account.id, Number(profitOrLoss) + remainder, queryRunner);
 				await queryRunner.manager.update(TradeEntity, trade.id, {
 					profitOrLoss,
 					closedAt: new Date().toDateString(),
@@ -232,21 +229,20 @@ export class TradeService {
 		return bidAmount * leverage / rate;
 	}
 
-	async create(createTrade: CreateTrade, user: User) {
-		if ((+user.walletBalance) < (+createTrade.bidAmount)) {
+	async create(createTrade: CreateTrade) {
+		const account = await this.accountService.findOne(createTrade.accountID);
+		if ((+account.walletBalance) < (+createTrade.bidAmount)) {
 			throw new BadRequestException('Insufficient funds');
 		}
 		const queryRunner = this.dataSource.createQueryRunner();
 		try {
 			const asset = await this.tradeAssetService.findAsset(createTrade.assetID, createTrade.assetType);
-			let obj = {
+			const obj = {
 				...createTrade,
 				...this.getAssetObject(createTrade.assetType, asset),
-				user,
+				account,
 			}
-			await this.userService.update(user.id, {
-				walletBalance: (+user.walletBalance) - (+createTrade.bidAmount),
-			}, queryRunner);
+			await this.accountService.decreaseBalance(account.id, createTrade.bidAmount, queryRunner);
 			if (createTrade.openingPrice || createTrade.executeAt) {
 				if (createTrade.openingPrice) {
 					if (createTrade.isShort) {
@@ -257,7 +253,7 @@ export class TradeService {
 				}
 				obj['status'] = TradeStatus.pending;
 			} else {
-				// @ts-ignore
+				// @ts-expect-error idk
 				const openingPrice = await this.getCurrentAssetPrice(createTrade.assetType, asset.currencyID || asset.symbol);
 				obj['units'] = await this.getUnits(createTrade.assetType, openingPrice, createTrade.bidAmount, createTrade.leverage, asset.symbol);
 				if (createTrade.isShort) {
@@ -271,7 +267,7 @@ export class TradeService {
 			const trade = await queryRunner.manager.save(TradeEntity, obj);
 			await this.transactionService.create({
 				type: TransactionType.trade,
-				user,
+				account,
 				status: obj['status'],
 				amount: createTrade.bidAmount,
 				transactionID: trade.id,
@@ -286,23 +282,40 @@ export class TradeService {
 		}
 	}
 
-	findAll(query: FindTradeQueryParams) {
-		const { status, assetType, ...options } = query;
-		const queryBuilder = this.tradeRepo.createQueryBuilder('T')
-			.leftJoinAndSelect('T.user', 'user')
-			.leftJoinAndSelect('T.crypto', 'crypto')
-			.leftJoinAndSelect('T.stock', 'stock')
-			.leftJoinAndSelect('T.forex', 'forex');
+	findAll(query: FindTradeQueryParams, user: User) {
+		// eslint-disable-next-line prefer-const
+		let { status, assetType, accountID, ...options } = query;
+		const queryBuilder = this.tradeRepo.createQueryBuilder('TR')
+			.leftJoinAndSelect('TR.crypto', 'crypto')
+			.leftJoinAndSelect('TR.stock', 'stock')
+			.leftJoinAndSelect('TR.forex', 'forex');
+
+		if (user.role === UserRole.admin) {
+			queryBuilder
+				.leftJoinAndSelect('TR.account', 'A')
+				.leftJoinAndSelect('A.user', 'U');
+		}
+
+		if (user.role === UserRole.user) {
+			if (!accountID) {
+				accountID = user.accounts[0].id;
+			}
+			queryBuilder.where('A.id = :accountID', { accountID });
+		}
+
 		if (status) {
-			queryBuilder.andWhere('T.status = :status', { status });
+			queryBuilder.andWhere('TR.status = :status', { status });
 		}
+
 		if (assetType) {
-			queryBuilder.andWhere('T.assetType = :assetType', { assetType });
+			queryBuilder.andWhere('TR.assetType = :assetType', { assetType });
 		}
+
 		queryBuilder
-			.orderBy('CASE WHEN T.status = :active THEN 1 ELSE 2 END', 'ASC')
-			.addOrderBy('T.createdAt', 'DESC')
+			.orderBy('CASE WHEN TR.status = :active THEN 1 ELSE 2 END', 'ASC')
+			.addOrderBy('TR.createdAt', 'DESC')
 			.setParameter('active', TradeStatus.active);
+
 		return paginate(queryBuilder, options);
 	}
 
@@ -316,9 +329,7 @@ export class TradeService {
 			const queryRunner = this.dataSource.createQueryRunner();
 			try {
 				if (updateTrade.status === TradeStatus.cancelled) {
-					await this.userService.update(trade.user.id, {
-						walletBalance: (+trade.user.walletBalance) + (+trade.bidAmount),
-					}, queryRunner);
+					await this.accountService.increaseBalance(trade.account.id, trade.bidAmount, queryRunner);
 					await this.transactionService.update(trade.id, {
 						status: (TransactionStatusEnum.cancelled as unknown) as TransactionStatus,
 					}, queryRunner);
@@ -350,9 +361,9 @@ export class TradeService {
 		for (const trade of pendingTrades) {
 			const shouldOpen = await this.shouldOpenTrade(trade);
 			if (shouldOpen) {
-				let obj = { status: TradeStatus.active };
+				const obj = { status: TradeStatus.active };
 				if (!trade.buyPrice && !trade.sellPrice) {
-					// @ts-ignore
+					// @ts-expect-error idk
 					const openingPrice = await this.getCurrentAssetPrice(trade.assetType, trade.asset.currencyID || trade.asset.symbol);
 					if (trade.isShort) {
 						obj['sellPrice'] = openingPrice;

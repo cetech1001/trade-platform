@@ -5,14 +5,14 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {DepositEntity} from "./entities/deposit.entity";
 import {PaymentMethodModule} from "../payment-method/payment-method.module";
 import {TransactionModule} from "../transaction/transaction.module";
-import {UserModule} from "../user/user.module";
+import { AccountModule } from '../account/account.module';
 
 @Module({
   imports: [
       TypeOrmModule.forFeature([DepositEntity]),
       PaymentMethodModule,
       TransactionModule,
-      UserModule,
+      AccountModule,
   ],
   controllers: [DepositController],
   providers: [DepositService],

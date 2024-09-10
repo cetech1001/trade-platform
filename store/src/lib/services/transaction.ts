@@ -1,13 +1,13 @@
 import {api} from "./api";
 import {
+  FindTransactionsQueryParams,
   Paginated,
-  PaginationOptions,
   Transaction
-} from "@coinvant/types";
+} from '@coinvant/types';
 
 export class TransactionService {
-  static async getTransactions(options?: PaginationOptions): Promise<Paginated<Transaction>> {
-    let { data } =  await api.get('/transaction', { params: options });
+  static async getTransactions(params?: FindTransactionsQueryParams): Promise<Paginated<Transaction>> {
+    const { data } =  await api.get('/transaction', { params });
     return data;
   }
 }

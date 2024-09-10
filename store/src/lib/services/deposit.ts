@@ -1,31 +1,30 @@
 import {api} from "./api";
 import {
   Paginated,
-  PaginationOptions,
   UpdateDeposit,
-  Deposit, Transaction
-} from "@coinvant/types";
+  Deposit, Transaction, FindDepositsQueryParams
+} from '@coinvant/types';
 
 export class DepositService {
-  static async getDeposits(options?: PaginationOptions): Promise<Paginated<Deposit>> {
-    let { data } =  await api.get('/deposit', { params: options });
+  static async getDeposits(params?: FindDepositsQueryParams): Promise<Paginated<Deposit>> {
+    const { data } =  await api.get('/deposit', { params });
     return data;
   }
 
   static async createDeposit(payload: FormData): Promise<Transaction> {
-    let { data } = await api.post('/deposit', payload, {
+    const { data } = await api.post('/deposit', payload, {
       headers: { "Content-Type": "multipart/form-data" }
     });
     return data;
   }
 
   static async updateDeposit(id: string, payload: UpdateDeposit): Promise<Deposit> {
-    let { data } = await api.patch(`/deposit/${id}`, payload);
+    const { data } = await api.patch(`/deposit/${id}`, payload);
     return data;
   }
 
   static async fetchTotalDepositAmount(): Promise<number> {
-    let { data } = await api.get('/deposit/total/amount');
+    const { data } = await api.get('/deposit/total/amount');
     return data;
   }
 

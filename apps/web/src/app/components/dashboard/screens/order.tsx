@@ -1,13 +1,14 @@
 import {Popup} from "../shared/popup";
 import {ChangeEvent, useState} from "react";
 import {StopLossTakeProfitOptions} from "../shared/stop-los-take-profit";
-import {AlertState, CreateTrade, CurrentAsset, Modals} from "@coinvant/types";
+import { Account, AlertState, CreateTrade, CurrentAsset, Modals } from '@coinvant/types';
 import {closeModal, openModal, placeBid, refreshUserProfile, RootState, showAlert} from "@coinvant/store";
 import {connect} from "react-redux";
 import { Link } from 'react-router-dom';
 
 interface IProps {
 	asset: CurrentAsset | null;
+	account: Account | null;
 	openModal: (payload: Modals) => void;
 	closeModal: () => void;
 	showAlert: (payload: AlertState) => void;
@@ -17,6 +18,7 @@ interface IProps {
 
 const mapStateToProps = (state: RootState) => ({
 	asset: state.tradeAsset.currentAsset,
+	account: state.user.currentAccount,
 });
 
 const actions = {
@@ -86,7 +88,7 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 	};
 
 	const onBid = async (isShort?: boolean) => {
-		if (props.asset) {
+		if (props.asset && props.account) {
 			const payload: CreateTrade = {
 				bidAmount,
 				leverage,
@@ -97,6 +99,7 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 				executeAt: executeAt || undefined,
 				assetType: props.asset.type,
 				assetID: props.asset.id,
+				accountID: props.account.id,
 			}
 			await props.placeBid(payload);
 			await props.refreshUserProfile();

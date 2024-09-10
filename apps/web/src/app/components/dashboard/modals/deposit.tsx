@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {AlertState, Modals, PaginationOptions, PaymentMethod} from "@coinvant/types";
+import { Account, AlertState, Modals, PaginationOptions, PaymentMethod } from '@coinvant/types';
 import axios from "axios";
 import QRCode from 'qrcode.react';
 import {Form} from "react-bootstrap";
@@ -9,6 +9,7 @@ import {addDeposit, closeModal, fetchPaymentMethods, openModal, RootState, showA
 interface IProps {
   activeModal: Modals | null;
   paymentMethods: PaymentMethod[];
+  account: Account | null,
   openModal: (payload: Modals) => void;
   closeModal: () => void;
   showAlert: (payload: AlertState) => void;
@@ -19,6 +20,7 @@ interface IProps {
 const mapStateToProps = (state: RootState) => ({
   activeModal: state.modal.activeModal,
   paymentMethods: state.paymentMethod.list,
+  account: state.user.currentAccount,
 });
 
 const actions = {
@@ -42,13 +44,13 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
       setMethod(() => props.paymentMethods.find(({ id }) =>
           id === paymentMethod));
     }
-  }, [paymentMethod]);
+  }, [paymentMethod, props.paymentMethods]);
 
   useEffect(() => {
     if (props.paymentMethods.length === 0) {
       props.fetchPaymentMethods();
     }
-  }, []);
+  }, [props]);
 
   const reset = () => {
     setStep(1);
@@ -84,21 +86,29 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
   }
 
   const submit = async () => {
-    if (proof) {
-      const formData = new FormData();
-      formData.append("proof", proof);
-      formData.append("paymentMethod", paymentMethod);
-      formData.append("amount", `${amount}`);
+    try {
+      if (proof) {
+        const formData = new FormData();
+        formData.append("proof", proof);
+        formData.append("paymentMethod", paymentMethod);
+        formData.append("amount", `${amount}`);
 
-      await props.addDeposit(formData);
-      props.openModal(Modals.transactions);
-      reset();
-    } else {
-      props.showAlert({
-        show: true,
-        type: "error",
-        message: "Please upload proof of payment to continue",
-      });
+        if (props.account) {
+          formData.append("accountID", props.account.id);
+        }
+
+        await props.addDeposit(formData);
+        props.openModal(Modals.transactions);
+        reset();
+      } else {
+        props.showAlert({
+          show: true,
+          type: "error",
+          message: "Please upload proof of payment to continue",
+        });
+      }
+    } catch (e) {
+      console.error('Error creating deposit', e);
     }
   }
 

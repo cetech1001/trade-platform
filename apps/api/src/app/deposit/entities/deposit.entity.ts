@@ -1,4 +1,4 @@
-import {Deposit, DepositStatus, User} from "@coinvant/types";
+import { Account, Deposit, DepositStatus } from '@coinvant/types';
 import {
 	Column,
 	CreateDateColumn,
@@ -11,7 +11,7 @@ import {
 import {IsIn, IsNotEmpty, IsNumber, IsString} from "class-validator";
 import {Transform} from "class-transformer";
 import {ApiProperty} from "@nestjs/swagger";
-import {UserEntity} from "../../user/entities/user.entity";
+import { AccountEntity } from '../../account/entities/account.entity';
 
 @Entity('deposits')
 export class DepositEntity implements Deposit {
@@ -37,11 +37,13 @@ export class DepositEntity implements Deposit {
 	@ApiProperty({ type: String, required: true })
 	paymentMethod: string;
 
-	@ManyToOne(() => UserEntity, (user) => user.deposits, {
-		eager: true,
-	})
-	@JoinColumn({ name: 'userID' })
-	user: User;
+	@ManyToOne(
+		() => AccountEntity,
+		(account) => account.deposits,
+		{ eager: true }
+	)
+	@JoinColumn({ name: 'accountID' })
+	account: Account;
 
 	@Column({
 		type: 'enum',

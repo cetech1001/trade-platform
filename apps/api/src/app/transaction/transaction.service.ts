@@ -1,9 +1,9 @@
 import {Injectable} from '@nestjs/common';
 import {
   CreateTransaction,
-  Transaction, TransactionsQuery,
-  UpdateTransaction
-} from "@coinvant/types";
+  Transaction, FindTransactionsQueryParams,
+  UpdateTransaction, UserRole, User
+} from '@coinvant/types';
 import {QueryRunner, Repository} from "typeorm";
 import {TransactionEntity} from "./entities/transaction.entity";
 import {InjectRepository} from "@nestjs/typeorm";
@@ -18,9 +18,23 @@ export class TransactionService {
     return queryRunner.manager.save(TransactionEntity, createTransaction);
   }
 
-  findAll(query: TransactionsQuery): Promise<Pagination<Transaction>> {
-    const { status, type, ...options } = query;
+  findAll(query: FindTransactionsQueryParams, user: User): Promise<Pagination<Transaction>> {
+    // eslint-disable-next-line prefer-const
+    let { status, type, accountID, ...options } = query;
     const queryBuilder = this.transactionRepo.createQueryBuilder('T');
+
+    if (user.role === UserRole.admin) {
+      queryBuilder
+        .leftJoinAndSelect('T.account', 'A')
+        .leftJoinAndSelect('A.user', 'U');
+    }
+
+    if (user.role === UserRole.user) {
+      if (!accountID) {
+        accountID = user.accounts[0].id;
+      }
+      queryBuilder.where('A.id = :accountID', { accountID });
+    }
 
     if (status) {
       queryBuilder.andWhere('T.status = :status', { status });
@@ -44,8 +58,11 @@ export class TransactionService {
     return queryRunner.manager.update(TransactionEntity, transaction.id, updateTransaction);
   }
 
-  async remove(transactionID: string) {
+  async remove(transactionID: string, queryRunner?: QueryRunner) {
     const transaction = await this.findByTransactionID(transactionID);
+    if (queryRunner) {
+      return queryRunner.manager.delete(TransactionEntity, transaction.id);
+    }
     return this.transactionRepo.delete(transaction.id);
   }
 }

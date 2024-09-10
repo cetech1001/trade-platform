@@ -1,8 +1,9 @@
-import {AppDispatch, showAlert} from "@coinvant/store";
-import {UserService} from "../services";
-import {AuthActions, UserActions} from "../types";
-import {CreateUser, PaginationOptions, UpdateUser, User} from "@coinvant/types";
-import {getError} from "../helpers";
+import { AppDispatch } from '../../index';
+import { UserService } from '../services';
+import { AuthActions, UserActions } from '../types';
+import { Account, CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@coinvant/types';
+import { getDemoAccount, getError } from '../helpers';
+import { showAlert } from './alert';
 
 export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -17,6 +18,26 @@ export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppD
 	} catch (error) {
 		dispatch(showAlert({
 			message: 'Failed to fetch users.',
+			type: 'error',
+			show: true,
+		}));
+	}
+}
+
+export const fetchKYC = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
+	try {
+		const data = await UserService.findKYC(options);
+		console.log(data);
+		dispatch({
+			type: UserActions.KYC_LIST,
+			payload: {
+				kycList: data.items,
+				kycCount: data.meta.totalItems,
+			},
+		});
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to fetch KYC list.',
 			type: 'error',
 			show: true,
 		}));
@@ -90,11 +111,68 @@ export const removeUser = (id: string) => async (dispatch: AppDispatch) => {
 	}
 }
 
+export const removeKYC = (id: string) => async (dispatch: AppDispatch) => {
+	try {
+		await UserService.deleteKYC(id);
+		dispatch({
+			type: UserActions.DELETE_KYC,
+		});
+		dispatch(showAlert({
+			message: 'KYC deleted successfully.',
+			type: 'success',
+			show: true,
+		}));
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to delete KYC.',
+			type: 'error',
+			show: true,
+		}));
+	}
+}
+
 export const setCurrentUser = (user: User) => async (dispatch: AppDispatch) => {
 	dispatch({
 		type: UserActions.SET_CURRENT_USER,
-		payload: { currentUser: user },
+		payload: {
+			currentUser: user,
+		},
 	});
+}
+
+export const setCurrentKYC = (kyc: KYC) => async (dispatch: AppDispatch) => {
+	dispatch({
+		type: UserActions.SET_CURRENT_KYC,
+		payload: {
+			currentKYC: kyc,
+		},
+	});
+}
+
+export const setCurrentAccount = (account?: Account) => async (dispatch: AppDispatch) => {
+	dispatch({
+		type: UserActions.SET_CURRENT_ACCOUNT,
+		payload: {
+			currentAccount: account,
+		},
+	});
+}
+
+export const uploadKYC = (formData: FormData) => async (dispatch: AppDispatch) => {
+	try {
+		await UserService.uploadKYC(formData);
+		dispatch(showAlert({
+			message: 'We are verifying your information',
+			type: 'success',
+			show: true,
+		}));
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to upload data.',
+			type: 'error',
+			show: true,
+		}));
+	}
 }
 
 export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
@@ -120,6 +198,8 @@ export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
 				type: AuthActions.LOGIN,
 				payload: authData,
 			});
+
+			setCurrentAccount(getDemoAccount(user.accounts));
 		}
 	} catch (error) {
 		dispatch(showAlert({

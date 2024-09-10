@@ -1,10 +1,10 @@
 import {Route, Routes, Navigate, Outlet} from "react-router-dom";
-import {User} from "./user";
-import {Landing} from "./components/auth";
+import {Landing} from "./components/landing";
 import {Alert} from "./components/shared/alert";
 import {connect} from "react-redux";
 import { AlertState, AuthState } from '@coinvant/types';
 import {RootState} from "@coinvant/store";
+import { Dashboard } from './components/dashboard';
 
 interface IProps {
   auth: AuthState,
@@ -33,7 +33,7 @@ export const App = connect(mapStateToProps)((props: IProps) => {
           <Route path="/" element={<Landing/>}/>
         </Route>
         <Route path={'/platform'} element={<ProtectedRoute/>}>
-          <Route path="/platform" element={<User/>}/>
+          <Route path="/platform" element={<Dashboard/>}/>
         </Route>
       </Routes>
     </>

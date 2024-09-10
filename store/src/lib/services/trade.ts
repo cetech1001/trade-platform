@@ -2,8 +2,8 @@ import {CreateTrade, FindTradeQueryParams, Paginated, Trade, UpdateTrade} from "
 import {api} from "./api";
 
 export class TradeService {
-	static async fetchTrades(query: FindTradeQueryParams): Promise<Paginated<Trade>> {
-		const { data } = await api.get('/trade', {params: query});
+	static async fetchTrades(params: FindTradeQueryParams): Promise<Paginated<Trade>> {
+		const { data } = await api.get('/trade', {params});
 		return data;
 	}
 
@@ -13,7 +13,7 @@ export class TradeService {
 	}
 
 	static async updateTrade(id: string, payload: UpdateTrade): Promise<Trade> {
-		let { data } = await api.patch(`/trade/${id}`, payload);
+		const { data } = await api.patch(`/trade/${id}`, payload);
 		return data;
 	}
 

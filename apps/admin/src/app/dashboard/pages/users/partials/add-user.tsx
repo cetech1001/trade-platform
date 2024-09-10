@@ -17,7 +17,6 @@ const initialState = {
 	password: "",
 	role: UserRole.user,
 	status: UserStatus.active,
-	walletBalance: 0,
 };
 
 const mapStateToProps = (state: RootState) => ({

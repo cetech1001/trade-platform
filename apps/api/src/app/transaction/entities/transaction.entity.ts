@@ -7,8 +7,8 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn
 } from "typeorm";
-import {Transaction, TransactionStatus, TransactionStatusEnum, TransactionType, User} from "@coinvant/types";
-import {UserEntity} from "../../user/entities/user.entity";
+import {Transaction, TransactionStatus, TransactionStatusEnum, TransactionType, Account} from "@coinvant/types";
+import {AccountEntity} from "../../account/entities/account.entity";
 
 @Entity('transactions')
 export class TransactionEntity implements Transaction{
@@ -37,9 +37,13 @@ export class TransactionEntity implements Transaction{
 	})
 	type: TransactionType;
 
-	@ManyToOne(() => UserEntity, (user) => user.withdrawals)
-	@JoinColumn({ name: 'userID' })
-	user: User;
+	@ManyToOne(
+		() => AccountEntity,
+		(account) => account.transactions,
+		{ onUpdate: 'CASCADE', onDelete: 'CASCADE' }
+	)
+	@JoinColumn({ name: 'accountID' })
+	account: Account;
 
 	@CreateDateColumn()
 	createdAt: string;
