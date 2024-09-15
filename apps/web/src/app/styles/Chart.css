@@ -7,3 +7,12 @@
   height: 100%;
   width: 100%;
 }
+
+/* Mobile view adjustments */
+@media (max-width: 768px) {
+  .chart {
+    flex: 1;
+    height: calc(100vh - 120px);
+  }
+}
+

@@ -32,7 +32,6 @@ export class TradeAssetService {
 	importStockOptions() {
 		const stocks: CreateStock[] = [];
 		return new Promise<StockOption[]>((resolve, reject) => {
-			console.error("Assets path", environment.assetsPath);
 			const filePath = path.join(environment.assetsPath, 'stocks.csv');
 			fs.createReadStream(filePath)
 				.pipe(csv())

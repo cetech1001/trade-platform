@@ -25,7 +25,7 @@ export class AccountController {
     }
     return this.accountService.create({
       type: AccountType.live,
-      userID: user.id,
+      user,
     });
   }
 

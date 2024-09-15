@@ -7,7 +7,7 @@ export class CryptoEntity implements CryptoCurrency {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@Column({ unique: true })
+	@Column()
 	symbol: string;
 
 	@Column()

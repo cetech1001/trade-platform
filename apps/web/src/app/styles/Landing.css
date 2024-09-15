@@ -71,3 +71,47 @@
   color: #fff;
   text-align: center;
 }
+
+/* Mobile view adjustments */
+@media (max-width: 768px) {
+  .landing {
+    height: 100vh;
+    padding: 16px;
+  }
+
+  .landing .title {
+    width: 100%;
+    padding: 0;
+  }
+
+  .landing .title h3 {
+    font-size: 2rem;
+  }
+
+  .landing .title h5 {
+    font-size: 1.25rem;
+  }
+
+  .landing .home {
+    display: block;
+  }
+
+  .landing .home .content {
+    padding: 2rem 0;
+  }
+
+  .landing .home .image {
+    height: auto;
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+
+  .landing .tabs button {
+    font-size: 0.75rem;
+  }
+
+  .landing .navbar .button {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+}

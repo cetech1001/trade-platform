@@ -4,6 +4,7 @@ import {USER_ROUTES} from "../../../../routes";
 import {Modals} from "@coinvant/types";
 import {logout, openModal, RootState} from "@coinvant/store";
 import {connect} from "react-redux";
+import { useIsMobile } from '../../../../hooks';
 
 
 interface IProps {
@@ -27,6 +28,7 @@ const actions = {
 
 export const Nav = connect(mapStateToProps, actions)((props: IProps) => {
   const [activeUsers, setActiveUsers] = useState(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     intervalID = setInterval(function() {
@@ -59,12 +61,30 @@ export const Nav = connect(mapStateToProps, actions)((props: IProps) => {
           <i className="fas fa-house"></i>
           <p>Home</p>
         </Link>
-        <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
-              className={`nav-item ${[USER_ROUTES.trades, USER_ROUTES.history].includes(props.activeTab)
-              && 'nav-item-active'}`}>
-          <i className="fas fa-chart-line"></i>
-          <p>Trades</p>
-        </Link>
+        {!isMobile && (
+          <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
+                className={`nav-item ${[USER_ROUTES.trades, USER_ROUTES.history].includes(props.activeTab)
+                && 'nav-item-active'}`}>
+            <i className="fas fa-chart-line"></i>
+            <p>Trades</p>
+          </Link>
+        )}
+        {isMobile && (
+          <>
+            <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.order)}
+                  className={`nav-item ${USER_ROUTES.trades === props.activeTab
+                  && 'nav-item-active'}`}>
+              <i className="fas fa-chart-line"></i>
+              <p>Order</p>
+            </Link>
+            <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
+                  className={`nav-item ${[USER_ROUTES.trades, USER_ROUTES.history].includes(props.activeTab)
+                  && 'nav-item-active'}`}>
+              <i className="fas fa-clock-rotate-left"></i>
+              <p>Trades</p>
+            </Link>
+          </>
+        )}
         <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.help)}
               className={`nav-item ${props.activeTab === USER_ROUTES.help && 'nav-item-active'}`}>
           <i className="fas fa-circle-question"></i>

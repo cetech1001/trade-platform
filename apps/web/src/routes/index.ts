@@ -4,4 +4,6 @@ export enum USER_ROUTES {
   help = "help",
   trades = "trades",
   history = "history",
+  chart = "chart",
+  order = "order",
 }

@@ -50,7 +50,7 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
     if (props.paymentMethods.length === 0) {
       props.fetchPaymentMethods();
     }
-  }, [props]);
+  }, []);
 
   const reset = () => {
     setStep(1);

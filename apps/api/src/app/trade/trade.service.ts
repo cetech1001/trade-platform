@@ -20,6 +20,8 @@ import {Cron, CronExpression} from "@nestjs/schedule";
 import axios from "axios";
 import {TransactionService} from "../transaction/transaction.service";
 import { AccountService } from '../account/account.service';
+import { EmailService } from '../email/email.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class TradeService {
@@ -29,6 +31,7 @@ export class TradeService {
 		private readonly tradeAssetService: TradeAssetService,
 		private readonly transactionService: TransactionService,
 		private readonly accountService: AccountService,
+		private readonly emailService: EmailService,
 	) {}
 
 	private getCurrentPriceForStock = async (symbol: string) => {
@@ -189,6 +192,14 @@ export class TradeService {
 				await this.transactionService.update(trade.id, {
 					status: (TransactionStatusEnum.closed as unknown) as TransactionStatus,
 				}, queryRunner);
+
+				const {user} = trade.account;
+
+				this.emailService.sendMail(user.email, 'Trade Order Closed', './user/order-closed', {
+					name: user.name,
+					orderID: trade.id,
+					asset: trade.asset.symbol,
+				}).catch(console.error);
 			}
 		} catch (e) {
 			console.error(e);
@@ -229,7 +240,7 @@ export class TradeService {
 		return bidAmount * leverage / rate;
 	}
 
-	async create(createTrade: CreateTrade) {
+	async create(createTrade: CreateTrade, user: User) {
 		const account = await this.accountService.findOne(createTrade.accountID);
 		if ((+account.walletBalance) < (+createTrade.bidAmount)) {
 			throw new BadRequestException('Insufficient funds');
@@ -272,6 +283,19 @@ export class TradeService {
 				amount: createTrade.bidAmount,
 				transactionID: trade.id,
 			}, queryRunner);
+			Promise.all([
+				this.emailService.sendMail(user.email, 'Trade Order Placed', './user/new-order', {
+					name: user.name,
+					orderID: trade.id,
+					asset: trade.asset.symbol,
+				}),
+				this.emailService.sendMail(environment.supportEmail, 'New Trade Order', './admin/new-order', {
+					name: user.name,
+					orderID: trade.id,
+					asset: trade.asset.symbol,
+					orderType: `${trade.assetType} (${trade.isShort ? 'Short Order' : 'Long Order'})`,
+				}),
+			]).catch(console.error);
 			return trade;
 		} catch (e) {
 			console.error(e);
@@ -288,12 +312,11 @@ export class TradeService {
 		const queryBuilder = this.tradeRepo.createQueryBuilder('TR')
 			.leftJoinAndSelect('TR.crypto', 'crypto')
 			.leftJoinAndSelect('TR.stock', 'stock')
-			.leftJoinAndSelect('TR.forex', 'forex');
+			.leftJoinAndSelect('TR.forex', 'forex')
+			.leftJoinAndSelect('TR.account', 'A');
 
 		if (user.role === UserRole.admin) {
-			queryBuilder
-				.leftJoinAndSelect('TR.account', 'A')
-				.leftJoinAndSelect('A.user', 'U');
+			queryBuilder.leftJoinAndSelect('A.user', 'U');
 		}
 
 		if (user.role === UserRole.user) {
@@ -320,7 +343,7 @@ export class TradeService {
 	}
 
 	findOne(id: string) {
-		return this.tradeRepo.findOne({ where: { id } });
+		return this.tradeRepo.findOne({ where: { id }, relations: ['account', 'account.user'] });
 	}
 
 	async update(id: string, updateTrade: UpdateTrade) {

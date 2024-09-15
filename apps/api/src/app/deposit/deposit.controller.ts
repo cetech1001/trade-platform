@@ -40,11 +40,7 @@ export class DepositController {
   create(@UploadedFile() file: Express.Multer.File,
          @Body() createDepositDto: CreateDepositDto,
          @CurrentUser() user: User) {
-    const accountIDs = user.accounts.map(a => a.id);
-    if (!accountIDs.includes(createDepositDto.accountID)) {
-      throw new BadRequestException('Account ID is invalid');
-    }
-    return this.depositService.create(file, createDepositDto);
+    return this.depositService.create(file, createDepositDto, user);
   }
 
   @Roles(UserRole.admin)

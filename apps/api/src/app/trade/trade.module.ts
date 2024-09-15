@@ -6,13 +6,15 @@ import {TradeEntity} from "./entities/trade.entity";
 import {TradeAssetModule} from "../trade-asset/trade-asset.module";
 import {TransactionModule} from "../transaction/transaction.module";
 import { AccountModule } from '../account/account.module';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
-      TypeOrmModule.forFeature([TradeEntity]),
-      TradeAssetModule,
-      TransactionModule,
-      AccountModule,
+    TypeOrmModule.forFeature([TradeEntity]),
+    TradeAssetModule,
+    TransactionModule,
+    AccountModule,
+    EmailModule,
   ],
   controllers: [TradeController],
   providers: [TradeService],

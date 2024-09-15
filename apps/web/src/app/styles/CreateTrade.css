@@ -219,3 +219,10 @@
   border-radius: 8px;
   color: #FFFFFF;
 }
+
+@media (max-width: 768px) {
+  .create-trade {
+    flex: 1;
+    height: calc(100vh - 120px);
+  }
+}

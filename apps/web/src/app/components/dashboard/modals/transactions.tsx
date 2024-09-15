@@ -54,7 +54,7 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 			type: type || undefined,
 			status: status || undefined,
 		})
-	}, [type, status, props, options]);
+	}, [type, status]);
 
 	const totalPages = useMemo(() => {
 		return Math.ceil(props.totalTransactions / options.limit);

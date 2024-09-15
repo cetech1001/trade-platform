@@ -5,6 +5,7 @@ dotenv.config();
 export const environment = {
   production: false,
   port: process.env.PORT || 3000,
+  appName: process.env.APP_NAME,
   db: {
     type: (process.env.DB_TYPE as 'mysql' | 'mariadb') || 'mysql',
     host: process.env.DB_HOST || 'localhost',
@@ -22,5 +23,15 @@ export const environment = {
     secret: process.env.JWT_SECRET || 'secret',
     expiresIn: process.env.JWT_TOKEN_EXPIRE || '1h',
   },
-  assetsPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
+  email: {
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  },
+  supportEmail: process.env.SUPPORT_EMAIL,
+  assetsPath: path.join(process.cwd(),/* 'apps', 'api', 'src',*/ 'assets'),
 }

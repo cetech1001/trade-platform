@@ -22,11 +22,10 @@ export class TransactionService {
     // eslint-disable-next-line prefer-const
     let { status, type, accountID, ...options } = query;
     const queryBuilder = this.transactionRepo.createQueryBuilder('T');
+    queryBuilder.leftJoinAndSelect('T.account', 'A');
 
     if (user.role === UserRole.admin) {
-      queryBuilder
-        .leftJoinAndSelect('T.account', 'A')
-        .leftJoinAndSelect('A.user', 'U');
+        queryBuilder.leftJoinAndSelect('A.user', 'U');
     }
 
     if (user.role === UserRole.user) {

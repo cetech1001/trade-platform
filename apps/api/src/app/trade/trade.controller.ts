@@ -5,7 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  Delete, UseGuards, Query, BadRequestException
+  Delete, UseGuards, Query
 } from '@nestjs/common';
 import { TradeService } from './trade.service';
 import { CreateTradeDto } from './dto/create-trade.dto';
@@ -27,11 +27,7 @@ export class TradeController {
   @Roles(UserRole.user)
   @Post()
   create(@Body() createTradeDto: CreateTradeDto, @CurrentUser() user: User) {
-    const accountIDs = user.accounts.map(a => a.id);
-    if (!accountIDs.includes(createTradeDto.accountID)) {
-      throw new BadRequestException('Account ID is invalid');
-    }
-    return this.tradeService.create(createTradeDto);
+    return this.tradeService.create(createTradeDto, user);
   }
 
   @Get()

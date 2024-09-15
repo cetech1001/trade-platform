@@ -65,7 +65,7 @@ export const Assets = (props: IProps) => {
 					<h3>Assets</h3>
 					<div className={"icons"}>
 						<i className="fa-solid fa-xmark"
-						   onClick={() => props.toggleNav(USER_ROUTES.blank)}></i>
+						   onClick={() => props.toggleNav(USER_ROUTES.chart)}></i>
 					</div>
 				</div>
 				<div className="tabs">

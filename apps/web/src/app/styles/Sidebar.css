@@ -52,3 +52,10 @@
 .sidebar-option .info p {
   font-size: 0.8625rem;
 }
+
+@media (max-width: 768px) {
+  .sidebar {
+    right: -100vw;
+    width: 99vw;
+  }
+}

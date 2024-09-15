@@ -6,8 +6,10 @@ let currentAccount = null;
 const _authData = localStorage.getItem("authData");
 if (_authData) {
 	const authData = JSON.parse(_authData);
-	currentAccount = authData.user.accounts.find(({ type }: Account) =>
-		type === AccountType.demo);
+	if (authData?.user?.accounts) {
+		currentAccount = authData.user.accounts.find(({ type }: Account) =>
+			type === AccountType.demo);
+	}
 }
 
 const initialState: UserState = {

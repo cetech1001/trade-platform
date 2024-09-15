@@ -69,7 +69,7 @@ export const Trades = connect(mapStateToProps, actions)((props: IProps) => {
 
   useEffect(() => {
     props.fetchTrades(query);
-  }, [props, query]);
+  }, [query]);
 
   useEffect(() => {
     if (props.trades.length > 0) {
@@ -93,7 +93,7 @@ export const Trades = connect(mapStateToProps, actions)((props: IProps) => {
           <h3>Trades</h3>
           <div className={"icons"}>
             <i className="fa-solid fa-xmark"
-               onClick={() => props.toggleNav(USER_ROUTES.blank)}></i>
+               onClick={() => props.toggleNav(USER_ROUTES.chart)}></i>
           </div>
         </div>
         <div className="tabs">

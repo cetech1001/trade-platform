@@ -1,21 +1,25 @@
-import {Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   CreateDeposit,
   Deposit,
-  DepositStatus, FindDepositsQueryParams,
+  DepositStatus,
+  FindDepositsQueryParams,
   Transaction,
   TransactionType,
   UpdateDeposit,
   User,
   UserRole
 } from '@coinvant/types';
-import {paginate, Pagination} from "nestjs-typeorm-paginate";
-import {DataSource, Repository} from "typeorm";
-import {DepositEntity} from "./entities/deposit.entity";
-import {InjectRepository} from "@nestjs/typeorm";
-import {TransactionService} from "../transaction/transaction.service";
-import {PaymentMethodService} from "../payment-method/payment-method.service";
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { DataSource, Repository } from 'typeorm';
+import { DepositEntity } from './entities/deposit.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TransactionService } from '../transaction/transaction.service';
+import { PaymentMethodService } from '../payment-method/payment-method.service';
 import { AccountService } from '../account/account.service';
+import { EmailService } from '../email/email.service';
+import { formatCurrency } from '../../helpers';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class DepositService {
@@ -25,9 +29,10 @@ export class DepositService {
       private readonly dataSource: DataSource,
       private readonly accountService: AccountService,
       private readonly paymentMethodService: PaymentMethodService,
-      private readonly transactionService: TransactionService) {}
+      private readonly transactionService: TransactionService,
+      private readonly emailService: EmailService) {}
 
-  async create(file: Express.Multer.File, createDeposit: CreateDeposit): Promise<Transaction> {
+  async create(file: Express.Multer.File, createDeposit: CreateDeposit, user: User): Promise<Transaction> {
     const queryRunner = this.dataSource.createQueryRunner();
     try {
       const account = await this.accountService.findOne(createDeposit.accountID);
@@ -38,13 +43,25 @@ export class DepositService {
         account,
         proof: file.filename,
       });
-      return await this.transactionService.create({
+      const transaction = await this.transactionService.create({
         amount: deposit.amount,
         type: TransactionType.deposit,
         status: deposit.status,
         transactionID: deposit.id,
         account,
       }, queryRunner);
+      Promise.all([
+        this.emailService.sendMail(user.email, 'Deposit Request Received', './user/new-deposit', {
+          name: user.name,
+          amount: formatCurrency(deposit.amount),
+        }),
+        this.emailService.sendMail(environment.supportEmail, 'New Deposit Alert', './admin/new-deposit', {
+          name: user.name,
+          amount: formatCurrency(deposit.amount),
+          method: `${paymentMethod.name} (${paymentMethod.network})`,
+        }),
+      ]).catch(console.error);
+      return transaction;
     } catch (e) {
       console.error(e);
       await queryRunner.rollbackTransaction();
@@ -88,7 +105,7 @@ export class DepositService {
   }
 
   findOne(id: string): Promise<Deposit> {
-    return this.depositRepo.findOne({ where: { id } });
+    return this.depositRepo.findOne({ where: { id }, relations: ['account', 'account.user'] });
   }
 
   async update(id: string, updateDeposit: UpdateDeposit): Promise<Deposit> {
@@ -96,8 +113,19 @@ export class DepositService {
     try {
       await queryRunner.manager.update(DepositEntity, id, updateDeposit);
       const deposit = await this.findOne(id);
+      const {user} = deposit.account;
       if (updateDeposit.status === DepositStatus.confirmed) {
         await this.accountService.increaseBalance(deposit.account.id, deposit.amount, queryRunner);
+        this.emailService.sendMail(user.email, 'Deposit Confirmed', './user/deposit-confirmed', {
+          name: user.name,
+          amount: formatCurrency(deposit.amount),
+        }).catch(console.error);
+      }
+      if (updateDeposit.status === DepositStatus.rejected) {
+        this.emailService.sendMail(user.email, 'Deposit Rejected', './user/deposit-rejected', {
+          name: user.name,
+          amount: formatCurrency(deposit.amount),
+        }).catch(console.error);
       }
       await this.transactionService.update(id, updateDeposit, queryRunner);
       return deposit;
