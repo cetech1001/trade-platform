@@ -37,6 +37,8 @@ const actions = {
 };
 
 export const KYCVerification = connect(mapStateToProps, actions)((props: IProps) => {
+  if (props.activeModal !== Modals.kycVerification) return null;
+
   const [createKYC, setCreateKYC] = useState<CreateKYC>({
     dob: '',
     firstName: '',

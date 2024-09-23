@@ -34,6 +34,8 @@ const actions = {
 };
 
 export const UpdateProfile = connect(mapStateToProps, actions)((props: IProps) => {
+  if (props.activeModal !== Modals.personal) return null;
+
   const [name, setName] = useState(props.user?.name);
   const [email, setEmail] = useState(props.user?.email);
   const [isSubmitting, setIsSubmitting] = useState(false);

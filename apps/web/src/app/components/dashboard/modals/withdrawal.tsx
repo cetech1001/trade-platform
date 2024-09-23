@@ -10,7 +10,16 @@ import {
 } from '@coinvant/types';
 import {formatCurrency} from "../../../helpers";
 import {connect} from "react-redux";
-import {addWithdrawal, closeModal, fetchPaymentMethods, openModal, RootState, showAlert} from "@coinvant/store";
+import {
+  addWithdrawal,
+  closeModal,
+  fetchPaymentMethods,
+  openModal,
+  RootState,
+  sendOTP,
+  showAlert
+} from '@coinvant/store';
+import { OTPModal } from './otp';
 
 interface IProps {
   activeModal: Modals | null;
@@ -22,6 +31,7 @@ interface IProps {
   showAlert: (payload: AlertState) => void;
   addWithdrawal: (payload: CreateWithdrawal) => Promise<void>;
   fetchPaymentMethods: (options?: PaginationOptions) => void;
+  sendOTP: () => Promise<void>;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -37,15 +47,19 @@ const actions = {
   addWithdrawal,
   showAlert,
   fetchPaymentMethods,
+  sendOTP,
 };
 
 export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
+  if (Modals.withdrawal !== props.activeModal) return null;
+
   const [step, setStep] = useState(1);
-  const [amount, setAmount] = useState(10);
+  const [amount, setAmount] = useState("10");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [method, setMethod] = useState<PaymentMethod | undefined>();
   const [walletAddress, setWalletAddress] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOTPOpen, setIsOTPOpen] = useState(false);
 
   useEffect(() => {
     if (paymentMethod !== "") {
@@ -62,14 +76,14 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
 
   const reset = () => {
     setStep(1);
-    setAmount(10);
+    setAmount("10");
     setPaymentMethod("");
     setMethod(undefined);
     setWalletAddress("");
   }
 
   const validateInputs = () => {
-    if (amount <= 0) {
+    if (+amount <= 0) {
       props.showAlert({
         show: true,
         type: "error",
@@ -112,24 +126,40 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
     props.openModal(Modals.payments);
   }
 
-  const submit = async () => {
-    if (validateInputs() && props.account && method) {
-      setIsSubmitting(true);
-      await props.addWithdrawal({
-        amount,
-        paymentMethod: method.name,
-        network: method.network,
-        walletAddress,
-        accountID: props.account.id,
-      });
-      setIsSubmitting(false);
-      setStep(2);
+  const openOTPModal = async () => {
+    if (validateInputs() && method) {
+      try {
+        setIsSubmitting(true);
+        await props.sendOTP();
+        setIsOTPOpen(true);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  }
+
+  const submit = async (isValid: boolean) => {
+    if (isValid && props.account && method) {
+      try {
+        setIsOTPOpen(false);
+        setIsSubmitting(true);
+        await props.addWithdrawal({
+          amount: +amount,
+          paymentMethod: method.name,
+          network: method.network,
+          walletAddress,
+          accountID: props.account.id,
+        });
+        setStep(2);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   }
 
   const onConfirm = async () => {
     if (step === 1) {
-      await submit();
+      await openOTPModal();
     } else {
       props.openModal(Modals.transactions);
       reset();
@@ -154,7 +184,7 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
   };
 
   return (
-    <div className={`sidebar ${props.activeModal === Modals.withdrawal ? 'open' : ''} transactions-modal`}>
+    <div className={'sidebar open'}>
       <div>
         <div className={"flex-row-space-between close-button"}>
           <i className="fa-solid fa-long-arrow-left cursor-pointer"
@@ -174,7 +204,7 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
                   <div className={'input-field'}>
                     <input type={'number'} value={amount} step={0.01} min={10}
                            onChange={e =>
-                               setAmount(+e.target.value)} required/>
+                               setAmount(e.target.value)} required/>
                   </div>
                 </div>
               </div>
@@ -245,9 +275,10 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
       <div style={{display: 'flex'}}>
         <button className={`button bg-primary`}
                 onClick={onConfirm} style={{marginBottom: "1rem"}}>
-          {step === 1 ? (!isSubmitting ? 'Confirm' : 'Submitting...') : 'Done'}
+          {step === 1 ? (!isSubmitting ? 'Confirm' : 'Processing...') : 'Done'}
         </button>
       </div>
+      <OTPModal isOpen={isOTPOpen} onClose={() => setIsOTPOpen(false)} onSubmit={submit}/>
     </div>
   );
 });

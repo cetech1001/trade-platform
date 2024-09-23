@@ -13,11 +13,13 @@ enum ActiveTab {
 }
 
 export const Sidebar = (props: IProps) => {
+  if(!props.isSidebarOpen) return null;
+
   const [activeTab, setActiveTab]
     = useState<ActiveTab>(ActiveTab.login);
 
   return (
-    <div className={`sidebar ${props.isSidebarOpen ? 'open' : ''}`}>
+    <div className={'sidebar open'}>
       <div>
         <div className={"flex-row-space-between close-button"}>
           <div/>

@@ -26,12 +26,12 @@ export const environment = {
   email: {
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
-    secure: false,
+    secure: true,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
   },
   supportEmail: process.env.SUPPORT_EMAIL,
-  assetsPath: path.join(process.cwd(),/* 'apps', 'api', 'src',*/ 'assets'),
+  assetsPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
 }

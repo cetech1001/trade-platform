@@ -32,8 +32,10 @@ const actions = {
 };
 
 export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
+  if (props.activeModal !== Modals.deposit) return null;
+
   const [step, setStep] = useState(1);
-  const [amount, setAmount] = useState(10);
+  const [amount, setAmount] = useState("10");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [cryptoAmount, setCryptoAmount] = useState(0);
   const [method, setMethod] = useState<PaymentMethod | undefined>();
@@ -54,7 +56,7 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
 
   const reset = () => {
     setStep(1);
-    setAmount(10);
+    setAmount("10");
     setPaymentMethod("");
     setCryptoAmount(0);
     setMethod(undefined);
@@ -62,10 +64,10 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
   }
 
   const goForward = () => {
-    if (amount > 0 && method) {
+    if (+amount > 0 && method) {
       axios.get(`https://min-api.cryptocompare.com/data/price?fsym=${method.code}&tsyms=USD`)
           .then((response) => {
-            setCryptoAmount(amount / response.data["USD"]);
+            setCryptoAmount(+amount / response.data["USD"]);
           })
           .catch((error) => {
             console.error('Error fetching conversion rate:', error);
@@ -133,7 +135,7 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
   }
 
   return (
-    <div className={`sidebar ${props.activeModal === Modals.deposit ? 'open' : ''}`}>
+    <div className={'sidebar open'}>
       <div>
         <div className={"flex-row-space-between close-button"}>
           <i className="fa-solid fa-long-arrow-left cursor-pointer"
@@ -153,7 +155,7 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
                   <div className={'input-field'}>
                     <input type={'number'} value={amount} step={0.01} min={10}
                            onChange={e =>
-                               setAmount(+e.target.value)} required/>
+                               setAmount(e.target.value)} required/>
                   </div>
                 </div>
               </div>

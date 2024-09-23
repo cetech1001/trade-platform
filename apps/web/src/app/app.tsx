@@ -2,19 +2,19 @@ import {Route, Routes, Navigate, Outlet} from "react-router-dom";
 import {Landing} from "./components/landing";
 import {Alert} from "./components/shared/alert";
 import {connect} from "react-redux";
-import { AlertState, AuthState } from '@coinvant/types';
-import {RootState} from "@coinvant/store";
+import { AuthState } from '@coinvant/types';
+import { refreshUserProfile, RootState } from '@coinvant/store';
 import { Dashboard } from './components/dashboard';
+import { useAppDispatch } from '../hooks';
+import { useEffect } from 'react';
 
 interface IProps {
   auth: AuthState,
-  alert: AlertState,
 }
 
 const mapStateToProps = (state: RootState) => ({
   auth: state.auth,
-  alert: state.alert,
-})
+});
 
 export const App = connect(mapStateToProps)((props: IProps) => {
   const GuestRoute = () => {
@@ -27,7 +27,7 @@ export const App = connect(mapStateToProps)((props: IProps) => {
 
   return (
     <>
-      {props.alert.show && <Alert />}
+      <Alert />
       <Routes>
         <Route path="/" element={<GuestRoute/>}>
           <Route path="/" element={<Landing/>}/>

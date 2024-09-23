@@ -185,8 +185,17 @@
   background: #1A1D21;
   border-radius: 8px;
   padding: 4px 16px;
-  /*gap: 2px;*/
   margin-bottom: 8px;
+}
+
+.sl-tp-option .input textarea {
+  background-color: #1A1D21;
+  width: 100%;
+  color: #ffffff;
+  outline: none;
+  border: none;
+  resize: none;
+  padding-top: 10px;
 }
 
 .sl-tp-option .input span, .sl-tp-option .input > i {

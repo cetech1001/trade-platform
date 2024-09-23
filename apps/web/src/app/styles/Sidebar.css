@@ -34,6 +34,14 @@
   border-radius: 8px;
 }
 
+.sidebar-option.active {
+  background-color: rgba(0, 148, 255, 1);
+}
+
+.sidebar-option.disabled {
+  background-color: #B0B0B0;
+}
+
 .sidebar-option:hover {
   background-color: rgba(94, 105, 120, 0.22);
   cursor: pointer;
@@ -55,7 +63,8 @@
 
 @media (max-width: 768px) {
   .sidebar {
-    right: -100vw;
-    width: 99vw;
+    right: calc(100vw + 1% * -1);
+    width: 96%;
+    padding: 2%
   }
 }

@@ -4,6 +4,7 @@ import { AuthActions, UserActions } from '../types';
 import { Account, CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@coinvant/types';
 import { getDemoAccount, getError } from '../helpers';
 import { showAlert } from './alert';
+import { AccountService } from '../services/account';
 
 export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -27,7 +28,6 @@ export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppD
 export const fetchKYC = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
 		const data = await UserService.findKYC(options);
-		console.log(data);
 		dispatch({
 			type: UserActions.KYC_LIST,
 			payload: {
@@ -158,6 +158,25 @@ export const setCurrentAccount = (account?: Account) => async (dispatch: AppDisp
 	});
 }
 
+export const addAccount = () => async (dispatch: AppDispatch) => {
+	try {
+		console.log("Called this function");
+		await AccountService.createAccount();
+		dispatch(refreshUserProfile());
+		dispatch(showAlert({
+			message: 'Account created successfully.',
+			type: 'success',
+			show: true,
+		}));
+	} catch (error) {
+		dispatch(showAlert({
+			message: 'Failed to create account',
+			type: 'error',
+			show: true,
+		}));
+	}
+}
+
 export const uploadKYC = (formData: FormData) => async (dispatch: AppDispatch) => {
 	try {
 		await UserService.uploadKYC(formData);
@@ -199,7 +218,7 @@ export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
 				payload: authData,
 			});
 
-			setCurrentAccount(getDemoAccount(user.accounts));
+			dispatch(setCurrentAccount(getDemoAccount(user.accounts)));
 		}
 	} catch (error) {
 		dispatch(showAlert({

@@ -28,7 +28,10 @@ export class UserService {
         throw new BadRequestException("Email address already exists");
       }
       const user = await queryRunner.manager.save(UserEntity, createUserDto);
-      await this.accountService.create({ user }, queryRunner);
+      await this.accountService.create({
+        user,
+        walletBalance: 100000
+      }, queryRunner);
       Promise.all([
         this.emailService.sendMail(user.email, `Welcome to ${environment.appName}`, './user/welcome', {
           name: user.name,

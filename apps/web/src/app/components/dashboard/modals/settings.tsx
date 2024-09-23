@@ -1,6 +1,6 @@
 import { Account, AuthUser, KYCStatus, Modals } from '@coinvant/types';
 import { capitalizeFirstLetter, formatCurrency } from '../../../helpers';
-import { closeModal, logout, openModal, RootState, setCurrentAccount } from '@coinvant/store';
+import { addAccount, closeModal, logout, openModal, RootState, setCurrentAccount } from '@coinvant/store';
 import { connect } from 'react-redux';
 
 interface IProps {
@@ -11,6 +11,7 @@ interface IProps {
   openModal: (payload: Modals) => void;
   closeModal: () => void;
   setCurrentAccount: (account?: Account) => void;
+  addAccount: () => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -24,9 +25,12 @@ const actions = {
   closeModal,
   logout,
   setCurrentAccount,
+  addAccount,
 };
 
 export const Settings = connect(mapStateToProps, actions)((props: IProps) => {
+  if (props.activeModal !== Modals.settings) return null;
+
   return (
     <div className={`sidebar ${props.activeModal === Modals.settings ? 'open' : ''}`}>
       <div>
@@ -59,7 +63,7 @@ export const Settings = connect(mapStateToProps, actions)((props: IProps) => {
               && props.user.kycStatus === KYCStatus.verified
               && (
               <div className={'sidebar-option'}
-                   onClick={() => props.openModal(Modals.personal)}>
+                   onClick={props.addAccount}>
                 <i className="fa-solid fa-plus"></i>
                 <div className={'info'}>
                   <h5>New Account</h5>

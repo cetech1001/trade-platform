@@ -12,7 +12,6 @@ const mapStateToProps = (state: RootState) => ({
 
 export const Chart = connect(mapStateToProps)((props: IProps) => {
   const container = useRef<HTMLDivElement>(null);
-    const widgetRef = useRef<any>(null);
 
   useEffect(() => {
       if (container.current) {

@@ -1,7 +1,5 @@
 import {FC, useState} from "react";
-import {TradeItem} from "../shared/trade";
 import {FilterDropdown} from "../shared/filter-dropdown";
-import "../../../styles/TradeHistory.css";
 import {USER_ROUTES} from "../../../../routes";
 
 interface IProps {
@@ -13,7 +11,9 @@ interface TradeFiltersProps {
 }
 
 const TradeFilters: FC<TradeFiltersProps> = (props) => {
-  const action = (value: string) => {}
+  const action = (value: string) => {
+    return;
+  }
 
   const Assets = () => {
     const options = [

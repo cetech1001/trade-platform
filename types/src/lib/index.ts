@@ -13,3 +13,4 @@ export * from './transaction';
 export * from './trade-asset';
 export * from './kyc';
 export * from './account';
+export * from './email';

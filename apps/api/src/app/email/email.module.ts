@@ -21,10 +21,6 @@ import { environment } from '../../../environments/environment';
             strict: true,
           },
           partialsDir: path.join(environment.assetsPath, 'templates', 'partials'),
-          context: {
-            companyName: environment.appName,
-            supportEmail: environment.supportEmail,
-          },
         },
       }),
     }),

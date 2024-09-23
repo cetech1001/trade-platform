@@ -21,7 +21,7 @@ const authenticate = async (payload: LoginRequest | RegisterRequest, actionType:
       payload: response,
     });
 
-    setCurrentAccount(getDemoAccount(response.user.accounts));
+    dispatch(setCurrentAccount(getDemoAccount(response.user.accounts)));
 
     return Promise.resolve();
   } catch (error) {

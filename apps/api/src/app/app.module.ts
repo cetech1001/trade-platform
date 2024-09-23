@@ -12,6 +12,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TradeAssetModule } from './trade-asset/trade-asset.module';
 import { EmailModule } from './email/email.module';
 import { AccountModule } from './account/account.module';
+import { OTPModule } from './otp/otp.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AccountModule } from './account/account.module';
     TradeAssetModule,
     EmailModule,
     AccountModule,
+    OTPModule,
   ],
 })
 export class AppModule {}

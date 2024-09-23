@@ -14,7 +14,7 @@ export enum AccountType {
   demo = 'demo',
 }
 
-export interface CreateAccount extends Partial<Pick<Account, 'type'>> {
+export interface CreateAccount extends Partial<Pick<Account, 'type' | 'walletBalance'>> {
   user: User;
 }
 export type UpdateAccount = Pick<Account, 'walletBalance'>;

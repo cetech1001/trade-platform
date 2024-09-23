@@ -30,7 +30,7 @@ const actions = {
 };
 
 export const Order = connect(mapStateToProps, actions)((props: IProps) => {
-	const [bidAmount, setBidAmount] = useState(0);
+	const [bidAmount, setBidAmount] = useState("0");
 	const [leverage, setLeverage] = useState(1);
 	const [stopLoss, setStopLoss] = useState(0);
 	const [takeProfit, setTakeProfit] = useState(0);
@@ -39,7 +39,7 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 	const [time, setTime] = useState("");
 
 	const reset = () => {
-		setBidAmount(0);
+		setBidAmount("0");
 		setLeverage(1);
 		setStopLoss(0);
 		setTakeProfit(0);
@@ -49,17 +49,17 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 	}
 
 	const add = () => {
-		const remainder = bidAmount % 10;
-		setBidAmount(bidAmount + (10 - remainder));
+		const remainder = +bidAmount % 10;
+		setBidAmount(`${+bidAmount + (10 - remainder)}`);
 	}
 
 	const subtract = () => {
-		if (bidAmount > 0) {
-			const remainder = bidAmount % 10;
+		if (+bidAmount > 0) {
+			const remainder = +bidAmount % 10;
 			if (remainder > 0) {
-				setBidAmount(bidAmount - remainder);
+				setBidAmount(`${+bidAmount - remainder}`);
 			} else {
-				setBidAmount(bidAmount - 10);
+				setBidAmount(`${+bidAmount - 10}`);
 			}
 		}
 	}
@@ -90,7 +90,7 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 	const onBid = async (isShort?: boolean) => {
 		if (props.asset && props.account) {
 			const payload: CreateTrade = {
-				bidAmount,
+				bidAmount: +bidAmount,
 				leverage,
 				stopLoss: stopLoss || undefined,
 				takeProfit: takeProfit || undefined,
@@ -210,7 +210,7 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 				<div className={'amount-input'}>
 					<span>Amount, $</span>
 					<input type={'number'} placeholder={'0'} onChange={e =>
-						setBidAmount(+e.target.value)} value={bidAmount}/>
+						setBidAmount(e.target.value)} value={bidAmount}/>
 				</div>
 				<div className={'amount-change'}>
 					<div className={'subtract'} onClick={subtract}>-</div>

@@ -31,7 +31,7 @@ export class WithdrawalController {
     if (!accountIDs.includes(createWithdrawalDto.accountID)) {
       throw new BadRequestException('Account ID is invalid');
     }
-    return this.withdrawalService.create(createWithdrawalDto);
+    return this.withdrawalService.create(createWithdrawalDto, user);
   }
 
   @Get()

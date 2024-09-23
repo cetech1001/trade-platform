@@ -6,6 +6,7 @@ import {WithdrawalEntity} from "./entities/withdrawal.entity";
 import {TransactionModule} from "../transaction/transaction.module";
 import { AccountModule } from '../account/account.module';
 import { EmailModule } from '../email/email.module';
+import { PaymentMethodModule } from '../payment-method/payment-method.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { EmailModule } from '../email/email.module';
     TransactionModule,
     AccountModule,
     EmailModule,
+    PaymentMethodModule,
   ],
   controllers: [WithdrawalController],
   providers: [WithdrawalService],

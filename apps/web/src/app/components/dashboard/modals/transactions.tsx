@@ -35,6 +35,8 @@ const actions = {
 };
 
 export const Transactions = connect(mapStateToProps, actions)((props: IProps) => {
+	if (props.activeModal !== Modals.transactions) return null;
+
 	const [options, setOptions] = useState<FindTransactionsQueryParams>({
 		page: 1,
 		limit: 5,

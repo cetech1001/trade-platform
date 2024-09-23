@@ -25,6 +25,8 @@ const actions = {
 };
 
 export const UpdatePassword = connect(mapStateToProps, actions)((props: IProps) => {
+  if (props.activeModal !== Modals.password) return null;
+
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

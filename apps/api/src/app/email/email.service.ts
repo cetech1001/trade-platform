@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class EmailService {
@@ -14,7 +15,11 @@ export class EmailService {
       to: email,
       subject,
       template,
-      context,
+      context: {
+        companyName: environment.appName,
+        supportEmail: environment.supportEmail,
+        ...context,
+      },
     });
   }
 }
