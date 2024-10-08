@@ -4,6 +4,7 @@ import {TradeActions} from "../types";
 import { showAlert } from './alert';
 
 import {CreateTrade, UpdateTrade, FindTradeQueryParams} from "@coinvant/types";
+import { getError } from '../helpers';
 
 export const fetchTrades = (query: FindTradeQueryParams) => async (dispatch: AppDispatch) => {
 	try {
@@ -13,6 +14,7 @@ export const fetchTrades = (query: FindTradeQueryParams) => async (dispatch: App
 			payload: {
 				trades: data.items,
 				totalCount: data.meta.totalItems,
+				totalPages: data.meta.totalPages,
 			},
 		});
 	} catch (error) {
@@ -34,20 +36,20 @@ export const placeBid = (payload: CreateTrade) => async (dispatch: AppDispatch) 
 			},
 		});
 		dispatch(showAlert({
-			message: 'Bid placed successfully.',
+			message: 'Order placed successfully.',
 			type: 'success',
 			show: true,
 		}));
 	} catch (error) {
 		dispatch(showAlert({
-			message: 'Failed to place bid.',
+			message: 'Failed to place order.',
 			type: 'error',
 			show: true,
 		}));
 	}
 }
 
-export const editTrade = (id: string, payload: UpdateTrade) => async (dispatch: AppDispatch) => {
+export const updateTrade = (id: string, payload: UpdateTrade) => async (dispatch: AppDispatch) => {
 	try {
 		const data = await TradeService.updateTrade(id, payload);
 		dispatch({
@@ -57,13 +59,14 @@ export const editTrade = (id: string, payload: UpdateTrade) => async (dispatch: 
 			},
 		});
 		dispatch(showAlert({
-			message: 'Bid updated successfully.',
+			message: 'Order updated successfully.',
 			type: 'success',
 			show: true,
 		}));
 	} catch (error) {
+		const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to update bid.',
+			message: message || 'Failed to update order.',
 			type: 'error',
 			show: true,
 		}));

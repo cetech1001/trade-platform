@@ -65,16 +65,22 @@ export const Nav = connect(mapStateToProps, actions)((props: IProps) => {
           <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
                 className={`nav-item ${[USER_ROUTES.trades, USER_ROUTES.history].includes(props.activeTab)
                 && 'nav-item-active'}`}>
-            <i className="fas fa-chart-line"></i>
+            <i className="fas fa-clock-rotate-left"></i>
             <p>Trades</p>
           </Link>
         )}
         {isMobile && (
           <>
-            <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.order)}
-                  className={`nav-item ${USER_ROUTES.trades === props.activeTab
+            <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.chart)}
+                  className={`nav-item ${USER_ROUTES.chart === props.activeTab
                   && 'nav-item-active'}`}>
               <i className="fas fa-chart-line"></i>
+              <p>Chart</p>
+            </Link>
+            <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.order)}
+                  className={`nav-item ${USER_ROUTES.order === props.activeTab
+                  && 'nav-item-active'}`}>
+              <i className="fas fa-compass"></i>
               <p>Order</p>
             </Link>
             <Link to={'#'} onClick={() => props.toggleNav(USER_ROUTES.trades)}
@@ -90,15 +96,19 @@ export const Nav = connect(mapStateToProps, actions)((props: IProps) => {
           <i className="fas fa-circle-question"></i>
           <p>Help</p>
         </Link>
-        <Link to={'#'} onClick={() => props.openModal(Modals.settings)}
-              className={`nav-item ${props.activeModal === Modals.settings && 'nav-item-active'}`}>
-          <i className="fas fa-cog"></i>
-          <p>Settings</p>
-        </Link>
-        <Link to={'#'} onClick={props.logout} className={`nav-item text-danger`}>
-          <i className="fas fa-sign-out-alt" style={{ color: "red" }}></i>
-          <p>Logout</p>
-        </Link>
+        {!isMobile && (
+          <>
+            <Link to={'#'} onClick={() => props.openModal(Modals.settings)}
+                  className={`nav-item ${props.activeModal === Modals.settings && 'nav-item-active'}`}>
+              <i className="fas fa-cog"></i>
+              <p>Settings</p>
+            </Link>
+            <Link to={'#'} onClick={props.logout} className={`nav-item text-danger`}>
+              <i className="fas fa-sign-out-alt" style={{ color: "red" }}></i>
+              <p>Logout</p>
+            </Link>
+          </>
+        )}
       </div>
       <div className={'active-users'}>
         <p className={'number'}>{activeUsers}</p>

@@ -1,4 +1,4 @@
-import {Trade, TradeAssetType, Transaction} from "@coinvant/types";
+import {Trade, TradeAssetType} from "@coinvant/types";
 import axios from "axios";
 
 export const formatCurrency = (amount: number | string = 0): string => {
@@ -10,11 +10,12 @@ export const formatCurrency = (amount: number | string = 0): string => {
 	}).format(Number(amount));
 }
 
-export const groupTransactionsByDate = (transactions: Transaction[]) => {
-	const groupedTransactions: Record<string, Transaction[]> = {};
+export const groupTransactionsByDate = <T>(transactions: T[]) => {
+	const groupedTransactions: Record<string, T[]> = {};
 
 	transactions.forEach((transaction) => {
-		const date = new Date(transaction.createdAt).toISOString().split('T')[0];
+		// @ts-expect-error idk
+		const date = new Date(transaction['createdAt']).toISOString().split('T')[0];
 		if (!groupedTransactions[date]) {
 			groupedTransactions[date] = [];
 		}

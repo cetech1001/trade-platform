@@ -1,9 +1,20 @@
-import {FC, useState} from "react";
-import {FilterDropdown} from "../shared/filter-dropdown";
-import {USER_ROUTES} from "../../../../routes";
+import { FC, useEffect, useRef, useState } from 'react';
+import { FilterDropdown } from '../shared/filter-dropdown';
+import { USER_ROUTES } from '../../../../routes';
+import { fetchTrades, RootState } from '@coinvant/store';
+import { connect } from 'react-redux';
+import { Account, FindTradeQueryParams, Trade, TradeStatus } from '@coinvant/types';
+import { formatDate, groupTransactionsByDate } from '../../../helpers';
+import { TradeItem } from '../shared/trade';
 
 interface IProps {
+  trades: Trade[];
+  account: Account | null;
+  limit: number;
+  totalCount: number;
+  totalPages: number;
   toggleNav: (route: USER_ROUTES) => void;
+  fetchTrades: (query: FindTradeQueryParams) => Promise<void>;
 }
 
 interface TradeFiltersProps {
@@ -61,18 +72,81 @@ const TradeFilters: FC<TradeFiltersProps> = (props) => {
   );
 }
 
-export const TradeHistory: FC<IProps> = (props) => {
+const mapStateToProps = (state: RootState) => ({
+  account: state.user.currentAccount,
+  trades: state.trade.list,
+  limit: state.trade.limit,
+  totalCount: state.trade.totalCount,
+  totalPages: state.trade.totalPages,
+});
+
+const actions = {
+  fetchTrades,
+};
+
+export const TradeHistory = connect(mapStateToProps, actions)((props: IProps) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'trades' | 'orders'>('trades');
+  const [isLoading, setIsLoading] = useState(false);
+  const [query, setQuery] = useState<FindTradeQueryParams>({
+    page: 1,
+    limit: props.limit,
+    accountID: props.account?.id,
+  });
+  const [tradeBlocks, setTradeBlocks] = useState<Trade[][]>([]);
+
+  const handleScroll = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const bottom =
+          container.scrollHeight - container.scrollTop <= container.clientHeight + 500;
+      if (bottom && !isLoading && query.page < props.totalPages) {
+        setQuery(prevState => ({
+          ...prevState,
+          page: prevState.page + 1,
+        }))
+      }
+    }
+  };
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [handleScroll]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    props.fetchTrades(query)
+      .finally(() => setIsLoading(false));
+  }, [query]);
+
+  useEffect(() => {
+    setTradeBlocks(groupTransactionsByDate(props.trades));
+  }, [props.trades]);
+
+  useEffect(() => {
+    setQuery(prevState => ({
+      ...prevState,
+      status: activeTab === 'orders' ? TradeStatus.pending : undefined,
+    }));
+  }, [activeTab]);
+
   return (
     <div className={"assets"}>
       <div className="asset-list">
-        <div className={"flex-row-space-between"} style={{paddingRight: 16, paddingLeft: 16}}>
-          <i className="fa-solid fa-long-arrow-left cursor-pointer"
-             onClick={() => props.toggleNav(USER_ROUTES.trades)}></i>
-          <i className="fa-solid fa-up-right-and-down-left-from-center"></i>
-        </div>
-        <div className={"title"}>
+        <div className={'title'}>
           <h3>History</h3>
+          <div className={'icons back'}>
+            <i className="fa-solid fa-long-arrow-left cursor-pointer"
+               onClick={() => props.toggleNav(USER_ROUTES.trades)}></i>
+          </div>
         </div>
         <div className="tabs">
           <button className={`${activeTab === 'trades' && 'active'}`}
@@ -82,27 +156,23 @@ export const TradeHistory: FC<IProps> = (props) => {
                   onClick={() => setActiveTab('orders')}>Orders
           </button>
         </div>
-        <div className={'assets-body'}>
-          <TradeFilters activeTab={activeTab}/>
+        <div className={'assets-body'} ref={scrollContainerRef}>
+          {/*<TradeFilters activeTab={activeTab} />*/}
           <div className={"trades"}>
-            <div className="history-block">
-              <span className={"text"}>APRIL 10</span>
-              {/*<TradeItem/>
-              <TradeItem/>*/}
-            </div>
-            <div className="history-block">
-              <span className={"text"}>APRIL 5</span>
-              {/*<TradeItem/>
-              <TradeItem/>
-              <TradeItem/>*/}
-            </div>
-            <div className="history-block">
-              <span className={"text"}>FEBRUARY 29</span>
-              {/*<TradeItem/>*/}
-            </div>
+            {tradeBlocks.map((block, i) => (
+              <div className="history-block" key={i}>
+                <span className={'text'}>{formatDate(block[0].createdAt)}</span>
+                {block.map((trade, i) => (
+                  <TradeItem trade={trade} key={i}/>
+                ))}
+              </div>
+            ))}
           </div>
+        </div>
+        <div className={"is-loading"}>
+          {isLoading && "Loading..."}
         </div>
       </div>
     </div>
   );
-}
+})

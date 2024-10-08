@@ -7,6 +7,7 @@ import {TradeAssetModule} from "../trade-asset/trade-asset.module";
 import {TransactionModule} from "../transaction/transaction.module";
 import { AccountModule } from '../account/account.module';
 import { EmailModule } from '../email/email.module';
+import { TradeJob } from './jobs/trade.job';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { EmailModule } from '../email/email.module';
     EmailModule,
   ],
   controllers: [TradeController],
-  providers: [TradeService],
+  providers: [TradeService, TradeJob],
 })
 export class TradeModule {}

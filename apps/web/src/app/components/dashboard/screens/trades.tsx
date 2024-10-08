@@ -76,6 +76,7 @@ export const Trades = connect(mapStateToProps, actions)((props: IProps) => {
       const activeTrades = props.trades.filter(t => t.status === TradeStatus.active);
       setActiveTradeCount(activeTrades.length);
       setActiveAmount(() => activeTrades.reduce((acc, curr) => acc + (+curr.bidAmount), 0));
+      setTotalPL(() => activeTrades.reduce((acc, curr) => acc + (+curr.profitOrLoss), 0))
     }
   }, [props.trades]);
 
@@ -135,7 +136,7 @@ export const Trades = connect(mapStateToProps, actions)((props: IProps) => {
             {props.trades
                 .filter((_, i) => i < activeTradeCount)
                 .map((trade) => (
-                <TradeItem trade={trade} isActive={true} key={trade.id}/>
+                <TradeItem trade={trade} key={trade.id}/>
             ))}
           </div>
           <div className={"title"} style={{ marginTop: 16 }}>

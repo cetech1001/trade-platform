@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { USER_ROUTES } from '../../../routes';
 import { useIsMobile } from '../../../hooks';
-import { TopBar } from './screens/top-bar';
-import { Nav } from './screens/nav';
+import { TopBar } from './layout/top-bar';
+import { Nav } from './layout/nav';
 import { Assets } from './screens/assets';
 import { Trades } from './screens/trades';
 import { TradeHistory } from './screens/history';

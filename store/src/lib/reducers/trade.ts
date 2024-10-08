@@ -6,12 +6,14 @@ interface TradePayload {
 	trades: Trade[];
 	trade: Trade;
 	totalCount: number;
+	totalPages: number;
 }
 
 const initialState = {
 	list: [],
 	totalCount: 0,
 	limit: 5,
+	totalPages: 0,
 }
 
 const reducer = (state = initialState, action: PayloadAction<TradePayload>) => {

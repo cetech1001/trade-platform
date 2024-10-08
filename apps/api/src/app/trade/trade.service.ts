@@ -5,10 +5,7 @@ import {DataSource, Repository} from "typeorm";
 import {TradeAssetService} from "../trade-asset/trade-asset.service";
 import {
 	CreateTrade,
-	FindTradeQueryParams,
-	Trade,
-	TradeAssetType,
-	TradeClosureReason,
+	FindTradeQueryParams, Trade, TradeAsset, TradeAssetType, TradeClosureReason,
 	TradeStatus,
 	TransactionStatus,
 	TransactionStatusEnum,
@@ -16,12 +13,11 @@ import {
 	UpdateTrade, User, UserRole
 } from '@coinvant/types';
 import {paginate} from "nestjs-typeorm-paginate";
-import {Cron, CronExpression} from "@nestjs/schedule";
-import axios from "axios";
 import {TransactionService} from "../transaction/transaction.service";
 import { AccountService } from '../account/account.service';
 import { EmailService } from '../email/email.service';
 import { environment } from '../../../environments/environment';
+import { calculateProfitOrLoss, getCurrentAssetPrice, getUnits } from './helpers';
 
 @Injectable()
 export class TradeService {
@@ -34,111 +30,26 @@ export class TradeService {
 		private readonly emailService: EmailService,
 	) {}
 
-	private getCurrentPriceForStock = async (symbol: string) => {
-		const { data } = await axios.get(`https://www.alphavantage.co/query`, {
-			params: {
-				function: 'TIME_SERIES_INTRADAY',
-				symbol: symbol,
-				interval: '5min',
-				apikey: '4SSFX5O7DOW5SK3C',
-			},
-		});
-
-		const timeSeries = data['Time Series (5min)'];
-		const latestTime = Object.keys(timeSeries)[0];
-		const latestData = timeSeries[latestTime];
-		return parseFloat(latestData['1. open']);
-	}
-
-	private getCurrentPriceForForex = async (symbol: string) => {
-		const [base, term] = symbol.split('/');
-		const { data } = await axios.get(`https://api.frankfurter.app/latest?amount=1&from=${base}&to=${term}`);
-		return data.rates[term];
-	}
-
-	private getCurrentPriceForCrypto = async (currencyID: string) => {
-		const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${currencyID}`);
-		return data[0].current_price;
-	}
-
-	private async getCurrentAssetPrice(assetType: TradeAssetType, symbol?: string): Promise<number> {
-		if (assetType === TradeAssetType.stock) {
-			return this.getCurrentPriceForStock(symbol);
-		} else if (assetType === TradeAssetType.crypto) {
-			return this.getCurrentPriceForCrypto(symbol);
+	private getAssetObject(assetType: TradeAssetType, asset: TradeAsset) {
+		if (asset) {
+			switch (assetType) {
+				case TradeAssetType.stock:
+					return { stock: asset };
+				case TradeAssetType.forex:
+					return { forex: asset };
+				default:
+					return { crypto: asset };
+			}
 		} else {
-			return this.getCurrentPriceForForex(symbol);
+			throw new NotFoundException('Asset not found');
 		}
 	}
 
-	private async shouldOpenTrade(trade: Trade) {
-		if (trade.executeAt && new Date() >= new Date(trade.executeAt)) {
-			return true;
-		}
-		// @ts-expect-error idk
-		const currentPrice = await this.getCurrentAssetPrice(trade.assetType, trade.asset.currencyID || trade.asset.symbol);
-
-		if (trade.sellPrice && trade.sellPrice >= currentPrice) {
-			return true
-		}
-
-		if (trade.buyPrice && trade.buyPrice <= currentPrice) {
-			return true;
-		}
-	}
-
-	private calculatePLForCrypto(trade: Trade, currentPrice: number) {
-		let priceMovement: number;
-		if (trade.isShort) {
-			priceMovement = trade.sellPrice - currentPrice;
-		} else {
-			priceMovement = currentPrice - trade.buyPrice;
-		}
-		return trade.units * trade.leverage * priceMovement;
-	}
-
-	private async calculatePLForForex(trade: Trade, currentPrice: number) {
-		let priceMovement: number;
-		if (trade.isShort) {
-			priceMovement = trade.sellPrice - currentPrice;
-		} else {
-			priceMovement = currentPrice - trade.buyPrice;
-		}
-		const profitOrLoss = trade.units * priceMovement;
-		const [base, term] = trade.asset.symbol.split('/');
-		if (base === 'USD') {
-			return profitOrLoss / currentPrice;
-		} else if (term === 'USD') {
-			return profitOrLoss;
-		}
-		const rate = await this.getCurrentPriceForForex(`${term}/USD`);
-		return profitOrLoss * rate;
-	}
-
-	private calculatePLForStock(trade: Trade, currentPrice: number) {
-		let priceMovement: number;
-		if (trade.isShort) {
-			priceMovement = trade.sellPrice - currentPrice;
-		} else {
-			priceMovement = currentPrice - trade.buyPrice;
-		}
-		return trade.units * priceMovement;
-	}
-
-	private calculateProfitOrLoss(trade: Trade, currentPrice: number) {
-		if (trade.assetType === TradeAssetType.stock) {
-			return this.calculatePLForStock(trade, currentPrice);
-		} else if (trade.assetType === TradeAssetType.crypto) {
-			return this.calculatePLForCrypto(trade, currentPrice);
-		}
-		return this.calculatePLForForex(trade, currentPrice);
-	}
-
-	private async checkAndCloseTrade(trade: Trade, forceClose?: boolean) {
+	async checkAndCloseTrade(trade: Trade, forceClose?: boolean) {
 		const queryRunner = this.dataSource.createQueryRunner();
 		try {
 			// @ts-expect-error idk
-			const currentPrice = await this.getCurrentAssetPrice(trade.assetType, trade.asset.currencyID || trade.asset.symbol);
+			const currentPrice = await getCurrentAssetPrice(trade.assetType, trade.asset.currencyID || trade.asset.symbol);
 			let profitOrLoss = 0;
 			let shouldClose = false;
 			let reason: TradeClosureReason;
@@ -146,33 +57,33 @@ export class TradeService {
 			if (forceClose) {
 				shouldClose = true;
 				reason = TradeClosureReason.user;
-				profitOrLoss = await this.calculateProfitOrLoss(trade, currentPrice);
-			}
-
-			if (trade.takeProfit) {
-				if (trade.isShort && currentPrice <= trade.takeProfit
-					|| !trade.isShort && currentPrice >= trade.takeProfit) {
-					shouldClose = true;
-					reason = TradeClosureReason.takeProfit;
-					profitOrLoss = await this.calculateProfitOrLoss(trade, trade.takeProfit);
-				}
-			}
-
-			if (trade.stopLoss) {
-				if (trade.isShort && currentPrice >= trade.stopLoss
-					|| !trade.isShort && currentPrice <= trade.stopLoss) {
-					shouldClose = true;
-					reason = TradeClosureReason.stopLoss;
-					profitOrLoss = await this.calculateProfitOrLoss(trade, trade.stopLoss);
-				}
+				profitOrLoss = await calculateProfitOrLoss(trade, currentPrice);
+			} else if (
+				trade.takeProfit
+				&& ((trade.isShort && currentPrice <= trade.takeProfit)
+					|| (!trade.isShort && currentPrice >= trade.takeProfit))) {
+				shouldClose = true;
+				reason = TradeClosureReason.takeProfit;
+				profitOrLoss = await calculateProfitOrLoss(trade, trade.takeProfit);
+			} else if (
+				trade.stopLoss
+				&& ((trade.isShort && currentPrice >= trade.stopLoss)
+					|| (!trade.isShort && currentPrice <= trade.stopLoss))) {
+				shouldClose = true;
+				reason = TradeClosureReason.stopLoss;
+				profitOrLoss = await calculateProfitOrLoss(trade, trade.stopLoss);
+			} else if ((+trade.bidAmount) + Number(profitOrLoss) <= 0) {
+				shouldClose = true;
+				reason = TradeClosureReason.stopOut;
+				profitOrLoss = trade.bidAmount * -1;
 			}
 
 			if (!shouldClose) {
-				if ((+trade.bidAmount) + Number(profitOrLoss) <= 0) {
-					shouldClose = true;
-					reason = TradeClosureReason.stopOut;
-					profitOrLoss = trade.bidAmount * -1;
-				}
+				profitOrLoss = await calculateProfitOrLoss(trade, currentPrice);
+				await queryRunner.manager.update(TradeEntity, trade.id, {
+					profitOrLoss,
+					currentPrice,
+				});
 			}
 
 			if (shouldClose) {
@@ -183,6 +94,7 @@ export class TradeService {
 				await this.accountService.increaseBalance(trade.account.id, Number(profitOrLoss) + remainder, queryRunner);
 				await queryRunner.manager.update(TradeEntity, trade.id, {
 					profitOrLoss,
+					currentPrice,
 					closedAt: new Date().toDateString(),
 					buyPrice: trade.isShort ? currentPrice : trade.buyPrice,
 					sellPrice: trade.isShort ? trade.sellPrice : currentPrice,
@@ -210,36 +122,6 @@ export class TradeService {
 		}
 	}
 
-	private getAssetObject(assetType: TradeAssetType, asset: any) {
-		if (asset) {
-			switch (assetType) {
-				case TradeAssetType.stock:
-					return { stock: asset };
-				case TradeAssetType.forex:
-					return { forex: asset };
-				default:
-					return { crypto: asset };
-			}
-		} else {
-			throw new NotFoundException('Asset not found');
-		}
-	}
-
-	private async getUnits(assetType: TradeAssetType, currentPrice: number, bidAmount: number, leverage = 1, symbol?: string) {
-		if (assetType === TradeAssetType.stock
-			|| assetType === TradeAssetType.crypto) {
-			return bidAmount * leverage / currentPrice;
-		}
-		const [base, term] = symbol.split('/');
-		if (base === 'USD') {
-			return bidAmount * leverage;
-		} else if (term === 'USD') {
-			return bidAmount * leverage / currentPrice;
-		}
-		const rate = await this.getCurrentPriceForForex(`${base}/USD`);
-		return bidAmount * leverage / rate;
-	}
-
 	async create(createTrade: CreateTrade, user: User) {
 		const account = await this.accountService.findOne(createTrade.accountID);
 		if ((+account.walletBalance) < (+createTrade.bidAmount)) {
@@ -265,8 +147,9 @@ export class TradeService {
 				obj['status'] = TradeStatus.pending;
 			} else {
 				// @ts-expect-error idk
-				const openingPrice = await this.getCurrentAssetPrice(createTrade.assetType, asset.currencyID || asset.symbol);
-				obj['units'] = await this.getUnits(createTrade.assetType, openingPrice, createTrade.bidAmount, createTrade.leverage, asset.symbol);
+				const openingPrice = await getCurrentAssetPrice(createTrade.assetType, asset.currencyID || asset.symbol);
+				obj['currentPrice'] = openingPrice;
+				obj['units'] = await getUnits(createTrade.assetType, openingPrice, createTrade.bidAmount, createTrade.leverage, asset.symbol);
 				if (createTrade.isShort) {
 					obj['sellPrice'] = openingPrice;
 				} else {
@@ -360,8 +243,20 @@ export class TradeService {
 					return queryRunner.manager.update(TradeEntity, id, updateTrade);
 				} else if (updateTrade.status === TradeStatus.closed) {
 					await this.checkAndCloseTrade(trade, true);
+				} else if (!updateTrade.status) {
+					if (updateTrade.takeProfit
+						&& ((trade.isShort && +trade.currentPrice <= +updateTrade.takeProfit)
+							|| !trade.isShort && +trade.currentPrice >= +updateTrade.takeProfit)) {
+						return new BadRequestException('Please input a valid take profit parameter');
+					}
+					if (updateTrade.stopLoss
+						&& ((trade.isShort && +trade.currentPrice >= +updateTrade.stopLoss)
+							|| !trade.isShort && +trade.currentPrice <= +updateTrade.stopLoss)) {
+						return new BadRequestException('Please input a valid stop loss parameter');
+					}
+					await queryRunner.manager.update(TradeEntity, id, updateTrade);
 				}
-				return trade;
+				return this.findOne(id);
 			} catch (e) {
 				console.error(e);
 				await queryRunner.rollbackTransaction();
@@ -375,44 +270,5 @@ export class TradeService {
 
 	remove(id: string) {
 		return this.tradeRepo.delete(id);
-	}
-
-	@Cron(CronExpression.EVERY_MINUTE)
-	async checkPendingTrades() {
-		const pendingTrades = await this.tradeRepo.find({
-			where: { status: TradeStatus.pending }
-		});
-		for (const trade of pendingTrades) {
-			const shouldOpen = await this.shouldOpenTrade(trade);
-			if (shouldOpen) {
-				const obj = { status: TradeStatus.active };
-				if (!trade.buyPrice && !trade.sellPrice) {
-					// @ts-expect-error idk
-					const openingPrice = await this.getCurrentAssetPrice(trade.assetType, trade.asset.currencyID || trade.asset.symbol);
-					if (trade.isShort) {
-						obj['sellPrice'] = openingPrice;
-					} else {
-						obj['buyPrice'] = openingPrice;
-					}
-				}
-				if (!trade.executeAt) {
-					obj['executeAt'] = new Date().toDateString();
-				}
-				const openingPrice = trade.buyPrice || trade.sellPrice || obj['buyPrice'] || obj['sellPrice'];
-				obj['units'] = await this.getUnits(trade.assetType, openingPrice, trade.bidAmount, trade.leverage, trade.asset.symbol);
-				await this.tradeRepo.update(trade.id, obj);
-			}
-		}
-	}
-
-	@Cron(CronExpression.EVERY_MINUTE)
-	async checkActiveTrades() {
-		const openTrades = await this.tradeRepo.find({
-			where: { status: TradeStatus.active },
-		});
-
-		for (const trade of openTrades) {
-			await this.checkAndCloseTrade(trade);
-		}
 	}
 }

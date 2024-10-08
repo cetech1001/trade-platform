@@ -32,13 +32,30 @@ export const Popup: FC<IProps> = (props) => {
     }
   }, [props.closePopup]);
 
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    if (props.top || props.top === 0) {
+      setStyles(prevState => ({
+        ...prevState,
+        top: props.top,
+      }));
+    }
+    if (props.left || props.left === 0) {
+      setStyles(prevState => ({
+        ...prevState,
+        left: props.left,
+      }));
+    }
+  }, [props]);
+
   return (
     <div ref={containerRef} className={'parent-container'}>
       <span onClick={() => setShowPopup(!showPopup)}>
         {props.popupLauncher}
       </span>
       {showPopup && (
-        <div className={'popup'}/* style={{
+        <div className={'popup'} style={styles} /*style={{
           top: props.top || 0,
           left: props.left !== undefined ? props.left : -295
         }}*/>{props.popupContent}</div>

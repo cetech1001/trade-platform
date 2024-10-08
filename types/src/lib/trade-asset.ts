@@ -8,7 +8,7 @@ export interface CryptoCurrency {
   currencyID: string;
 }
 
-export interface CreateCryptoCurrency extends Omit<CryptoCurrency, 'id'> {}
+export type CreateCryptoCurrency = Omit<CryptoCurrency, 'id'>;
 
 export interface FindCryptoCurrencies extends PaginationOptions, Partial<Omit<CryptoCurrency, 'id' | 'image'>> {}
 
@@ -28,7 +28,7 @@ export enum ForexType {
   emergingMarket =  'Emerging Market',
 }
 
-export interface CreateForex extends Omit<ForexPair, 'id' | 'symbol'> {}
+export type CreateForex = Omit<ForexPair, 'id' | 'symbol'>;
 
 export interface FindForexPairs extends PaginationOptions, Partial<Omit<ForexPair, 'id'>> {}
 
@@ -53,7 +53,7 @@ export enum StockAssetType {
   ETF = 'ETF',
 }
 
-export interface CreateStock extends Omit<StockOption, 'id'> {}
+export type CreateStock = Omit<StockOption, 'id'>;
 
 export interface FindStockOptions extends PaginationOptions, Partial<Omit<StockOption, 'id'>> {
 }
@@ -70,3 +70,5 @@ export interface CurrentAsset {
   type: TradeAssetType;
   currencyID?: string;
 }
+
+export type TradeAsset = StockOption | ForexPair | CryptoCurrency;

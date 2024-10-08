@@ -10,6 +10,7 @@ interface IProps {
   setStopLoss: Dispatch<SetStateAction<string>>;
   takeProfit: string;
   setTakeProfit: Dispatch<SetStateAction<string>>;
+  onSave?: () => void;
 }
 
 interface SlTpOptionsProps {
@@ -19,6 +20,7 @@ interface SlTpOptionsProps {
   setStopLoss: Dispatch<SetStateAction<string>>;
   takeProfit: string;
   setTakeProfit: Dispatch<SetStateAction<string>>;
+  onSave?: () => void;
 }
 
 interface SlTpProps {
@@ -74,9 +76,12 @@ const SlTpOptions = (props: SlTpOptionsProps) => (
           <button className={"button bg-light-grey"} onClick={() => props.setClosePopup(true)}>
             Cancel
           </button>
-          <button className={"button bg-primary"} onClick={() => props.setClosePopup(true)}>
-            Save
-          </button>
+          <button className={"button bg-primary"} onClick={() => {
+            if (props.onSave) {
+              props.onSave();
+            }
+            props.setClosePopup(true);
+          }}>Save</button>
         </div>
     )}
   </div>
@@ -100,7 +105,8 @@ export const StopLossTakeProfitOptions: FC<IProps> = (props) => {
     <Popup popupLauncher={<SlTp showFullName={props.showFullName} stopLoss={props.stopLoss} takeProfit={props.takeProfit}/>}
            popupContent={<SlTpOptions stopLoss={props.stopLoss} setStopLoss={props.setStopLoss}
                                       takeProfit={props.takeProfit} setTakeProfit={props.setTakeProfit}
-                                      setClosePopup={setClosePopup} showButtons={props.showButtons}/>}
+                                      setClosePopup={setClosePopup} onSave={props.onSave}
+                                      showButtons={props.showButtons}/>}
            left={props.left} top={props.top} closePopup={closePopup}/>
   );
 };

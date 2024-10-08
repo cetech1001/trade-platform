@@ -13,6 +13,7 @@ export interface Trade {
 	isShort: boolean;
 	executeAt: string;
 	closedAt: string;
+	currentPrice?: number;
 	takeProfit?: number;
 	stopLoss?: number;
 	closureReason?: TradeClosureReason;
@@ -48,7 +49,7 @@ export interface CreateTrade
 	openingPrice?: number;
 }
 
-export type UpdateTrade = Pick<Trade, 'status' | 'stopLoss' | 'takeProfit'>;
+export type UpdateTrade = Partial<Pick<Trade, 'status' | 'stopLoss' | 'takeProfit'>>;
 
 export interface FindTradeQueryParams extends PaginationOptions, Partial<Pick<Trade, 'status' | 'assetType'>>{
 	accountID?: string;

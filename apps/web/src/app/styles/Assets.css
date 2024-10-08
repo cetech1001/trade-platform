@@ -112,4 +112,12 @@
     flex: 1;
     height: calc(100vh - 120px);
   }
+
+  .assets .icons {
+    display: none;
+  }
+
+  .assets .back {
+    display: flex;
+  }
 }

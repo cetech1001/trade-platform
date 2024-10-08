@@ -1,7 +1,7 @@
 .top-bar {
   display: none;
 }
-/* Mobile view adjustments */
+
 @media (max-width: 768px) {
   .top-bar {
     display: block;

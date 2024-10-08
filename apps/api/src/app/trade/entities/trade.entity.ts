@@ -38,6 +38,9 @@ export class TradeEntity implements Trade{
 	bidAmount: number;
 
 	@Column({ type: 'decimal', precision: 16, scale: 8, nullable: true })
+	currentPrice: number;
+
+	@Column({ type: 'decimal', precision: 16, scale: 8, nullable: true })
 	buyPrice: number;
 
 	@Column({ type: 'decimal', precision: 16, scale: 8, nullable: true })

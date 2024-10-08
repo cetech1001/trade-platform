@@ -13,12 +13,14 @@ import { TradeAssetModule } from './trade-asset/trade-asset.module';
 import { EmailModule } from './email/email.module';
 import { AccountModule } from './account/account.module';
 import { OTPModule } from './otp/otp.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: environment.assetsPath,
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     UserModule,
     TypeOrmModule.forRoot(environment.db),
