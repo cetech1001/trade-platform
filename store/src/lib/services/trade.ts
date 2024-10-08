@@ -1,8 +1,8 @@
-import {CreateTrade, FindTradeQueryParams, Paginated, Trade, UpdateTrade} from "@coinvant/types";
+import {CreateTrade, FindTradesQueryParams, Paginated, Trade, UpdateTrade} from "@coinvant/types";
 import {api} from "./api";
 
 export class TradeService {
-	static async fetchTrades(params: FindTradeQueryParams): Promise<Paginated<Trade>> {
+	static async fetchTrades(params: FindTradesQueryParams): Promise<Paginated<Trade>> {
 		const { data } = await api.get('/trade', {params});
 		return data;
 	}

@@ -1,9 +1,9 @@
-import {FindTradeQueryParams, TradeAssetType, TradeStatus} from "@coinvant/types";
+import {FindTradesQueryParams, TradeAssetType, TradeStatus} from "@coinvant/types";
 import {PaginationOptionsDto} from "../../../dto/pagination.dto";
 import {IsIn, IsOptional} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 
-export class FindTradeQueryParamsDto extends PaginationOptionsDto implements FindTradeQueryParams {
+export class FindTradeQueryParamsDto extends PaginationOptionsDto implements FindTradesQueryParams {
 	@IsOptional()
 	@IsIn(Object.values(TradeAssetType))
 	@ApiProperty({ type: String, required: true, enum: TradeAssetType })

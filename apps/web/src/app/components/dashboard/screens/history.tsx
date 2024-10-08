@@ -3,7 +3,7 @@ import { FilterDropdown } from '../shared/filter-dropdown';
 import { USER_ROUTES } from '../../../../routes';
 import { fetchTrades, RootState } from '@coinvant/store';
 import { connect } from 'react-redux';
-import { Account, FindTradeQueryParams, Trade, TradeStatus } from '@coinvant/types';
+import { Account, FindTradesQueryParams, Trade, TradeStatus } from '@coinvant/types';
 import { formatDate, groupTransactionsByDate } from '../../../helpers';
 import { TradeItem } from '../shared/trade';
 
@@ -14,7 +14,7 @@ interface IProps {
   totalCount: number;
   totalPages: number;
   toggleNav: (route: USER_ROUTES) => void;
-  fetchTrades: (query: FindTradeQueryParams) => Promise<void>;
+  fetchTrades: (query: FindTradesQueryParams) => Promise<void>;
 }
 
 interface TradeFiltersProps {
@@ -88,7 +88,7 @@ export const TradeHistory = connect(mapStateToProps, actions)((props: IProps) =>
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'trades' | 'orders'>('trades');
   const [isLoading, setIsLoading] = useState(false);
-  const [query, setQuery] = useState<FindTradeQueryParams>({
+  const [query, setQuery] = useState<FindTradesQueryParams>({
     page: 1,
     limit: props.limit,
     accountID: props.account?.id,

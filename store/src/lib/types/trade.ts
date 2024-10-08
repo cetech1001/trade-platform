@@ -1,6 +1,7 @@
 export enum TradeActions {
-	fetchTrades = 'trade.fetchTrades',
-	createTrade = 'trade.createTrade',
-	updateTrade = 'trade.updateTrade',
-	deleteTrade = 'trade.deleteTrade',
+	FETCH_TRADES = 'trade.fetchTrades',
+	CREATE_TRADE = 'trade.createTrade',
+	UPDATE_TRADE = 'trade.updateTrade',
+	DELETE_TRADE = 'trade.deleteTrade',
+	SET_CURRENT_TRADE = 'trade.setCurrentTrade',
 }

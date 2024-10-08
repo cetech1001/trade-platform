@@ -2,7 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
 import {TradeItem} from "../shared/trade";
 import {USER_ROUTES} from "../../../../routes";
-import { Account, FindTradeQueryParams, Trade, TradeAssetType, TradeStatus } from '@coinvant/types';
+import { Account, FindTradesQueryParams, Trade, TradeAssetType, TradeStatus } from '@coinvant/types';
 import {fetchTrades, RootState} from "@coinvant/store";
 import {connect} from "react-redux";
 import {capitalizeFirstLetter, formatCurrency} from "../../../helpers";
@@ -13,7 +13,7 @@ interface IProps {
   limit: number;
   totalCount: number;
   toggleNav: (route: USER_ROUTES) => void;
-  fetchTrades: (query: FindTradeQueryParams) => void;
+  fetchTrades: (query: FindTradesQueryParams) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -32,7 +32,7 @@ export const Trades = connect(mapStateToProps, actions)((props: IProps) => {
   const [activeTab, setActiveTab]
       = useState<TradeAssetType>(TradeAssetType.forex);
   const [totalPL, setTotalPL] = useState(0);
-  const [query, setQuery] = useState<FindTradeQueryParams>({
+  const [query, setQuery] = useState<FindTradesQueryParams>({
     page: 1,
     limit: props.limit,
     assetType: activeTab,

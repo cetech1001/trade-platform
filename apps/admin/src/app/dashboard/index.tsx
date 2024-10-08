@@ -12,6 +12,7 @@ import {Deposits} from "./pages/deposits";
 import {Withdrawals} from "./pages/withdrawals";
 import {Profile} from "./pages/profile";
 import { KYC } from './pages/kyc';
+import { Trades } from './pages/trades';
 
 interface IProps {
     authUser: AuthUser | null;
@@ -41,6 +42,8 @@ export const Dashboard = connect(mapStateToProps)((props: IProps) => {
                            element={<Users/>}/>
                     <Route path={removeDashboardFromUrl(AdminRoutes.paymentMethods)}
                            element={<PaymentMethods/>}/>
+                    <Route path={removeDashboardFromUrl(AdminRoutes.trades)}
+                           element={<Trades/>}/>
                     <Route path={removeDashboardFromUrl(AdminRoutes.deposits)}
                            element={<Deposits/>}/>
                     <Route path={removeDashboardFromUrl(AdminRoutes.withdrawals)}

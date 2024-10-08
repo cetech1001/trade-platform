@@ -14,17 +14,18 @@ const initialState = {
 	totalCount: 0,
 	limit: 5,
 	totalPages: 0,
+	currentTrade: null,
 }
 
 const reducer = (state = initialState, action: PayloadAction<TradePayload>) => {
 	switch (action.type) {
-		case TradeActions.fetchTrades:
+		case TradeActions.FETCH_TRADES:
 			return {
 				...state,
 				list: action.payload.trades,
 				totalCount: action.payload.totalCount,
 			};
-		case TradeActions.createTrade:
+		case TradeActions.CREATE_TRADE:
 			return {
 				...state,
 				list: [
@@ -33,7 +34,12 @@ const reducer = (state = initialState, action: PayloadAction<TradePayload>) => {
 				],
 				totalCount: state.totalCount + 1,
 			}
-		case TradeActions.updateTrade:
+		case TradeActions.SET_CURRENT_TRADE:
+			return {
+				...state,
+				currentTrade: action.payload.trade,
+			}
+		case TradeActions.UPDATE_TRADE:
 			return {
 				...state,
 				list: state.list.map((trade: Trade) => {
@@ -43,7 +49,7 @@ const reducer = (state = initialState, action: PayloadAction<TradePayload>) => {
 					return trade;
 				}),
 			};
-		case TradeActions.deleteTrade:
+		case TradeActions.DELETE_TRADE:
 			return {
 				...state,
 				list: state.list.filter((trade: Trade) => trade.id !== action.payload.trade.id),

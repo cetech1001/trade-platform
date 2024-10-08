@@ -19,6 +19,8 @@ export enum Modals {
   deletePaymentMethod = 'deletePaymentMethod',
   editKYC = 'editKYC',
   deleteKYC = 'deleteKYC',
+  editTrade = 'editTrade',
+  deleteTrade = 'deleteTrade',
 }
 
 export interface ModalState {

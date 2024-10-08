@@ -51,7 +51,7 @@ export interface CreateTrade
 
 export type UpdateTrade = Partial<Pick<Trade, 'status' | 'stopLoss' | 'takeProfit'>>;
 
-export interface FindTradeQueryParams extends PaginationOptions, Partial<Pick<Trade, 'status' | 'assetType'>>{
+export interface FindTradesQueryParams extends PaginationOptions, Partial<Pick<Trade, 'status' | 'assetType'>>{
 	accountID?: string;
 }
 
@@ -60,4 +60,12 @@ export enum TradeClosureReason {
 	takeProfit = 'Take Profit',
 	user = 'User',
 	stopOut = 'Stop Out',
+}
+
+export interface TradeState {
+	list: Trade[];
+	totalCount: number;
+	limit: number;
+	totalPages: number;
+	currentTrade: Trade | null;
 }

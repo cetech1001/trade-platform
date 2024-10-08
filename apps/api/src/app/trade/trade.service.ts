@@ -5,7 +5,7 @@ import {DataSource, Repository} from "typeorm";
 import {TradeAssetService} from "../trade-asset/trade-asset.service";
 import {
 	CreateTrade,
-	FindTradeQueryParams, Trade, TradeAsset, TradeAssetType, TradeClosureReason,
+	FindTradesQueryParams, Trade, TradeAsset, TradeAssetType, TradeClosureReason,
 	TradeStatus,
 	TransactionStatus,
 	TransactionStatusEnum,
@@ -190,7 +190,7 @@ export class TradeService {
 		}
 	}
 
-	findAll(query: FindTradeQueryParams, user: User) {
+	findAll(query: FindTradesQueryParams, user: User) {
 		// eslint-disable-next-line prefer-const
 		let { status, assetType, accountID, ...options } = query;
 		const queryBuilder = this.tradeRepo.createQueryBuilder('TR')
