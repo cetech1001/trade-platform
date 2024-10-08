@@ -60,7 +60,7 @@ export const UpdatePassword = connect(mapStateToProps, actions)((props: IProps) 
   }
 
   return (
-    <div className={`sidebar ${props.activeModal === Modals.password ? 'open' : ''}`}>
+    <div className={'sidebar open'}>
       <form>
         <div className={"flex-row-space-between close-button"}>
           <i className="fa-solid fa-long-arrow-left cursor-pointer"

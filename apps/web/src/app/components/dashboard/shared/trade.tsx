@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {StopLossTakeProfitOptions} from "./stop-los-take-profit";
+import {StopLossTakeProfitOptions} from "./stop-loss-take-profit";
 import {Trade, TradeAssetType, TradeStatus} from "@coinvant/types";
 import {
 	calculateProfitOrLoss,
@@ -21,8 +21,8 @@ interface ExpandedActiveTradeProps {
 
 
 const ExpandedActiveTrade = (props: ExpandedActiveTradeProps) => {
-	const [stopLoss, setStopLoss] = useState(0);
-	const [takeProfit, setTakeProfit] = useState(0);
+	const [stopLoss, setStopLoss] = useState("0");
+	const [takeProfit, setTakeProfit] = useState("0");
 	return (
 		<div className="flex-column" style={{ marginTop: 15 }}>
 			<button className={"close-trade-button"} style={{ marginBottom: 15 }}>

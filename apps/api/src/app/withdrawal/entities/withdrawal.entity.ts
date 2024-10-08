@@ -56,7 +56,7 @@ export class WithdrawalEntity implements Withdrawal {
 	@ManyToOne(
 		() => AccountEntity,
 		(account) => account.withdrawals,
-		{ eager: true }
+		{ eager: true, onDelete: 'CASCADE' }
 	)
 	@JoinColumn({ name: 'accountID' })
 	account: Account;

@@ -24,7 +24,7 @@ export const Chart = connect(mapStateToProps)((props: IProps) => {
       script.async = true;
       script.innerHTML = JSON.stringify({
           "autosize": true,
-          "symbol": props.symbol?.toUpperCase() || "BTC",
+          "symbol": props.symbol?.toUpperCase().replace(/\//g, '') || "BTC",
           "interval": "D",
           "timezone": "Etc/UTC",
           "theme": "dark",

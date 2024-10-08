@@ -23,7 +23,7 @@ export const Payments = connect(mapStateToProps, actions)((props: IProps) => {
   if (props.activeModal !== Modals.payments) return null;
 
   return (
-    <div className={`sidebar ${props.activeModal === Modals.payments ? 'open' : ''}`}>
+    <div className={'sidebar open'}>
       <div>
         <div className={"flex-row-space-between close-button"}>
           <div/>

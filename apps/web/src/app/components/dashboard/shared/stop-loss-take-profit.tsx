@@ -6,25 +6,25 @@ interface IProps {
   top?: number;
   left?: number;
   showButtons?: boolean;
-  stopLoss: number;
-  setStopLoss: Dispatch<SetStateAction<number>>;
-  takeProfit: number;
-  setTakeProfit: Dispatch<SetStateAction<number>>;
+  stopLoss: string;
+  setStopLoss: Dispatch<SetStateAction<string>>;
+  takeProfit: string;
+  setTakeProfit: Dispatch<SetStateAction<string>>;
 }
 
 interface SlTpOptionsProps {
   showButtons?: boolean;
   setClosePopup: Dispatch<SetStateAction<boolean>>;
-  stopLoss: number;
-  setStopLoss: Dispatch<SetStateAction<number>>;
-  takeProfit: number;
-  setTakeProfit: Dispatch<SetStateAction<number>>;
+  stopLoss: string;
+  setStopLoss: Dispatch<SetStateAction<string>>;
+  takeProfit: string;
+  setTakeProfit: Dispatch<SetStateAction<string>>;
 }
 
 interface SlTpProps {
   showFullName?: boolean;
-  stopLoss: number;
-  takeProfit: number;
+  stopLoss: string;
+  takeProfit: string;
 }
 
 const SlTp = (props: SlTpProps) => (
@@ -46,7 +46,8 @@ const SlTpOptions = (props: SlTpOptionsProps) => (
           <div className={'input-field'}>
             <span>-</span>
             <input type={'number'} step={0.00000001} value={props.stopLoss}
-                   onChange={e => props.setStopLoss(+e.target.value)}/>
+                   onChange={e =>
+                     props.setStopLoss(e.target.value)}/>
           </div>
         </div>
         <div className={'symbol'}>
@@ -59,7 +60,8 @@ const SlTpOptions = (props: SlTpOptionsProps) => (
           <div className={'input-field'}>
             <span>+</span>
             <input type={'number'} step={0.00000001} value={props.takeProfit}
-                   onChange={e => props.setTakeProfit(+e.target.value)}/>
+                   onChange={e =>
+                     props.setTakeProfit(e.target.value)}/>
           </div>
         </div>
         <div className={'symbol'}>

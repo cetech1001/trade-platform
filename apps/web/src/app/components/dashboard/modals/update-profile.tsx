@@ -59,7 +59,7 @@ export const UpdateProfile = connect(mapStateToProps, actions)((props: IProps) =
   }
 
   return (
-    <div className={`sidebar ${props.activeModal === Modals.personal ? 'open' : ''}`}>
+    <div className={'sidebar open'}>
       <div>
         <div className={"flex-row-space-between close-button"}>
           <i className="fa-solid fa-long-arrow-left cursor-pointer"

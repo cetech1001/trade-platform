@@ -287,13 +287,14 @@ export class TradeService {
 				this.emailService.sendMail(user.email, 'Trade Order Placed', './user/new-order', {
 					name: user.name,
 					orderID: trade.id,
-					asset: trade.asset.symbol,
+					asset: asset.symbol,
 				}),
 				this.emailService.sendMail(environment.supportEmail, 'New Trade Order', './admin/new-order', {
 					name: user.name,
 					orderID: trade.id,
-					asset: trade.asset.symbol,
+					asset: asset.symbol,
 					orderType: `${trade.assetType} (${trade.isShort ? 'Short Order' : 'Long Order'})`,
+					amount: trade.bidAmount.toString(),
 				}),
 			]).catch(console.error);
 			return trade;

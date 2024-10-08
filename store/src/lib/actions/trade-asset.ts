@@ -15,6 +15,7 @@ export const fetchStockOptions = (query: FindStockOptions) => async (dispatch: A
 			type: TradeAssetActions.fetchStockOptions,
 			payload: {
 				list: data.items,
+				page: query.page,
 				totalPages: data.meta.totalPages,
 			},
 		});
@@ -34,6 +35,7 @@ export const fetchForexPairs = (query: FindForexPairs) => async (dispatch: AppDi
 			type: TradeAssetActions.fetchForexPairs,
 			payload: {
 				list: data.items,
+				page: query.page,
 				totalPages: data.meta.totalPages,
 			},
 		});

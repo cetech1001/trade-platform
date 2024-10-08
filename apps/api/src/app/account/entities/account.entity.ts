@@ -42,7 +42,7 @@ export class AccountEntity implements Account{
   @ManyToOne(
     () => UserEntity,
     (user) => user.accounts,
-    { onDelete: 'CASCADE', onUpdate: 'CASCADE' }
+    { onDelete: 'CASCADE' }
   )
   @JoinColumn({ name: 'userID' })
   user: User;

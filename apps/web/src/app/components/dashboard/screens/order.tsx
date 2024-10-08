@@ -1,6 +1,6 @@
 import {Popup} from "../shared/popup";
 import {ChangeEvent, useState} from "react";
-import {StopLossTakeProfitOptions} from "../shared/stop-los-take-profit";
+import {StopLossTakeProfitOptions} from "../shared/stop-loss-take-profit";
 import { Account, AlertState, CreateTrade, CurrentAsset, Modals } from '@coinvant/types';
 import {closeModal, openModal, placeBid, refreshUserProfile, RootState, showAlert} from "@coinvant/store";
 import {connect} from "react-redux";
@@ -30,20 +30,20 @@ const actions = {
 };
 
 export const Order = connect(mapStateToProps, actions)((props: IProps) => {
-	const [bidAmount, setBidAmount] = useState("0");
+	const [bidAmount, setBidAmount] = useState("");
 	const [leverage, setLeverage] = useState(1);
-	const [stopLoss, setStopLoss] = useState(0);
-	const [takeProfit, setTakeProfit] = useState(0);
-	const [openingPrice, setOpeningPrice] = useState(0);
+	const [stopLoss, setStopLoss] = useState("");
+	const [takeProfit, setTakeProfit] = useState("");
+	const [openingPrice, setOpeningPrice] = useState("");
 	const [executeAt, setExecuteAt] = useState<string>();
 	const [time, setTime] = useState("");
 
 	const reset = () => {
-		setBidAmount("0");
+		setBidAmount("");
 		setLeverage(1);
-		setStopLoss(0);
-		setTakeProfit(0);
-		setOpeningPrice(0);
+		setStopLoss("");
+		setTakeProfit("");
+		setOpeningPrice("");
 		setExecuteAt(undefined);
 		setTime("");
 	}
@@ -88,33 +88,48 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 	};
 
 	const onBid = async (isShort?: boolean) => {
-		if (props.asset && props.account) {
-			const payload: CreateTrade = {
-				bidAmount: +bidAmount,
-				leverage,
-				stopLoss: stopLoss || undefined,
-				takeProfit: takeProfit || undefined,
-				isShort: !!isShort,
-				openingPrice: openingPrice || undefined,
-				executeAt: executeAt || undefined,
-				assetType: props.asset.type,
-				assetID: props.asset.id,
-				accountID: props.account.id,
-			}
-			await props.placeBid(payload);
-			await props.refreshUserProfile();
-			reset();
-		} else {
-			props.showAlert({
+		if (!props.asset) {
+			return props.showAlert({
 				show: true,
 				message: 'Please select a trading asset',
 				type: 'error',
 			});
 		}
+
+		if (!props.account) {
+			return props.showAlert({
+				show: true,
+				message: 'Please select a trading account',
+				type: 'error',
+			});
+		}
+
+		if (!bidAmount || +bidAmount < 10) {
+			return props.showAlert({
+				show: true,
+				message: 'Please select an amount greater than 10',
+				type: 'error',
+			});
+		}
+
+		await props.placeBid({
+			bidAmount: +bidAmount,
+			leverage,
+			stopLoss: stopLoss ? +stopLoss : undefined,
+			takeProfit: takeProfit ? +takeProfit : undefined,
+			isShort: !!isShort,
+			openingPrice: openingPrice ? +openingPrice : undefined,
+			executeAt: executeAt || undefined,
+			assetType: props.asset.type,
+			assetID: props.asset.id,
+			accountID: props.account.id,
+		});
+		await props.refreshUserProfile();
+		reset();
 	}
 
 	const Multiplier = () => (
-		<div className={'leverage'}>
+		<div className={'multiplier'}>
 			<span>Multiplier</span>
 			<p className={'option'}>
 				<span className={'x-sign'}>x</span>{leverage}
@@ -177,7 +192,7 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 							<div className={'input-field'}>
 								<input type={'number'} step={0.00000001} value={openingPrice}
 								       onChange={e =>
-									       setOpeningPrice(+e.target.value)}/>
+									       setOpeningPrice(e.target.value)}/>
 							</div>
 						</div>
 					)}
@@ -208,17 +223,21 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 			</div>
 			<div>
 				<div className={'amount-input'}>
+					<span>Selected Trade Asset</span>
+					<input type={'text'} value={props.asset?.symbol || 'N/A'} readOnly={true}/>
+				</div>
+				<div className={'amount-input'}>
 					<span>Amount, $</span>
 					<input type={'number'} placeholder={'0'} onChange={e =>
-						setBidAmount(e.target.value)} value={bidAmount}/>
+						setBidAmount(e.target.value)} value={bidAmount} />
 				</div>
 				<div className={'amount-change'}>
 					<div className={'subtract'} onClick={subtract}>-</div>
-					<div style={{backgroundColor: "rgba(14, 15, 18, 1)", flex: 0.1}}/>
+					<div style={{ backgroundColor: 'rgba(14, 15, 18, 1)', flex: 0.1 }} />
 					<div className={'add'} onClick={add}>+</div>
 				</div>
 			</div>
-			<Popup popupLauncher={<Multiplier/>} popupContent={<MultiplierOptions/>}/>
+			<Popup popupLauncher={<Multiplier />} popupContent={<MultiplierOptions />} />
 			<StopLossTakeProfitOptions takeProfit={takeProfit} setTakeProfit={setTakeProfit}
 			                           stopLoss={stopLoss} setStopLoss={setStopLoss}/>
 			<Popup popupLauncher={<PendingOrders/>} popupContent={<PendingOrderOptions/>} top={-75}/>

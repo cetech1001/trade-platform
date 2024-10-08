@@ -33,21 +33,21 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 	const [pairs, setPairs]
 		= useState<(ForexPair & { isActive: boolean })[]>([]);
 
-	const handleScroll = () => {
-		const container = scrollContainerRef.current;
-		if (container) {
-			const bottom =
-				container.scrollHeight - container.scrollTop <= container.clientHeight + 500;
-			if (bottom && !isLoading && query.page < props.totalPages) {
-				setQuery(prevState => ({
-					...prevState,
-					page: prevState.page + 1,
-				}))
-			}
-		}
-	};
-
 	useEffect(() => {
+		const handleScroll = () => {
+			const container = scrollContainerRef.current;
+			if (container) {
+				const bottom =
+					container.scrollHeight - container.scrollTop <= container.clientHeight + 500;
+				if (bottom && !isLoading && query.page < props.totalPages) {
+					setQuery(prevState => ({
+						...prevState,
+						page: prevState.page + 1,
+					}));
+				}
+			}
+		};
+
 		const container = scrollContainerRef.current;
 		if (container) {
 			container.addEventListener('scroll', handleScroll);
@@ -57,7 +57,7 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 				container.removeEventListener('scroll', handleScroll);
 			}
 		};
-	}, [handleScroll]);
+	}, []);
 
 
 	useEffect(() => {
@@ -112,14 +112,14 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 			asset: ForexPair & { isActive: boolean };
 		}
 	) => {
-		const [rate, setRate] = useState(0);
+		/*const [rate, setRate] = useState(0);*/
 
-		useEffect(() => {
+		/*useEffect(() => {
 			if (asset) {
 				axios.get(`https://api.frankfurter.app/latest?amount=1&from=${asset.base}&to=${asset.term}`)
 					.then(({ data }) => setRate(data.rates[asset.term]));
 			}
-		}, [asset]);
+		}, [asset]);*/
 
 		return (
 			<div className={`asset-item ${asset.isActive && 'asset-active'}`}
@@ -132,7 +132,7 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 				</div>
 				<span className={'name-price'}>
 					<span className="name">{asset.base}/{asset.term}</span>
-					<span className="price">{rate}</span>
+					{/*<span className="price">{rate}</span>*/}
 				</span>
 				<span className={'change'}>
 					<span>{asset.type} Pair</span>

@@ -38,10 +38,10 @@ export const Popup: FC<IProps> = (props) => {
         {props.popupLauncher}
       </span>
       {showPopup && (
-        <div className={'popup'} style={{
+        <div className={'popup'}/* style={{
           top: props.top || 0,
           left: props.left !== undefined ? props.left : -295
-        }}>{props.popupContent}</div>
+        }}*/>{props.popupContent}</div>
       )}
     </div>
   );

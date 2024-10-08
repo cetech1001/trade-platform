@@ -32,7 +32,7 @@ export const Settings = connect(mapStateToProps, actions)((props: IProps) => {
   if (props.activeModal !== Modals.settings) return null;
 
   return (
-    <div className={`sidebar ${props.activeModal === Modals.settings ? 'open' : ''}`}>
+    <div className={'sidebar open'}>
       <div>
         <div className={"flex-row-space-between close-button"}>
           <div />

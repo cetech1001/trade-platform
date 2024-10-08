@@ -3,10 +3,8 @@ import {Landing} from "./components/landing";
 import {Alert} from "./components/shared/alert";
 import {connect} from "react-redux";
 import { AuthState } from '@coinvant/types';
-import { refreshUserProfile, RootState } from '@coinvant/store';
 import { Dashboard } from './components/dashboard';
-import { useAppDispatch } from '../hooks';
-import { useEffect } from 'react';
+import { RootState } from '@coinvant/store';
 
 interface IProps {
   auth: AuthState,
@@ -29,11 +27,11 @@ export const App = connect(mapStateToProps)((props: IProps) => {
     <>
       <Alert />
       <Routes>
-        <Route path="/" element={<GuestRoute/>}>
-          <Route path="/" element={<Landing/>}/>
+        <Route path="/" element={<GuestRoute />}>
+          <Route path="/" element={<Landing />} />
         </Route>
-        <Route path={'/platform'} element={<ProtectedRoute/>}>
-          <Route path="/platform" element={<Dashboard/>}/>
+        <Route path={'/platform'} element={<ProtectedRoute />}>
+          <Route path="/platform" element={<Dashboard />} />
         </Route>
       </Routes>
     </>

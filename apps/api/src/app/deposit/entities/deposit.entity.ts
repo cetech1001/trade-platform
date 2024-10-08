@@ -40,7 +40,7 @@ export class DepositEntity implements Deposit {
 	@ManyToOne(
 		() => AccountEntity,
 		(account) => account.deposits,
-		{ eager: true }
+		{ eager: true, onDelete: 'CASCADE' }
 	)
 	@JoinColumn({ name: 'accountID' })
 	account: Account;

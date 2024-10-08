@@ -88,7 +88,7 @@ export class TradeEntity implements Trade{
 	@Column({ default: false })
 	isShort: boolean;
 
-	@Column({ type: 'enum', enum: TradeClosureReason })
+	@Column({ type: 'enum', enum: TradeClosureReason, nullable: true, default: null })
 	closureReason: TradeClosureReason;
 
 	@IsNotEmpty()
@@ -103,7 +103,7 @@ export class TradeEntity implements Trade{
 	@ManyToOne(
 		() => AccountEntity,
 		account => account.trades,
-		{ eager: true }
+		{ eager: true, onDelete: 'CASCADE' }
 	)
 	@JoinColumn({ name: 'accountID' })
 	account: Account;
