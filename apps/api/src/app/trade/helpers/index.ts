@@ -17,10 +17,30 @@ const getCurrentPriceForStock = async (symbol: string) => {
   return parseFloat(latestData['1. open']);
 }
 
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 const getCurrentPriceForForex = async (symbol: string) => {
   const [base, term] = symbol.split('/');
-  const { data } = await axios.get(`https://api.frankfurter.app/latest?amount=1&from=${base}&to=${term}`);
-  return data.rates[term];
+  try {
+    const { data } = await axios.get(`https://api.frankfurter.app/latest?amount=1&from=${base}&to=${term}`);
+    return data.rates[term];
+  } catch (e) {
+
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const currentDate = formatDate(today);
+    const yesterdayDate = formatDate(yesterday);
+
+    const { data } = await axios.get(`https://api.polygon.io/v2/aggs/ticker/C:${base}${term}/range/1/day/${yesterdayDate}/${currentDate}?adjusted=true&sort=desc&limit=-2&apiKey=GgtbDtQgjKDCbNcyPxwuzAV34QLhjjiS`);
+    return data.results[0].c;
+  }
 }
 
 const getCurrentPriceForCrypto = async (currencyID: string) => {

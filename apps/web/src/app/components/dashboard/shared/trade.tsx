@@ -155,9 +155,9 @@ export const TradeItem = connect(null, actions)((props: IProps) => {
 				{props.trade.status === TradeStatus.active && (
 					<span className={props.trade.profitOrLoss >= 0 ? 'positive' : 'negative'}>
 						{props.trade.profitOrLoss > 0 && '+'}{formatCurrency(props.trade.profitOrLoss)}&nbsp;
-						{props.trade.profitOrLoss !== 0 && (
-							<i className={`fa-solid fa-long-arrow-${props.trade.profitOrLoss > 0
-								? 'up' : 'down'} ${props.trade.profitOrLoss > 0 ? 'positive' : 'negative'}`}></i>
+						{+props.trade.profitOrLoss !== 0 && (
+							<i className={`fa-solid fa-long-arrow-${+props.trade.profitOrLoss > 0
+								? 'up' : 'down'} ${+props.trade.profitOrLoss > 0 ? 'positive' : 'negative'}`}></i>
 						)}
 					</span>
 				)}

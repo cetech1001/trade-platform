@@ -205,7 +205,7 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 						</div>
 					)}
 				</div>
-				<button className={"save"}>Save</button>
+				{/*<button className={"save"} onClick={}>Save</button>*/}
 			</div>
 		);
 	};
