@@ -49,8 +49,9 @@ export const Signup = connect(null, actions)((props: IProps) => {
         <div className={'input'}>
           <span>Password</span>
           <div className={'input-field'}>
-            <input type={'password'} value={password}
-                   onChange={e => setPassword(e.target.value)} required/>
+            <input type={showPassword ? 'text' : 'password'} value={password}
+                   onChange={e =>
+                     setPassword(e.target.value)} required/>
             {showPassword ? (
               <i className={"fa-solid fa-eye-slash cursor-pointer"} key={'signup-eye'}
                  onClick={() => setShowPassword(false)}></i>

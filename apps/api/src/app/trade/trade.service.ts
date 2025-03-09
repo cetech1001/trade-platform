@@ -45,11 +45,14 @@ export class TradeService {
 		}
 	}
 
-	async checkAndCloseTrade(trade: Trade, forceClose?: boolean) {
-		const queryRunner = this.dataSource.createQueryRunner();
+	async checkAndCloseTrade(trade: Trade, forceClose?: boolean, currentPrice?: number) {
+    // @ts-expect-error idk
+    const symbol = trade.asset.currencyID || trade.asset.symbol;
+    const queryRunner = this.dataSource.createQueryRunner();
 		try {
-			// @ts-expect-error idk
-			const currentPrice = await getCurrentAssetPrice(trade.assetType, trade.asset.currencyID || trade.asset.symbol);
+      if (!currentPrice) {
+        currentPrice = await getCurrentAssetPrice(trade.assetType, symbol);
+      }
 			let profitOrLoss = 0;
 			let shouldClose = false;
 			let reason: TradeClosureReason;
@@ -135,7 +138,6 @@ export class TradeService {
 				...this.getAssetObject(createTrade.assetType, asset),
 				account,
 			}
-			await this.accountService.decreaseBalance(account.id, createTrade.bidAmount, queryRunner);
 			if (createTrade.openingPrice || createTrade.executeAt) {
 				if (createTrade.openingPrice) {
 					if (createTrade.isShort) {
@@ -166,6 +168,7 @@ export class TradeService {
 				amount: createTrade.bidAmount,
 				transactionID: trade.id,
 			}, queryRunner);
+      await this.accountService.decreaseBalance(account.id, createTrade.bidAmount, queryRunner);
 			Promise.all([
 				this.emailService.sendMail(user.email, 'Trade Order Placed', './user/new-order', {
 					name: user.name,

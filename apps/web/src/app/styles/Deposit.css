@@ -1,6 +1,11 @@
 .qr-code {
     display: flex;
+    align-content: center;
+    align-items: center;
     justify-content: center;
+    justify-items: center;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .payment-amount {

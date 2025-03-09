@@ -20,13 +20,20 @@ export class TradeJob {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async checkPendingTrades() {
+    const tradeMap = new Map<string, number>();
+
     const pendingTrades = await this.tradeRepo.find({
       where: { status: TradeStatus.pending }
     });
 
     for (const trade of pendingTrades) {
       // @ts-expect-error idk
-      const currentPrice = await getCurrentAssetPrice(trade.assetType, trade.asset.currencyID || trade.asset.symbol);
+      const symbol = trade.asset.currencyID || trade.asset.symbol;
+      let currentPrice = tradeMap.get(symbol);
+      if (!currentPrice) {
+        currentPrice = await getCurrentAssetPrice(trade.assetType, symbol);
+        tradeMap.set(symbol, currentPrice);
+      }
       const shouldOpen = await shouldOpenTrade(trade, currentPrice);
       if (shouldOpen) {
         const obj = { status: TradeStatus.active, currentPrice };
@@ -41,20 +48,28 @@ export class TradeJob {
           obj['executeAt'] = new Date().toDateString();
         }
         const openingPrice = trade.buyPrice || trade.sellPrice || obj['buyPrice'] || obj['sellPrice'];
-        obj['units'] = await getUnits(trade.assetType, openingPrice, trade.bidAmount, trade.leverage, trade.asset.symbol);
+        obj['units'] = await getUnits(trade.assetType, openingPrice, trade.bidAmount, trade.leverage, symbol);
         await this.tradeRepo.update(trade.id, obj);
       }
     }
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async checkActiveTrades() {
     const openTrades = await this.tradeRepo.find({
       where: { status: TradeStatus.active },
     });
+    const tradePriceMap = new Map<string, number>();
 
     for (const trade of openTrades) {
-      await this.tradeService.checkAndCloseTrade(trade);
+      // @ts-expect-error idk
+      const symbol = trade.asset.currencyID || trade.asset.symbol;
+      let currentPrice = tradePriceMap.get(symbol);
+      if (!currentPrice) {
+        currentPrice = await getCurrentAssetPrice(trade.assetType, symbol);
+        tradePriceMap.set(symbol, currentPrice);
+      }
+      await this.tradeService.checkAndCloseTrade(trade, false, currentPrice);
     }
   }
 }

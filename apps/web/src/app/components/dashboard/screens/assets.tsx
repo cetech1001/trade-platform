@@ -95,7 +95,7 @@ export const Assets = (props: IProps) => {
 					{activeTab === TradeAssetType.stock
 						&& (<StockOptions symbol={stockSymbol} name={stockName}/>)}
 					{activeTab === TradeAssetType.forex
-						&& (<ForexPairs base={base} term={term}/>)}
+						&& (<ForexPairs base={base} term={term} toggleNav={props.toggleNav}/>)}
 					{activeTab === TradeAssetType.crypto
 						&& (<CryptoCurrencies symbol={cryptoSymbol} name={cryptoName}/>)}
 				</div>

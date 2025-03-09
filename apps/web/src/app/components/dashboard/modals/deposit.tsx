@@ -54,6 +54,16 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
     }
   }, []);
 
+  const handleCopy = async () => {
+    try {
+      if (method) {
+        await navigator.clipboard.writeText(method.walletAddress);
+      }
+    } catch (error) {
+      console.error("Failed to copy text: ", error);
+    }
+  };
+
   const reset = () => {
     setStep(1);
     setAmount("10");
@@ -186,6 +196,10 @@ export const Deposit = connect(mapStateToProps, actions)((props: IProps) => {
             </div>
             <div className={'qr-code'}>
               <QRCode value={`${method?.code}:${method?.walletAddress}`} style={{ border: "2px solid #ffffff" }}/>
+              <div style={{ color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", padding: "10px", flexWrap: "wrap" }}>
+                <code>{method?.walletAddress}</code>
+                <i className="fas fa-copy" style={{ cursor: "pointer" }} onClick={handleCopy}></i>
+              </div>
             </div>
             <div className={"payment-amount"}>
               <h4 style={{color: "#9CB0C2"}}>Payment Amount</h4>

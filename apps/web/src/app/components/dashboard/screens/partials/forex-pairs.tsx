@@ -3,6 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
 import {fetchForexPairs, RootState, setCurrentAsset} from "@coinvant/store";
+import { USER_ROUTES } from '../../../../../routes';
 
 interface IProps {
 	base: string;
@@ -11,6 +12,7 @@ interface IProps {
 	totalPages: number;
 	fetchForexPairs: (query: FindForexPairs) => Promise<void>;
 	setCurrentAsset: (asset: CurrentAsset) => void;
+  toggleNav: (route: USER_ROUTES) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -105,6 +107,7 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 			symbol: `${pair.base}/${pair.term}`,
 			type: TradeAssetType.forex,
 		});
+    props.toggleNav(USER_ROUTES.chart);
 	}
 
 	const AssetItem = (
