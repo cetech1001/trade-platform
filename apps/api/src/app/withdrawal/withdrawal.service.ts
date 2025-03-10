@@ -17,7 +17,7 @@ import { TransactionService } from '../transaction/transaction.service';
 import { AccountService } from '../account/account.service';
 import { EmailService } from '../email/email.service';
 import { formatCurrency } from '../../helpers';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { PaymentMethodService } from '../payment-method/payment-method.service';
 
 @Injectable()

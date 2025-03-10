@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import {openModal, RootState, setCurrentKYC} from "@coinvant/store";
 import {DeleteKYCModal} from "./delete-kyc";
 import {formatDate} from "../../../../helpers";
-import {environment} from "../../../../../environment/environment";
+import {environment} from "../../../../../environments/environment";
 import { EditKYCModal } from './edit-kyc';
 
 interface IProps {

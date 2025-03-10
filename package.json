@@ -6,8 +6,8 @@
     "start:web": "nx serve web",
     "start:admin": "nx serve admin",
     "start:api": "nx serve api --watch",
-    "build:web": "nx build web && cd dist/apps/web && zip -rX archive.zip .",
-    "build:admin": "nx build admin && cd dist/apps/admin && zip -rX archive.zip .",
+    "build:web": "nx build web --configuration=production && cd dist/apps/web && zip -rX archive.zip .",
+    "build:admin": "nx build admin --configuration=production && cd dist/apps/admin && zip -rX archive.zip .",
     "build:api": "nx build api --configuration=production && cd dist/apps/api && zip -rX archive.zip ."
   },
   "private": true,

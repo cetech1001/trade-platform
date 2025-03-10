@@ -34,5 +34,5 @@ export const environment = {
   },
   supportEmail: process.env.SUPPORT_EMAIL,
   polygonAPI: process.env.POLYGON_API,
-  assetsPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
+  assetsPath: path.join(process.cwd(), /*'apps', 'api', 'src', */'assets'),
 }

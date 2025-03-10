@@ -16,7 +16,7 @@ import {paginate} from "nestjs-typeorm-paginate";
 import {TransactionService} from "../transaction/transaction.service";
 import { AccountService } from '../account/account.service';
 import { EmailService } from '../email/email.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { calculateProfitOrLoss, getCurrentAssetPrice, getUnits } from './helpers';
 
 @Injectable()
@@ -148,8 +148,11 @@ export class TradeService {
 				}
 				obj['status'] = TradeStatus.pending;
 			} else {
-				// @ts-expect-error idk
-				const openingPrice = await getCurrentAssetPrice(createTrade.assetType, asset.currencyID || asset.symbol);
+        let openingPrice = 1;
+        if (asset.symbol !== "XAU/USD") {
+          // @ts-expect-error idk
+          openingPrice = await getCurrentAssetPrice(createTrade.assetType, asset.currencyID || asset.symbol);
+        }
 				obj['currentPrice'] = openingPrice;
 				obj['units'] = await getUnits(createTrade.assetType, openingPrice, createTrade.bidAmount, createTrade.leverage, asset.symbol);
 				if (createTrade.isShort) {
@@ -245,15 +248,17 @@ export class TradeService {
 		if (trade) {
 			const queryRunner = this.dataSource.createQueryRunner();
 			try {
-				if (updateTrade.status === TradeStatus.cancelled) {
+				if (updateTrade.status === TradeStatus.cancelled && trade.status !== TradeStatus.cancelled) {
 					await this.accountService.increaseBalance(trade.account.id, trade.bidAmount, queryRunner);
 					await this.transactionService.update(trade.id, {
 						status: (TransactionStatusEnum.cancelled as unknown) as TransactionStatus,
 					}, queryRunner);
 					return queryRunner.manager.update(TradeEntity, id, updateTrade);
-				} else if (updateTrade.status === TradeStatus.closed) {
-					await this.checkAndCloseTrade(trade, true);
-				} else if (!updateTrade.status) {
+				} else if (updateTrade.status === TradeStatus.closed && trade.status !== TradeStatus.closed) {
+          await queryRunner.manager.update(TradeEntity, id, updateTrade);
+          const currentPrice = updateTrade.currentPrice ? updateTrade.currentPrice : null;
+          await this.checkAndCloseTrade(trade, true, currentPrice);
+				} else if (updateTrade.takeProfit || updateTrade.stopLoss) {
 					if (updateTrade.takeProfit
 						&& ((trade.isShort && +trade.currentPrice <= +updateTrade.takeProfit)
 							|| !trade.isShort && +trade.currentPrice >= +updateTrade.takeProfit)) {
@@ -265,7 +270,9 @@ export class TradeService {
 						return new BadRequestException('Please input a valid stop loss parameter');
 					}
 					await queryRunner.manager.update(TradeEntity, id, updateTrade);
-				}
+				} else {
+          await queryRunner.manager.update(TradeEntity, id, updateTrade);
+        }
 				return this.findOne(id);
 			} catch (e) {
 				console.error(e);

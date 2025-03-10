@@ -19,7 +19,7 @@ import { PaymentMethodService } from '../payment-method/payment-method.service';
 import { AccountService } from '../account/account.service';
 import { EmailService } from '../email/email.service';
 import { formatCurrency } from '../../helpers';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class DepositService {

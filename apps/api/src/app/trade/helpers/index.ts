@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Trade, TradeAssetType } from '@coinvant/types';
-import { environment } from '../../../../environments/environment';
 
 const getCurrentPriceForStock = async (symbol: string) => {
   const { data } = await axios.get(`https://www.alphavantage.co/query`, {
@@ -18,12 +17,12 @@ const getCurrentPriceForStock = async (symbol: string) => {
   return parseFloat(latestData['1. open']);
 }
 
-const formatDate = (date: Date) => {
+/*const formatDate = (date: Date) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
-}
+}*/
 
 const getCurrentPriceForForex = async (symbol: string) => {
   const [base, term] = symbol.split('/');
@@ -32,7 +31,7 @@ const getCurrentPriceForForex = async (symbol: string) => {
     return data.rates[term];
   } catch (e) {
 
-    const today = new Date();
+    /*const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(today.getDate() - 1);
 
@@ -40,7 +39,8 @@ const getCurrentPriceForForex = async (symbol: string) => {
     const yesterdayDate = formatDate(yesterday);
 
     const { data } = await axios.get(`https://api.polygon.io/v2/aggs/ticker/C:${base}${term}/range/1/day/2025-02-27/2025-02-28?adjusted=true&sort=desc&limit=-2&apiKey=${environment.polygonAPI}`);
-    return data.results[0].c;
+    return data.results[0].c;*/
+    console.error(e);
   }
 }
 

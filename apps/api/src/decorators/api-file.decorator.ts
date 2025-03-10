@@ -3,7 +3,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import {diskStorage} from "multer";
 import path from "path";
-import {environment} from "../../environments/environment";
+import {environment} from "../environments/environment";
 
 export function ApiFile(
   fieldName = 'file',

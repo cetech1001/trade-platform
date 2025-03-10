@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class EmailService {

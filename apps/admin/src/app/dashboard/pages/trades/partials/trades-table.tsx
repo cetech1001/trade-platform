@@ -105,9 +105,9 @@ export const TradesTable = connect(mapStateToProps, actions)((props: IProps) => 
 			              </span>
 						</Dropdown.Toggle>
 						<Dropdown.Menu>
-							{/*<Dropdown.Item onClick={onEditClick}>
+							<Dropdown.Item onClick={onEditClick}>
 								<i className="fa-solid fa-pen-to-square me-2" /> Edit
-							</Dropdown.Item>*/}
+							</Dropdown.Item>
 							<Dropdown.Item className="text-danger" onClick={onDeleteClick}>
 								<i className="fa-solid fa-delete-left me-2" /> Remove
 							</Dropdown.Item>

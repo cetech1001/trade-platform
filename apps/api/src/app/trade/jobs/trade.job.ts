@@ -64,6 +64,9 @@ export class TradeJob {
     for (const trade of openTrades) {
       // @ts-expect-error idk
       const symbol = trade.asset.currencyID || trade.asset.symbol;
+      if (symbol === "XAU/USD") {
+        continue;
+      }
       let currentPrice = tradePriceMap.get(symbol);
       if (!currentPrice) {
         currentPrice = await getCurrentAssetPrice(trade.assetType, symbol);

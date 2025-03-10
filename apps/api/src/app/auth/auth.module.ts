@@ -6,7 +6,7 @@ import {JwtModule} from "@nestjs/jwt";
 import {PassportModule} from "@nestjs/passport";
 import {LocalStrategy} from "./strategy/local.strategy";
 import {JwtStrategy} from "./strategy/jwt.strategy";
-import {environment} from "../../../environments/environment";
+import {environment} from "../../environments/environment";
 
 @Module({
   imports: [

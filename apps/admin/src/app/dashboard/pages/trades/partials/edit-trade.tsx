@@ -20,6 +20,8 @@ interface IProps {
 
 const initialState = {
 	status: TradeStatus.pending,
+  currentPrice: 0,
+  profitOrLoss: 0,
 };
 
 const mapStateToProps = (state: RootState) => ({
@@ -41,6 +43,8 @@ export const EditTradeModal = connect(mapStateToProps, actions)((props: IProps) 
 		if (props.trade) {
 			setPayload({
 				status: props.trade.status,
+        currentPrice: props.trade.currentPrice,
+        profitOrLoss: props.trade.profitOrLoss,
 			});
 		}
 	}, [props.trade]);
@@ -66,7 +70,7 @@ export const EditTradeModal = connect(mapStateToProps, actions)((props: IProps) 
 		}
 	}
 
-	const onChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+	const onChange = (e: ChangeEvent<{ name: string; value: string; }>) => {
 		const { name, value } = e.target;
 		setPayload(prevState => ({
 			...prevState,
@@ -83,12 +87,27 @@ export const EditTradeModal = connect(mapStateToProps, actions)((props: IProps) 
 				<Form onSubmit={onSave}>
 					<Form.Group className="mb-3">
 						<Form.Label>Select Status</Form.Label>
-						<Form.Select defaultValue={payload.status} name={"status"} onChange={onChange} required>
+						<Form.Select name={"status"} onChange={onChange} required>
 							{Object.values(TradeStatus).map((status, i) => (
-								<option value={status} key={i}>{status}</option>
+								<option value={status} key={i}
+                        selected={status === payload.status}>{status}</option>
 							))}
 						</Form.Select>
 					</Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Current Price</Form.Label>
+            <Form.Control type="text" placeholder="Enter current price"
+                          name={"currentPrice"} value={payload.currentPrice}
+                          onChange={onChange} required/>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Profit/Loss</Form.Label>
+            <Form.Control type="text" placeholder="Enter profit/loss"
+                          name={"profitOrLoss"} value={payload.profitOrLoss}
+                          onChange={onChange} required/>
+          </Form.Group>
 
 					<Button variant="primary" type="submit" disabled={isSubmitting}>
 						{isSubmitting ? 'Submitting...' : 'Submit'}

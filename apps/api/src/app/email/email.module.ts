@@ -4,7 +4,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import path from 'path';
 import { EmailService } from './email.service';
 import { EmailController } from './email.controller';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Module({
   imports: [

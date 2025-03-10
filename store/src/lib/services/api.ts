@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {environment} from "../../../environments/environment";
+import {environment} from "../../environments/environment";
 import store, {AppDispatch} from "../../index";
 import {logout} from '../actions';
 

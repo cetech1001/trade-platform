@@ -7,7 +7,7 @@ import {openModal, RootState, setCurrentDeposit} from "@coinvant/store";
 import {EditDepositModal} from "./edit-deposit";
 import {DeleteDepositModal} from "./delete-deposit";
 import {formatCurrency, formatDate} from "../../../../helpers";
-import {environment} from "../../../../../environment/environment";
+import {environment} from "../../../../../environments/environment";
 
 interface IProps {
 	options: PaginationOptions;

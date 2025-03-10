@@ -25,8 +25,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/api/environments/environment.ts",
-              "with": "apps/api/environments/environment.prod.ts"
+              "replace": "apps/api/src/environments/environment.ts",
+              "with": "apps/api/src/environments/environment.prod.ts"
             }
           ]
         }

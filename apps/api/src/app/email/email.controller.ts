@@ -7,7 +7,7 @@ import { RolesGuard } from '../../guards/roles.guard';
 import { CurrentUser, Roles } from '../../decorators';
 import { User, UserRole } from '@coinvant/types';
 import { SupportEmailDto } from './dto/email.dto';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { formatDate } from '../../helpers';
 
 @ApiTags('Email Controller')

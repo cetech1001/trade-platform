@@ -8,7 +8,7 @@ import { AccountService } from '../account/account.service';
 import { KycEntity } from './entities/kyc.entity';
 import { EmailService } from '../email/email.service';
 import { formatDate } from '../../helpers';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class UserService {
