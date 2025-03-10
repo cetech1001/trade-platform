@@ -193,9 +193,9 @@ export class TradeService {
 		}
 	}
 
-	findAll(query: FindTradesQueryParams, user: User) {
-		// eslint-disable-next-line prefer-const
-		let { status, assetType, accountID, ...options } = query;
+	async findAll(query: FindTradesQueryParams, user: User) {
+    let { accountID } = query;
+    const { status, assetType, ...options } = query;
 		const queryBuilder = this.tradeRepo.createQueryBuilder('TR')
 			.leftJoinAndSelect('TR.crypto', 'crypto')
 			.leftJoinAndSelect('TR.stock', 'stock')
@@ -207,15 +207,22 @@ export class TradeService {
 		}
 
 		if (user.role === UserRole.user) {
-			if (!accountID) {
-				accountID = user.accounts[0].id;
-			}
+      if (!accountID) {
+        accountID = user.accounts[0].id;
+      } else {
+        const accounts = user.accounts.map((account) => account.id);
+        if (!accounts.includes(accountID)) {
+          accountID = user.accounts[0].id;
+        }
+      }
 			queryBuilder.where('A.id = :accountID', { accountID });
 		}
 
 		if (status) {
 			queryBuilder.andWhere('TR.status = :status', { status });
-		}
+		} else if (user.role === UserRole.user) {
+      queryBuilder.andWhere('TR.status != :status', { status: TradeStatus.pending });
+    }
 
 		if (assetType) {
 			queryBuilder.andWhere('TR.assetType = :assetType', { assetType });

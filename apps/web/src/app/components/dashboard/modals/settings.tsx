@@ -16,7 +16,7 @@ interface IProps {
 
 const mapStateToProps = (state: RootState) => ({
   user: state.auth.user,
-  account: state.user.currentAccount,
+  account: state.user.selectedAccount,
   activeModal: state.modal.activeModal,
 });
 

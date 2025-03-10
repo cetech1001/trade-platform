@@ -6,7 +6,7 @@ const initialState: TradeState = {
 	list: [],
 	limit: 5,
   totalCount: 0,
-  totalPages: 1,
+  totalPages: 0,
 	highlightedTrade: null,
 }
 
