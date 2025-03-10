@@ -4,9 +4,10 @@ import {WithdrawalActions} from "../types";
 
 const initialState: WithdrawalState = {
 	list: [],
-	count: 0,
-	currentWithdrawal: null,
-	total: 0,
+	totalCount: 0,
+  totalPages: 0,
+	highlightedWithdrawal: null,
+	totalWithdrawalAmount: 0,
 }
 
 const reducer = (state = initialState, action: PayloadAction<WithdrawalState>) => {
@@ -15,43 +16,42 @@ const reducer = (state = initialState, action: PayloadAction<WithdrawalState>) =
 			return {
 				...state,
 				list: action.payload.list,
-				count: action.payload.count
+				totalCount: action.payload.totalCount,
+        totalPages: action.payload.totalPages
 			};
 		case WithdrawalActions.UPDATE:
-			const { currentWithdrawal } = action.payload;
-			const prevWithdrawal = state.list.find(withdrawal =>
-				withdrawal.id === currentWithdrawal?.id);
 			return {
 				...state,
 				list: [
 					...state.list.map(withdrawal => {
-						if (withdrawal.id === state.currentWithdrawal?.id) {
-							return action.payload.currentWithdrawal!;
-						}
-						return withdrawal;
+						return withdrawal.id === state.highlightedWithdrawal?.id
+            && action.payload.highlightedWithdrawal
+              ? action.payload.highlightedWithdrawal : withdrawal;
 					})
 				],
-				total: currentWithdrawal?.status === WithdrawalStatus.paid
-				&& prevWithdrawal?.status !== WithdrawalStatus.paid
-					? state.total + (+currentWithdrawal.amount) : state.total,
+				totalWithdrawalAmount: action.payload.highlightedWithdrawal?.status === WithdrawalStatus.paid
+				&& state.list.find(withdrawal =>
+          withdrawal.id === action.payload.highlightedWithdrawal?.id)?.status
+        !== WithdrawalStatus.paid
+					? state.totalWithdrawalAmount + (+action.payload.highlightedWithdrawal.amount) : state.totalWithdrawalAmount,
 			};
 		case WithdrawalActions.DELETE:
 			return {
 				...state,
 				list: [
-					...state.list.filter(withdrawal => withdrawal.id !== state.currentWithdrawal?.id)
+					...state.list.filter(withdrawal => withdrawal.id !== state.highlightedWithdrawal?.id)
 				],
-				count: state.count - 1,
+				totalCount: state.totalCount - 1,
 			};
 		case WithdrawalActions.SET_TOTAL:
 			return {
 				...state,
-				total: action.payload.total,
+				totalWithdrawalAmount: action.payload.totalWithdrawalAmount,
 			}
 		case WithdrawalActions.SET_CURRENT_WITHDRAWAL:
 			return {
 				...state,
-				currentWithdrawal: action.payload.currentWithdrawal,
+				highlightedWithdrawal: action.payload.highlightedWithdrawal,
 			}
 		default:
 			return state;

@@ -2,24 +2,26 @@ import { Account, AccountType, UserState } from '@coinvant/types';
 import {PayloadAction} from "@reduxjs/toolkit";
 import {UserActions} from "../types";
 
-let currentAccount = null;
+let selectedAccount = null;
 const _authData = localStorage.getItem("authData");
 if (_authData) {
 	const authData = JSON.parse(_authData);
 	if (authData?.user?.accounts) {
-		currentAccount = authData.user.accounts.find(({ type }: Account) =>
+		selectedAccount = authData.user.accounts.find(({ type }: Account) =>
 			type === AccountType.demo);
 	}
 }
 
 const initialState: UserState = {
-	count: 0,
-	kycCount: 0,
+	totalUserCount: 0,
+  totalUserPages: 0,
+	totalKycCount: 0,
+  totalKycPages: 0,
 	list: [],
 	kycList: [],
-	currentUser: null,
-	currentKYC: null,
-	currentAccount,
+	highlightedUser: null,
+	highlightedKYC: null,
+	selectedAccount: selectedAccount,
 }
 
 const reducer = (state = initialState, action: PayloadAction<UserState>) => {
@@ -28,20 +30,24 @@ const reducer = (state = initialState, action: PayloadAction<UserState>) => {
 			return {
 				...state,
 				list: action.payload.list,
-				count: action.payload.count
+				totalUserCount: action.payload.totalUserCount,
+        totalUserPages: action.payload.totalUserPages
 			};
 		case UserActions.KYC_LIST:
 			return {
 				...state,
 				kycList: action.payload.kycList,
-				kycCount: action.payload.kycCount,
+				totalKycCount: action.payload.totalKycCount,
 			};
 		case UserActions.CREATE:
-			if (action.payload.currentUser) {
+			if (action.payload.highlightedUser) {
 				return {
 					...state,
-					list: [ action.payload.currentUser, ...state.list ],
-					count: state.count + 1,
+					list: [
+            action.payload.highlightedUser,
+            ...state.list.filter((_, i) => i < 9)
+          ],
+          totalUserCount: state.totalUserCount + 1,
 				};
 			}
 			return state;
@@ -50,46 +56,42 @@ const reducer = (state = initialState, action: PayloadAction<UserState>) => {
 				...state,
 				list: [
 					...state.list.map(user => {
-						if (user.id === state.currentUser?.id) {
-							if (action.payload.currentUser) {
-								return action.payload.currentUser;
-							}
-							return user;
-						}
-						return user;
+						return user.id === state.highlightedUser?.id
+            && action.payload.highlightedUser
+              ? action.payload.highlightedUser : user;
 					})
-				]
+				],
 			};
 		case UserActions.DELETE:
 			return {
 				...state,
 				list: [
-					...state.list.filter(user => user.id !== state.currentUser?.id)
+					...state.list.filter(user => user.id !== state.highlightedUser?.id)
 				],
-				count: state.count - 1,
+        totalUserCount: state.totalUserCount - 1,
 			};
 		case UserActions.DELETE_KYC:
 			return {
 				...state,
 				kycList: [
-					...state.kycList.filter(kyc => kyc.id !== state.currentKYC?.id)
+					...state.kycList.filter(kyc => kyc.id !== state.highlightedKYC?.id)
 				],
-				kycCount: state.kycCount - 1,
+				totalKycCount: state.totalKycCount - 1,
 			};
 		case UserActions.SET_CURRENT_USER:
 			return {
 				...state,
-				currentUser: action.payload.currentUser,
+				highlightedUser: action.payload.highlightedUser,
 			}
 		case UserActions.SET_CURRENT_KYC:
 			return {
 				...state,
-				currentKYC: action.payload.currentKYC,
+				highlightedKYC: action.payload.highlightedKYC,
 			}
 		case UserActions.SET_CURRENT_ACCOUNT:
 			return {
 				...state,
-				currentAccount: action.payload.currentAccount,
+				selectedAccount: action.payload.selectedAccount,
 			}
 		default:
 			return state;

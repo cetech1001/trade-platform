@@ -24,7 +24,7 @@ const initialState = {
 
 const mapStateToProps = (state: RootState) => ({
 	activeModal: state.modal.activeModal,
-	user: state.user.currentUser,
+	user: state.user.highlightedUser,
 });
 
 const actions = {
@@ -70,7 +70,7 @@ export const EditUserModal = connect(mapStateToProps, actions)((props: IProps) =
 		}
 	}
 
-	const onChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+	const onChange = (e: ChangeEvent<{ value: string; name: string }>) => {
 		const { name, value } = e.target;
 		setPayload(prevState => ({
 			...prevState,

@@ -50,7 +50,7 @@ export const AddPaymentMethodModal = connect(mapStateToProps, actions)((props: I
 		}
 	}
 
-	const onChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+	const onChange = (e: ChangeEvent<{ value: string; name: string }>) => {
 		const { name, value } = e.target;
 		setPayload(prevState => ({
 			...prevState,
@@ -64,7 +64,8 @@ export const AddPaymentMethodModal = connect(mapStateToProps, actions)((props: I
 				<Modal.Title>Add PaymentMethod</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
-				<PaymentMethodForm payload={payload} onSave={onSave} onChange={onChange} isSubmitting={isSubmitting}/>
+				<PaymentMethodForm payload={payload} onSave={onSave}
+                           onChange={onChange} isSubmitting={isSubmitting}/>
 			</Modal.Body>
 		</Modal>
 	);

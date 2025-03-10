@@ -2,7 +2,7 @@ import React, {FC, useState} from "react";
 import SimpleBar from 'simplebar-react';
 import {useLocation, Link, useNavigate} from "react-router-dom";
 import { CSSTransition } from 'react-transition-group';
-import { Nav, Badge, Image, Button, Accordion, Navbar } from '@themesberg/react-bootstrap';
+import { Nav, Badge, Image, Button, Navbar } from '@themesberg/react-bootstrap';
 import {Color} from "@themesberg/react-bootstrap/lib/cjs/types";
 import ProfilePicture from "../../../assets/images/admin-img.png";
 import {AdminRoutes} from "../../routes";
@@ -13,12 +13,12 @@ interface IProps {
   logout: () => void;
 }
 
-interface CollapsableNavItemProps {
+/*interface CollapsableNavItemProps {
   eventKey: string;
   title: string;
   icon: string;
   children: React.JSX.Element[];
-}
+}*/
 
 interface NavItemProps {
   title: string;
@@ -43,7 +43,7 @@ export const Sidebar = connect(null, { logout })((props: IProps) => {
 
   const onCollapse = () => setShow(!show);
 
-  const CollapsableNavItem: FC<CollapsableNavItemProps> = (props) => {
+  /*const CollapsableNavItem: FC<CollapsableNavItemProps> = (props) => {
     const { eventKey, title, icon, children = null } = props;
     const defaultKey = pathname.indexOf(eventKey) !== -1 ? eventKey : "";
 
@@ -64,7 +64,7 @@ export const Sidebar = connect(null, { logout })((props: IProps) => {
         </Accordion.Item>
       </Accordion>
     );
-  };
+  };*/
 
   const NavItem: FC<NavItemProps> = (props) => {
     const classNames = props.badgeText ? "d-flex justify-content-start align-items-center justify-content-between" : "";

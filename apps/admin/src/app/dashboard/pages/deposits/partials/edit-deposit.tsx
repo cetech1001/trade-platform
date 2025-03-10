@@ -25,8 +25,8 @@ const initialState = {
 
 const mapStateToProps = (state: RootState) => ({
 	activeModal: state.modal.activeModal,
-	deposit: state.deposit.currentDeposit,
-	depositTotal: state.deposit.total,
+	deposit: state.deposit.highlightedDeposit,
+	depositTotal: state.deposit.totalDepositAmount,
 });
 
 const actions = {

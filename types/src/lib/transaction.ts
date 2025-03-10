@@ -39,7 +39,9 @@ export enum TransactionStatusEnum {
 
 export interface TransactionState {
 	list: Transaction[];
-	count: number;
+  highlightedTransaction: Transaction | null;
+	totalCount: number;
+  totalPages: number;
 }
 
 export interface FindTransactionsQueryParams extends PaginationOptions {

@@ -26,9 +26,10 @@ export type UpdateDeposit = Pick<Deposit, 'status'>;
 
 export interface DepositState {
 	list: Deposit[];
-	count: number;
-	currentDeposit: Deposit | null;
-	total: number;
+	totalCount: number;
+  totalPages: number;
+	highlightedDeposit: Deposit | null;
+	totalDepositAmount: number;
 }
 
 export interface FindDepositsQueryParams extends PaginationOptions {

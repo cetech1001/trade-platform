@@ -22,9 +22,9 @@ interface IProps {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  userCount: state.user.count,
-  totalDepositAmount: state.deposit.total,
-  totalWithdrawalAmount: state.withdrawal.total,
+  userCount: state.user.totalUserCount,
+  totalDepositAmount: state.deposit.totalDepositAmount,
+  totalWithdrawalAmount: state.withdrawal.totalWithdrawalAmount,
 });
 
 const actions = {

@@ -11,7 +11,8 @@ export const fetchDeposits = (query?: FindDepositsQueryParams) => async (dispatc
 			type: DepositActions.LIST,
 			payload: {
 				list: data.items,
-				count: data.meta.totalItems,
+				totalCount: data.meta.totalItems,
+        totalPages: data.meta.totalPages,
 			},
 		});
 	} catch (error) {
@@ -29,7 +30,7 @@ export const addDeposit = (payload: FormData) => async (dispatch: AppDispatch) =
 		dispatch({
 			type: TransactionActions.ADD,
 			payload: {
-				transaction: data,
+				highlightedTransaction: data,
 			},
 		});
 		dispatch(showAlert({
@@ -52,7 +53,7 @@ export const editDeposit = (id: string, payload: UpdateDeposit) => async (dispat
 		dispatch({
 			type: DepositActions.UPDATE,
 			payload: {
-				currentDeposit: data,
+				highlightedDeposit: data,
 			},
 		});
 		dispatch(showAlert({
@@ -91,11 +92,11 @@ export const removeDeposit = (id: string) => async (dispatch: AppDispatch) => {
 
 export const setTotalDepositAmount = () => async (dispatch: AppDispatch) => {
 	try {
-		const total = await DepositService.fetchTotalDepositAmount();
+		const totalDepositAmount = await DepositService.fetchTotalDepositAmount();
 		dispatch({
 			type: DepositActions.SET_TOTAL,
 			payload: {
-				total,
+				totalDepositAmount,
 			}
 		});
 	} catch (error) {
@@ -110,6 +111,6 @@ export const setTotalDepositAmount = () => async (dispatch: AppDispatch) => {
 export const setCurrentDeposit = (deposit: Deposit) => async (dispatch: AppDispatch) => {
 	dispatch({
 		type: DepositActions.SET_CURRENT_DEPOSIT,
-		payload: { currentDeposit: deposit },
+		payload: { highlightedDeposit: deposit },
 	});
 }

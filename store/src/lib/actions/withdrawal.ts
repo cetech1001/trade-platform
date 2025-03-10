@@ -17,7 +17,8 @@ export const fetchWithdrawals = (query?: FindWithdrawalsQueryParams) => async (d
 			type: WithdrawalActions.LIST,
 			payload: {
 				list: data.items,
-				count: data.meta.totalItems,
+				totalCount: data.meta.totalItems,
+        totalPages: data.meta.totalPages,
 			},
 		});
 	} catch (error) {
@@ -35,7 +36,7 @@ export const addWithdrawal = (payload: CreateWithdrawal) => async (dispatch: App
 		dispatch({
 			type: TransactionActions.ADD,
 			payload: {
-				transaction: data,
+				highlightedTransaction: data,
 			},
 		});
 		dispatch(showAlert({
@@ -58,7 +59,7 @@ export const editWithdrawal = (id: string, payload: UpdateWithdrawal) => async (
 		dispatch({
 			type: WithdrawalActions.UPDATE,
 			payload: {
-				currentWithdrawal: data,
+				highlightedWithdrawal: data,
 			},
 		});
 		dispatch(showAlert({
@@ -101,7 +102,7 @@ export const setTotalWithdrawalAmount = () => async (dispatch: AppDispatch) => {
 		dispatch({
 			type: WithdrawalActions.SET_TOTAL,
 			payload: {
-				total,
+				totalWithdrawalAmount: total,
 			}
 		});
 	} catch (error) {
@@ -116,6 +117,6 @@ export const setTotalWithdrawalAmount = () => async (dispatch: AppDispatch) => {
 export const setCurrentWithdrawal = (withdrawal: Withdrawal) => async (dispatch: AppDispatch) => {
 	dispatch({
 		type: WithdrawalActions.SET_CURRENT_WITHDRAWAL,
-		payload: { currentWithdrawal: withdrawal },
+		payload: { highlightedWithdrawal: withdrawal },
 	});
 }

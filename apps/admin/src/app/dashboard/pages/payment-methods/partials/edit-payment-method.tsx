@@ -23,7 +23,7 @@ const initialState = {
 
 const mapStateToProps = (state: RootState) => ({
 	activeModal: state.modal.activeModal,
-	paymentMethod: state.paymentMethod.currentPaymentMethod,
+	paymentMethod: state.paymentMethod.highlightedPaymentMethod,
 });
 
 const actions = {
@@ -69,7 +69,7 @@ export const EditPaymentMethodModal = connect(mapStateToProps, actions)((props: 
 		}
 	}
 
-	const onChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+	const onChange = (e: ChangeEvent<{ value: string; name: string; }>) => {
 		const { name, value } = e.target;
 		setPayload(prevState => ({
 			...prevState,

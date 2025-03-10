@@ -1,4 +1,4 @@
-import {AppDispatch, showAlert} from "@coinvant/store";
+import {AppDispatch, showAlert} from "../../index";
 import {PaymentMethodService} from "../services";
 import {PaymentMethodActions} from "../types";
 import {CreatePaymentMethod, PaginationOptions, UpdatePaymentMethod, PaymentMethod} from "@coinvant/types";
@@ -10,7 +10,8 @@ export const fetchPaymentMethods = (options?: PaginationOptions) => async (dispa
 			type: PaymentMethodActions.LIST,
 			payload: {
 				list: data.items,
-				count: data.meta.totalItems,
+				totalCount: data.meta.totalItems,
+        totalPages: data.meta.totalPages,
 			},
 		});
 	} catch (error) {
@@ -28,7 +29,7 @@ export const addPaymentMethod = (payload: CreatePaymentMethod) => async (dispatc
 		dispatch({
 			type: PaymentMethodActions.CREATE,
 			payload: {
-				currentPaymentMethod: data,
+				highlightedPaymentMethod: data,
 			},
 		});
 		dispatch(showAlert({
@@ -51,7 +52,7 @@ export const editPaymentMethod = (id: string, payload: UpdatePaymentMethod) => a
 		dispatch({
 			type: PaymentMethodActions.UPDATE,
 			payload: {
-				currentPaymentMethod: data,
+				highlightedPaymentMethod: data,
 			},
 		});
 		dispatch(showAlert({
@@ -91,6 +92,6 @@ export const removePaymentMethod = (id: string) => async (dispatch: AppDispatch)
 export const setCurrentPaymentMethod = (paymentMethod: PaymentMethod) => async (dispatch: AppDispatch) => {
 	dispatch({
 		type: PaymentMethodActions.SET_CURRENT_PAYMENT_METHOD,
-		payload: { currentPaymentMethod: paymentMethod },
+		payload: { highlightedPaymentMethod: paymentMethod },
 	});
 }

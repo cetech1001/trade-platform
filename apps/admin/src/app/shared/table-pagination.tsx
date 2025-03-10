@@ -1,22 +1,21 @@
 import {Card, Nav, Pagination} from "@themesberg/react-bootstrap";
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback } from 'react';
 import {PaginationOptions} from "@coinvant/types";
 
 interface IProps {
-	items: number;
-	total: number;
+	itemsCount: number;
+	totalItemsCount: number;
+  totalPages: number;
 	options: PaginationOptions;
 	setOptions: Dispatch<SetStateAction<PaginationOptions>>;
 }
 
 export const TablePagination = (props: IProps) => {
-  const [totalPages, setTotalPages] = useState(1);
-
-	const isExhausted = useCallback(() => {
-		if ((props.options.limit * props.options.page) >= props.total) {
+  const isExhausted = useCallback(() => {
+		if ((props.options.limit * props.options.page) >= props.totalItemsCount) {
 			return true;
 		}
-		return props.options.page * props.options.limit === props.total;
+		return props.options.page * props.options.limit === props.totalItemsCount;
 	}, [props]);
 
 	const onPrevClick = () => {
@@ -46,10 +45,6 @@ export const TablePagination = (props: IProps) => {
     }
   }
 
-  useEffect(() => {
-    setTotalPages(Math.ceil(props.total / props.options.limit));
-  }, [props.total, props.options]);
-
 	return (
 		<Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
 			<Nav>
@@ -57,7 +52,7 @@ export const TablePagination = (props: IProps) => {
 					<Pagination.Prev disabled={props.options.page === 1} onClick={onPrevClick}>
 						Previous
 					</Pagination.Prev>
-          {Array.from(Array(totalPages)).map((_, i) => (
+          {Array.from(Array(props.totalPages)).map((_, i) => (
             <Pagination.Item key={i} onClick={navigateToPage(i + 1)}
                              active={props.options.page === i + 1}>
               {i + 1}
@@ -69,7 +64,7 @@ export const TablePagination = (props: IProps) => {
 				</Pagination>
 			</Nav>
 			<small className="fw-bold">
-				Showing <b>{props.items}</b> out of <b>{props.total}</b> entries
+				Showing <b>{props.itemsCount + ((props.options.page - 1) * props.options.limit)}</b> out of <b>{props.totalItemsCount}</b> entries
 			</small>
 		</Card.Footer>
 	);

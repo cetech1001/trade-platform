@@ -142,8 +142,9 @@ export const TradesTable = connect(mapStateToProps, actions)((props: IProps) => 
 					))}
 					</tbody>
 				</Table>
-				<TablePagination items={props.trade.list.length} total={props.trade.totalCount}
-				                 options={props.options} setOptions={props.setOptions}/>
+				<TablePagination itemsCount={props.trade.list.length} totalItemsCount={props.trade.totalCount}
+                         totalPages={props.trade.totalPages} options={props.options}
+                         setOptions={props.setOptions}/>
 			</Card.Body>
 			<EditTradeModal/>
 			<DeleteTradeModal/>

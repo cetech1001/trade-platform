@@ -14,7 +14,7 @@ interface IProps {
 
 const mapStateToProps = (state: RootState) => ({
 	activeModal: state.modal.activeModal,
-	withdrawal: state.withdrawal.currentWithdrawal,
+	withdrawal: state.withdrawal.highlightedWithdrawal,
 });
 
 const actions = {
@@ -48,7 +48,8 @@ export const DeleteWithdrawalModal = connect(mapStateToProps, actions)((props: I
 	}
 
 	return (
-		<Modal show={props.activeModal === Modals.deleteWithdrawal} onHide={props.closeModal}>
+		<Modal show={props.activeModal === Modals.deleteWithdrawal}
+           onHide={props.closeModal}>
 			<Modal.Header closeButton>
 				<Modal.Title>Delete Withdrawal</Modal.Title>
 			</Modal.Header>

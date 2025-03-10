@@ -14,7 +14,7 @@ interface IProps {
 
 const mapStateToProps = (state: RootState) => ({
 	activeModal: state.modal.activeModal,
-	deposit: state.deposit.currentDeposit,
+	deposit: state.deposit.highlightedDeposit,
 });
 
 const actions = {

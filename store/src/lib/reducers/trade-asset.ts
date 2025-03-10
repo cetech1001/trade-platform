@@ -1,6 +1,6 @@
 import {PayloadAction} from "@reduxjs/toolkit";
 import {TradeAssetActions} from "../types";
-import {CurrentAsset, TradeAssetType} from "@coinvant/types";
+import {CurrentAsset} from "@coinvant/types";
 
 const initialState = {
 	currentAsset: null,
@@ -18,14 +18,14 @@ const initialState = {
 	}
 }
 
-interface Payload {
+interface PayloadActionType {
 	list: any[];
 	totalPages: number;
 	page: number;
 	asset: CurrentAsset;
 }
 
-const reducer = (state = initialState, action: PayloadAction<Payload>) => {
+const reducer = (state = initialState, action: PayloadAction<PayloadActionType>) => {
 	let list = [];
 	switch (action.type) {
 		case TradeAssetActions.fetchStockOptions:

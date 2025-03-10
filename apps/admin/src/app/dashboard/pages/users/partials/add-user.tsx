@@ -50,7 +50,7 @@ export const AddUserModal = connect(mapStateToProps, actions)((props: IProps) =>
 		}
 	}
 
-	const onChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+	const onChange = (e: ChangeEvent<{ value: string; name: string }>) => {
 		const { name, value } = e.target;
 		setPayload(prevState => ({
 			...prevState,

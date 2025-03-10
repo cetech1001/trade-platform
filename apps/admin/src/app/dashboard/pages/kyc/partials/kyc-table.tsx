@@ -149,8 +149,11 @@ export const KycTable = connect(mapStateToProps, actions)((props: IProps) => {
           ))}
           </tbody>
         </Table>
-        <TablePagination items={props.user.kycList.length} total={props.user.kycCount}
-                         options={props.options} setOptions={props.setOptions}/>
+        <TablePagination itemsCount={props.user.kycList.length}
+                         totalItemsCount={props.user.totalKycCount}
+                         options={props.options}
+                         totalPages={props.user.totalKycPages}
+                         setOptions={props.setOptions}/>
       </Card.Body>
       <EditKYCModal/>
       <DeleteKYCModal/>

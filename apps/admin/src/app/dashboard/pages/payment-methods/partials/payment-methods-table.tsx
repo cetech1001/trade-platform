@@ -108,8 +108,9 @@ export const PaymentMethodsTable = connect(mapStateToProps, actions)((props: IPr
 					))}
 					</tbody>
 				</Table>
-				<TablePagination items={props.paymentMethod.list.length}
-				                 total={props.paymentMethod.count}
+				<TablePagination itemsCount={props.paymentMethod.list.length}
+				                 totalItemsCount={props.paymentMethod.totalCount}
+                         totalPages={props.paymentMethod.totalPages}
 				                 options={props.options} setOptions={props.setOptions}/>
 			</Card.Body>
 			<EditPaymentMethodModal/>

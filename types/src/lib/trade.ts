@@ -64,8 +64,8 @@ export enum TradeClosureReason {
 
 export interface TradeState {
 	list: Trade[];
-	totalCount: number;
 	limit: number;
-	totalPages: number;
-	currentTrade: Trade | null;
+  totalCount: number;
+  totalPages: number;
+	highlightedTrade: Trade | null;
 }

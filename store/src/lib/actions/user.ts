@@ -13,7 +13,8 @@ export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppD
 			type: UserActions.LIST,
 			payload: {
 				list: data.items,
-				count: data.meta.totalItems,
+				totalUserCount: data.meta.totalItems,
+        totalUserPages: data.meta.totalPages,
 			},
 		});
 	} catch (error) {
@@ -32,7 +33,8 @@ export const fetchKYC = (options?: PaginationOptions) => async (dispatch: AppDis
 			type: UserActions.KYC_LIST,
 			payload: {
 				kycList: data.items,
-				kycCount: data.meta.totalItems,
+				totalKycCount: data.meta.totalItems,
+        totalKycPages: data.meta.totalPages,
 			},
 		});
 	} catch (error) {
@@ -50,7 +52,7 @@ export const addUser = (payload: CreateUser) => async (dispatch: AppDispatch) =>
 		dispatch({
 			type: UserActions.CREATE,
 			payload: {
-				currentUser: data,
+				highlightedUser: data,
 			},
 		});
 		dispatch(showAlert({
@@ -73,7 +75,7 @@ export const editUser = (id: string, payload: UpdateUser) => async (dispatch: Ap
 		dispatch({
 			type: UserActions.UPDATE,
 			payload: {
-				currentUser: data,
+				highlightedUser: data,
 			},
 		});
 		dispatch(showAlert({
@@ -135,7 +137,7 @@ export const setCurrentUser = (user: User) => async (dispatch: AppDispatch) => {
 	dispatch({
 		type: UserActions.SET_CURRENT_USER,
 		payload: {
-			currentUser: user,
+			highlightedUser: user,
 		},
 	});
 }
@@ -144,7 +146,7 @@ export const setCurrentKYC = (kyc: KYC) => async (dispatch: AppDispatch) => {
 	dispatch({
 		type: UserActions.SET_CURRENT_KYC,
 		payload: {
-			currentKYC: kyc,
+			highlightedKYC: kyc,
 		},
 	});
 }
@@ -153,14 +155,13 @@ export const setCurrentAccount = (account?: Account) => async (dispatch: AppDisp
 	dispatch({
 		type: UserActions.SET_CURRENT_ACCOUNT,
 		payload: {
-			currentAccount: account,
+			selectedAccount: account,
 		},
 	});
 }
 
 export const addAccount = () => async (dispatch: AppDispatch) => {
 	try {
-		console.log("Called this function");
 		await AccountService.createAccount();
 		dispatch(refreshUserProfile());
 		dispatch(showAlert({
@@ -200,7 +201,7 @@ export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
 		dispatch({
 			type: UserActions.UPDATE,
 			payload: {
-				currentUser: user,
+				highlightedUser: user,
 			},
 		});
 		const _authData = localStorage.getItem('authData');

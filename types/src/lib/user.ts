@@ -17,11 +17,13 @@ export interface User {
 export interface UserState {
   list: User[];
   kycList: KYC[];
-  kycCount: number;
-  count: number;
-  currentUser: User | null;
-  currentAccount: Account | null;
-  currentKYC: KYC | null;
+  totalKycCount: number;
+  totalKycPages: number;
+  totalUserCount: number;
+  totalUserPages: number;
+  highlightedUser: User | null;
+  selectedAccount: Account | null;
+  highlightedKYC: KYC | null;
 }
 
 export enum UserRole {

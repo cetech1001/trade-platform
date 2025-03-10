@@ -4,8 +4,9 @@ import {PaymentMethodActions} from "../types";
 
 const initialState: PaymentMethodState = {
 	list: [],
-	count: 0,
-	currentPaymentMethod: null,
+	totalCount: 0,
+  totalPages: 0,
+	highlightedPaymentMethod: null,
 }
 
 const reducer = (state = initialState, action: PayloadAction<PaymentMethodState>) => {
@@ -14,38 +15,43 @@ const reducer = (state = initialState, action: PayloadAction<PaymentMethodState>
 			return {
 				...state,
 				list: action.payload.list,
-				count: action.payload.count
+        totalCount: action.payload.totalCount,
+        totalPages: action.payload.totalPages
 			};
 		case PaymentMethodActions.CREATE:
+      if (action.payload.highlightedPaymentMethod) {
+        state.list = [
+          action.payload.highlightedPaymentMethod,
+          ...state.list.filter((_, i) => i < 9)
+        ];
+      }
 			return {
 				...state,
-				list: [ ...state.list, action.payload.currentPaymentMethod! ],
-				count: state.count + 1,
+				totalCount: state.totalCount + 1,
 			};
 		case PaymentMethodActions.UPDATE:
-			return {
-				...state,
-				list: [
-					...state.list.map(user => {
-						if (user.id === state.currentPaymentMethod?.id) {
-							return action.payload.currentPaymentMethod!;
-						}
-						return user;
-					})
-				]
-			};
+      if (action.payload.highlightedPaymentMethod) {
+        const updatedPaymentMethod = action.payload.highlightedPaymentMethod;
+        state.list = [
+          ...state.list.map(user => {
+            return user.id === state.highlightedPaymentMethod?.id
+              ? updatedPaymentMethod : user;
+          })
+        ];
+      }
+			return state;
 		case PaymentMethodActions.DELETE:
 			return {
 				...state,
 				list: [
-					...state.list.filter(user => user.id !== state.currentPaymentMethod?.id)
+					...state.list.filter(user => user.id !== state.highlightedPaymentMethod?.id)
 				],
-				count: state.count - 1,
+        totalCount: state.totalCount - 1,
 			};
 		case PaymentMethodActions.SET_CURRENT_PAYMENT_METHOD:
 			return {
 				...state,
-				currentPaymentMethod: action.payload.currentPaymentMethod,
+				highlightedPaymentMethod: action.payload.highlightedPaymentMethod,
 			}
 		default:
 			return state;

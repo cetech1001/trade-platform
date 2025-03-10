@@ -1,50 +1,46 @@
 import {PayloadAction} from "@reduxjs/toolkit";
 import {TradeActions} from "../types";
-import {Trade} from "@coinvant/types";
+import { Trade, TradeState } from '@coinvant/types';
 
-interface TradePayload {
-	trades: Trade[];
-	trade: Trade;
-	totalCount: number;
-	totalPages: number;
-}
-
-const initialState = {
+const initialState: TradeState = {
 	list: [],
-	totalCount: 0,
 	limit: 5,
-	totalPages: 0,
-	currentTrade: null,
+  totalCount: 0,
+  totalPages: 1,
+	highlightedTrade: null,
 }
 
-const reducer = (state = initialState, action: PayloadAction<TradePayload>) => {
+const reducer = (state: TradeState = initialState, action: PayloadAction<TradeState>) => {
 	switch (action.type) {
 		case TradeActions.FETCH_TRADES:
 			return {
 				...state,
-				list: action.payload.trades,
+				list: action.payload.list,
 				totalCount: action.payload.totalCount,
+        totalPages: action.payload.totalPages,
 			};
 		case TradeActions.CREATE_TRADE:
+      if (action.payload.highlightedTrade) {
+        state.list = [
+          action.payload.highlightedTrade,
+          ...state.list.filter((_, i) => i < state.list.length - 1)
+        ];
+      }
 			return {
 				...state,
-				list: [
-					action.payload.trade,
-					...state.list.filter((_, i) => i < state.list.length - 1)
-				],
 				totalCount: state.totalCount + 1,
 			}
 		case TradeActions.SET_CURRENT_TRADE:
 			return {
 				...state,
-				currentTrade: action.payload.trade,
+				highlightedTrade: action.payload.highlightedTrade,
 			}
 		case TradeActions.UPDATE_TRADE:
 			return {
 				...state,
 				list: state.list.map((trade: Trade) => {
-					if (trade.id === action.payload.trade.id) {
-						return action.payload.trade;
+					if (trade.id === action.payload.highlightedTrade?.id) {
+						return action.payload.highlightedTrade;
 					}
 					return trade;
 				}),
@@ -52,7 +48,7 @@ const reducer = (state = initialState, action: PayloadAction<TradePayload>) => {
 		case TradeActions.DELETE_TRADE:
 			return {
 				...state,
-				list: state.list.filter((trade: Trade) => trade.id !== action.payload.trade.id),
+				list: state.list.filter((trade: Trade) => trade.id !== action.payload.highlightedTrade?.id),
 				totalCount: state.totalCount - 1,
 			}
 		default:

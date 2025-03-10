@@ -14,9 +14,10 @@ export enum PaymentMethodStatus {
 
 export interface PaymentMethodState {
 	list: PaymentMethod[];
-	count: number,
-	currentPaymentMethod: PaymentMethod | null;
+	totalCount: number;
+  totalPages: number;
+	highlightedPaymentMethod: PaymentMethod | null;
 }
 
-export interface CreatePaymentMethod extends Omit<PaymentMethod, 'id'> {}
-export interface UpdatePaymentMethod extends Partial<PaymentMethod> {}
+export type CreatePaymentMethod = Omit<PaymentMethod, 'id'>;
+export type UpdatePaymentMethod = Partial<PaymentMethod>;

@@ -15,7 +15,6 @@ interface IProps {
 	withdrawal: Withdrawal | null;
 	editWithdrawal: (id: string, payload: UpdateWithdrawal) => void;
 	closeModal: () => void;
-	withdrawalTotal: number;
 	showAlert: (payload: AlertState) => void;
 }
 
@@ -25,8 +24,7 @@ const initialState = {
 
 const mapStateToProps = (state: RootState) => ({
 	activeModal: state.modal.activeModal,
-	withdrawal: state.withdrawal.currentWithdrawal,
-	withdrawalTotal: state.withdrawal.total,
+	withdrawal: state.withdrawal.highlightedWithdrawal,
 });
 
 const actions = {

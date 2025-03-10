@@ -12,7 +12,7 @@ export const fetchTrades = (query: FindTradesQueryParams) => async (dispatch: Ap
 		dispatch({
 			type: TradeActions.FETCH_TRADES,
 			payload: {
-				trades: data.items,
+				list: data.items,
 				totalCount: data.meta.totalItems,
 				totalPages: data.meta.totalPages,
 			},
@@ -32,7 +32,7 @@ export const placeBid = (payload: CreateTrade) => async (dispatch: AppDispatch) 
 		dispatch({
 			type: TradeActions.CREATE_TRADE,
 			payload: {
-				trade: data,
+				highlightedTrade: data,
 			},
 		});
 		dispatch(showAlert({
@@ -55,7 +55,7 @@ export const updateTrade = (id: string, payload: UpdateTrade) => async (dispatch
 		dispatch({
 			type: TradeActions.UPDATE_TRADE,
 			payload: {
-				trade: data,
+				highlightedTrade: data,
 			},
 		});
 		dispatch(showAlert({
@@ -97,7 +97,7 @@ export const setCurrentTrade = (trade: Trade) => async (dispatch: AppDispatch) =
 	dispatch({
 		type: TradeActions.SET_CURRENT_TRADE,
 		payload: {
-			trade,
+			highlightedTrade: trade,
 		}
 	});
 }

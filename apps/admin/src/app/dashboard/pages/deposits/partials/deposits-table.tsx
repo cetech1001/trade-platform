@@ -119,8 +119,10 @@ export const DepositsTable = connect(mapStateToProps, actions)((props: IProps) =
 					))}
 					</tbody>
 				</Table>
-				<TablePagination items={props.deposit.list.length} total={props.deposit.count}
-				                 options={props.options} setOptions={props.setOptions}/>
+				<TablePagination itemsCount={props.deposit.list.length}
+                         totalItemsCount={props.deposit.totalCount}
+                         options={props.options} setOptions={props.setOptions}
+                         totalPages={props.deposit.totalPages} />
 			</Card.Body>
 			<EditDepositModal/>
 			<DeleteDepositModal/>

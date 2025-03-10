@@ -14,7 +14,7 @@ interface IProps {
 
 const mapStateToProps = (state: RootState) => ({
 	activeModal: state.modal.activeModal,
-	paymentMethod: state.paymentMethod.currentPaymentMethod,
+	paymentMethod: state.paymentMethod.highlightedPaymentMethod,
 });
 
 const actions = {

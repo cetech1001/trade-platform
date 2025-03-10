@@ -19,7 +19,7 @@ interface IProps {
 
 const mapStateToProps = (state: RootState) => ({
 	activeModal: state.modal.activeModal,
-	kyc: state.user.currentKYC,
+	kyc: state.user.highlightedKYC,
 });
 
 const actions = {

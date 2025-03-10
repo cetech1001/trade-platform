@@ -26,9 +26,10 @@ export type UpdateWithdrawal = Pick<Withdrawal, 'status'>;
 
 export interface WithdrawalState {
 	list: Withdrawal[];
-	count: number;
-	currentWithdrawal: Withdrawal | null;
-	total: number;
+	totalCount: number;
+  totalPages: number;
+	highlightedWithdrawal: Withdrawal | null;
+	totalWithdrawalAmount: number;
 }
 
 export interface FindWithdrawalsQueryParams extends PaginationOptions {
