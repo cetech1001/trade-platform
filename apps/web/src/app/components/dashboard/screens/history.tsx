@@ -47,6 +47,7 @@ export const TradeHistory = connect(mapStateToProps, actions)((props: IProps) =>
   useEffect(() => {
     setOptions(prevState => ({
       ...prevState,
+      page: 1,
       status: activeTab === 'orders' ? TradeStatus.pending : undefined,
     }));
   }, [activeTab]);

@@ -79,6 +79,7 @@ export const Trades = connect(mapStateToProps, actions)((props: IProps) => {
   useEffect(() => {
     setOptions(prevState => ({
       ...prevState,
+      page: 1,
       assetType: activeTab,
     }));
   }, [activeTab]);
