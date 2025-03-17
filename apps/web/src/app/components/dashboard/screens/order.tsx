@@ -124,8 +124,8 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 			assetID: props.asset.id,
 			accountID: props.account.id,
 		});
-		await props.refreshUserProfile();
-		reset();
+    reset();
+    await props.refreshUserProfile();
 	}
 
 	const Multiplier = () => (

@@ -1,126 +1,76 @@
-import axios from 'axios';
-import { Trade, TradeAssetType } from '@coinvant/types';
+import { CryptoCurrency, Trade, TradeAsset, TradeAssetType } from '@coinvant/types';
+import { calculateStockPL, fetchStockRate } from './stock.helper';
+import { calculateCryptoPL, fetchCryptoRate } from './crypto.helper';
+import { calculateForexPL, fetchForexRate } from './forex.helper';
 
-const getCurrentPriceForStock = async (symbol: string) => {
-  const { data } = await axios.get(`https://www.alphavantage.co/query`, {
-    params: {
-      function: 'TIME_SERIES_INTRADAY',
-      symbol: symbol,
-      interval: '5min',
-      apikey: '4SSFX5O7DOW5SK3C',
-    },
-  });
+const rateCache = new Map<string, { rate: number; timestamp: number }>();
+const CACHE_DURATION_MS = 5 * 60 * 1000;
 
-  const timeSeries = data['Time Series (5min)'];
-  const latestTime = Object.keys(timeSeries)[0];
-  const latestData = timeSeries[latestTime];
-  return parseFloat(latestData['1. open']);
-}
-
-/*const formatDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}*/
-
-const getCurrentPriceForForex = async (symbol: string) => {
-  const [base, term] = symbol.split('/');
-  try {
-    const { data } = await axios.get(`https://api.frankfurter.app/latest?amount=1&from=${base}&to=${term}`);
-    return data.rates[term];
-  } catch (e) {
-
-    /*const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(today.getDate() - 1);
-
-    const currentDate = formatDate(today);
-    const yesterdayDate = formatDate(yesterday);
-
-    const { data } = await axios.get(`https://api.polygon.io/v2/aggs/ticker/C:${base}${term}/range/1/day/2025-02-27/2025-02-28?adjusted=true&sort=desc&limit=-2&apiKey=${environment.polygonAPI}`);
-    return data.results[0].c;*/
-    console.error(e);
+const cleanupRateCache = () => {
+  const now = Date.now();
+  for (const [key, { timestamp }] of rateCache.entries()) {
+    if (now - timestamp >= CACHE_DURATION_MS) {
+      rateCache.delete(key);
+    }
   }
-}
+};
 
-const getCurrentPriceForCrypto = async (currencyID: string) => {
-  const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${currencyID}`);
-  return data[0].current_price;
-}
+setInterval(cleanupRateCache, CACHE_DURATION_MS);
 
-export async function getCurrentAssetPrice(assetType: TradeAssetType, symbol?: string): Promise<number> {
-  if (assetType === TradeAssetType.stock) {
-  return getCurrentPriceForStock(symbol);
-} else if (assetType === TradeAssetType.crypto) {
-  return getCurrentPriceForCrypto(symbol);
-} else {
-  return getCurrentPriceForForex(symbol);
-}
+export async function fetchAssetRate(assetType: TradeAssetType, symbol: string): Promise<number> {
+  try {
+    const cacheKey = symbol;
+    const now = Date.now();
+
+    if (rateCache.has(cacheKey)) {
+      const cached = rateCache.get(cacheKey);
+      if (now - cached.timestamp < CACHE_DURATION_MS) {
+        return cached.rate;
+      }
+    }
+
+    let rate: number;
+
+    if (assetType === TradeAssetType.stock) {
+      rate = await fetchStockRate(symbol);
+    } else if (assetType === TradeAssetType.crypto) {
+      rate = await fetchCryptoRate(symbol);
+    } else {
+      rate = await fetchForexRate(symbol);
+    }
+
+    rateCache.set(cacheKey, { rate, timestamp: now });
+    return rate;
+  } catch (error) {
+    console.error(`Error fetching asset rate for ${symbol}: ${error.message}`);
+    throw error;
+  }
 }
 
 export async function shouldOpenTrade(trade: Trade, currentPrice: number) {
   if (trade.executeAt && new Date() >= new Date(trade.executeAt)) {
     return true;
-  }
-
-  if (trade.sellPrice && trade.sellPrice >= currentPrice) {
+  } else if (trade.sellPrice && trade.sellPrice >= currentPrice) {
     return true
   }
-
-  if (trade.buyPrice && trade.buyPrice <= currentPrice) {
-    return true;
-  }
+  return trade.buyPrice && trade.buyPrice <= currentPrice;
 }
 
-export function calculatePLForCrypto(trade: Trade, currentPrice: number) {
-  let priceMovement: number;
-  if (trade.isShort) {
-    priceMovement = trade.sellPrice - currentPrice;
-  } else {
-    priceMovement = currentPrice - trade.buyPrice;
-  }
-  return trade.units * trade.leverage * priceMovement;
-}
-
-export async function calculatePLForForex(trade: Trade, currentPrice: number) {
-  let priceMovement: number;
-  if (trade.isShort) {
-    priceMovement = trade.sellPrice - currentPrice;
-  } else {
-    priceMovement = currentPrice - trade.buyPrice;
-  }
-  const profitOrLoss = trade.units * priceMovement;
-  const [base, term] = trade.asset.symbol.split('/');
-  if (base === 'USD') {
-    return profitOrLoss / currentPrice;
-  } else if (term === 'USD') {
-    return profitOrLoss;
-  }
-  const rate = await getCurrentPriceForForex(`${term}/USD`);
-  return profitOrLoss * rate;
-}
-
-function calculatePLForStock(trade: Trade, currentPrice: number) {
-  let priceMovement: number;
-  if (trade.isShort) {
-    priceMovement = trade.sellPrice - currentPrice;
-  } else {
-    priceMovement = currentPrice - trade.buyPrice;
-  }
-  return trade.units * priceMovement;
-}
-
-export function calculateProfitOrLoss(trade: Trade, currentPrice: number) {
+export function calculatePL(trade: Trade, currentPrice: number): number | Promise<number> {
   if (trade.assetType === TradeAssetType.stock) {
-    return calculatePLForStock(trade, currentPrice);
+    return calculateStockPL(trade, currentPrice);
   } else if (trade.assetType === TradeAssetType.crypto) {
-    return calculatePLForCrypto(trade, currentPrice);
+    return calculateCryptoPL(trade, currentPrice);
   }
-  return calculatePLForForex(trade, currentPrice);
+  return calculateForexPL(trade, currentPrice);
 }
 
-export async function getUnits(assetType: TradeAssetType, currentPrice: number, bidAmount: number, leverage = 1, symbol?: string) {
+export async function getUnits(
+  assetType: TradeAssetType,
+  currentPrice: number,
+  bidAmount: number,
+  leverage = 1,
+  symbol?: string) {
   if (assetType === TradeAssetType.stock
     || assetType === TradeAssetType.crypto) {
     return bidAmount * leverage / currentPrice;
@@ -131,6 +81,13 @@ export async function getUnits(assetType: TradeAssetType, currentPrice: number, 
   } else if (term === 'USD') {
     return bidAmount * leverage / currentPrice;
   }
-  const rate = await getCurrentPriceForForex(`${base}/USD`);
+  const rate = await fetchForexRate(`${base}/USD`);
   return bidAmount * leverage / rate;
+}
+
+export const getSymbol = (asset: TradeAsset) => {
+  if ((asset as CryptoCurrency).currencyID) {
+    return (asset as CryptoCurrency).currencyID;
+  }
+  return asset.symbol;
 }

@@ -9,14 +9,14 @@ import {
 } from 'typeorm';
 import {AccountEntity} from "../../account/entities/account.entity";
 import {
-	CryptoCurrency,
-	ForexPair,
-	StockOption,
-	Trade,
-	TradeAssetType, TradeClosureReason,
-	TradeStatus,
-	Account
-} from "@coinvant/types";
+  CryptoCurrency,
+  ForexPair,
+  StockOption,
+  Trade,
+  TradeAssetType, TradeClosureReason,
+  TradeStatus,
+  Account, TradeAsset
+} from '@coinvant/types';
 import {StockEntity} from "../../trade-asset/entities/stock.entity";
 import {ForexEntity} from "../../trade-asset/entities/forex.entity";
 import {CryptoEntity} from "../../trade-asset/entities/crypto.entity";
@@ -141,7 +141,7 @@ export class TradeEntity implements Trade{
 	@UpdateDateColumn()
 	updatedAt: string;
 
-	get asset() {
+	get asset(): TradeAsset {
 		return this.stock || this.forex || this.crypto;
 	}
 }

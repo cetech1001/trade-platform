@@ -19,8 +19,8 @@ export class TransactionService {
   }
 
   findAll(query: FindTransactionsQueryParams, user: User): Promise<Pagination<Transaction>> {
-    // eslint-disable-next-line prefer-const
-    let { status, type, accountID, ...options } = query;
+    const { status, type, ...options } = query;
+    let { accountID } = query;
     const queryBuilder = this.transactionRepo.createQueryBuilder('T');
     queryBuilder.leftJoinAndSelect('T.account', 'A');
 

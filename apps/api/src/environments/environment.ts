@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from "path";
+import * as process from 'node:process';
 dotenv.config();
 
 export const environment = {
@@ -33,6 +34,7 @@ export const environment = {
     },
   },
   supportEmail: process.env.SUPPORT_EMAIL,
-  polygonAPI: process.env.POLYGON_API,
+  polygonAPIKey: process.env.POLYGON_API_KEY,
+  alphaVantageAPIKey: process.env.ALPHA_VANTAGE_KEY,
   assetsPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
 }

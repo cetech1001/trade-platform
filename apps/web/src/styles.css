@@ -172,6 +172,18 @@ input::placeholder {
   padding: 0 16px;
 }
 
+.selected-filter {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  border: .0625rem solid rgba(85, 89, 104, 0.35);
+  border-radius: 1rem;
+  padding: 8px 12px;
+  margin-top: 8px;
+  font-size: .8125rem;
+  cursor: pointer;
+}
+
 .filter {
   display: flex;
   flex-direction: row;

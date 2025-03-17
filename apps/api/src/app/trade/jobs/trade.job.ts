@@ -1,18 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { TradeStatus } from '@coinvant/types';
+import { CryptoCurrency, TradeAssetType, TradeStatus } from '@coinvant/types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TradeEntity } from '../entities/trade.entity';
-import {
-  getCurrentAssetPrice,
-  getUnits,
-  shouldOpenTrade
-} from '../helpers';
+import { fetchAssetRate, getSymbol, getUnits, shouldOpenTrade } from '../helpers';
 import { TradeService } from '../trade.service';
 
 @Injectable()
 export class TradeJob {
+  private logger: Logger = new Logger(TradeJob.name);
   constructor(
     @InjectRepository(TradeEntity) private readonly tradeRepo: Repository<TradeEntity>,
     private readonly tradeService: TradeService) {
@@ -27,29 +24,33 @@ export class TradeJob {
     });
 
     for (const trade of pendingTrades) {
-      // @ts-expect-error idk
-      const symbol = trade.asset.currencyID || trade.asset.symbol;
-      let currentPrice = tradeMap.get(symbol);
-      if (!currentPrice) {
-        currentPrice = await getCurrentAssetPrice(trade.assetType, symbol);
-        tradeMap.set(symbol, currentPrice);
-      }
-      const shouldOpen = await shouldOpenTrade(trade, currentPrice);
-      if (shouldOpen) {
-        const obj = { status: TradeStatus.active, currentPrice };
-        if (!trade.buyPrice && !trade.sellPrice) {
-          if (trade.isShort) {
-            obj['sellPrice'] = currentPrice;
-          } else {
-            obj['buyPrice'] = currentPrice;
+      try {
+        const symbol = trade.assetType === TradeAssetType.crypto
+          ? (trade.asset as CryptoCurrency).currencyID : trade.asset.symbol;
+        let currentPrice = tradeMap.get(symbol);
+        if (!currentPrice) {
+          currentPrice = await fetchAssetRate(trade.assetType, symbol);
+          tradeMap.set(symbol, currentPrice);
+        }
+        const shouldOpen = await shouldOpenTrade(trade, currentPrice);
+        if (shouldOpen) {
+          const obj: any = { status: TradeStatus.active, currentPrice };
+          if (!trade.buyPrice && !trade.sellPrice) {
+            if (trade.isShort) {
+              obj['sellPrice'] = currentPrice;
+            } else {
+              obj['buyPrice'] = currentPrice;
+            }
           }
+          if (!trade.executeAt) {
+            obj['executeAt'] = new Date().toISOString();
+          }
+          const openingPrice = trade.buyPrice || trade.sellPrice || obj['buyPrice'] || obj['sellPrice'];
+          obj['units'] = await getUnits(trade.assetType, openingPrice, trade.bidAmount, trade.leverage, symbol);
+          await this.tradeRepo.update(trade.id, obj);
         }
-        if (!trade.executeAt) {
-          obj['executeAt'] = new Date().toISOString();
-        }
-        const openingPrice = trade.buyPrice || trade.sellPrice || obj['buyPrice'] || obj['sellPrice'];
-        obj['units'] = await getUnits(trade.assetType, openingPrice, trade.bidAmount, trade.leverage, symbol);
-        await this.tradeRepo.update(trade.id, obj);
+      } catch (error) {
+        this.logger.error(`Error processing pending trade ${trade.id}:`, error);
       }
     }
   }
@@ -62,17 +63,17 @@ export class TradeJob {
     const tradePriceMap = new Map<string, number>();
 
     for (const trade of openTrades) {
-      // @ts-expect-error idk
-      const symbol = trade.asset.currencyID || trade.asset.symbol;
-      if (symbol === "XAU/USD") {
-        continue;
+      try {
+        const symbol = getSymbol(trade.asset);
+        let currentPrice = tradePriceMap.get(symbol);
+        if (!currentPrice) {
+          currentPrice = await fetchAssetRate(trade.assetType, symbol);
+          tradePriceMap.set(symbol, currentPrice);
+        }
+        await this.tradeService.checkAndCloseTrade(trade, false, currentPrice);
+      } catch (error) {
+        this.logger.error(`Error processing active trade ${trade.id}:`, error);
       }
-      let currentPrice = tradePriceMap.get(symbol);
-      if (!currentPrice) {
-        currentPrice = await getCurrentAssetPrice(trade.assetType, symbol);
-        tradePriceMap.set(symbol, currentPrice);
-      }
-      await this.tradeService.checkAndCloseTrade(trade, false, currentPrice);
     }
   }
 }

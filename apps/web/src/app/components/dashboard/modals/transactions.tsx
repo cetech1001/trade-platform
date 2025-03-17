@@ -1,31 +1,38 @@
-import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
-	DepositStatus,
-	Modals,
-	TradeStatus,
-	Transaction, FindTransactionsQueryParams, TransactionStatus, TransactionStatusEnum,
-	TransactionType, WithdrawalStatus, Account
+  Account,
+  DepositStatus,
+  FindTransactionsQueryParams,
+  Modals,
+  TradeStatus,
+  Transaction,
+  TransactionStatus,
+  TransactionStatusEnum,
+  TransactionType,
+  WithdrawalStatus
 } from '@coinvant/types';
-import {FilterDropdown} from "../shared/filter-dropdown";
-import {capitalizeFirstLetter, formatCurrency, formatDate, groupTransactionsByDate} from "../../../helpers";
-import {connect} from "react-redux";
-import {closeModal, fetchTransactions, openModal, RootState} from "@coinvant/store";
+import { FilterDropdown } from '../shared/filter-dropdown';
+import { capitalizeFirstLetter, formatCurrency, formatDate, groupTransactionsByDate } from '../../../helpers';
+import { connect } from 'react-redux';
+import { closeModal, fetchTransactions, openModal, RootState } from '@coinvant/store';
 
 interface IProps {
-	account: Account | null;
-	activeModal: Modals | null;
-	transactions: Transaction[];
-	totalTransactions: number;
-	openModal: (payload: Modals) => void;
-	closeModal: () => void;
-	fetchTransactions: (query?: FindTransactionsQueryParams) => void;
+  account: Account | null;
+  activeModal: Modals | null;
+  transactions: Transaction[];
+  totalCount: number;
+  totalPages: number;
+  openModal: (payload: Modals) => void;
+  closeModal: () => void;
+  fetchTransactions: (query?: FindTransactionsQueryParams) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
 	account: state.user.selectedAccount,
 	transactions: state.transaction.list,
-	totalTransactions: state.transaction.totalCount,
+	totalCount: state.transaction.totalCount,
 	activeModal: state.modal.activeModal,
+  totalPages: state.transaction.totalPages,
 });
 
 const actions = {
@@ -35,7 +42,9 @@ const actions = {
 };
 
 export const Transactions = connect(mapStateToProps, actions)((props: IProps) => {
-	if (props.activeModal !== Modals.transactions) return null;
+	if (props.activeModal !== Modals.transactions) {
+    return null;
+  }
 
 	const [options, setOptions] = useState<FindTransactionsQueryParams>({
 		page: 1,
@@ -45,29 +54,34 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 	const [status, setStatus] = useState<TransactionStatus | "">("");
 	const [type, setType] = useState<TransactionType | "">("");
 	const [transactionBlocks, setTransactionBlocks] = useState<Transaction[][]>([]);
+  const [statusList, setStatusList] = useState<string[]>(Object.values(TransactionStatusEnum));
 
 	useEffect(() => {
 		setTransactionBlocks(groupTransactionsByDate(props.transactions));
 	}, [props.transactions]);
 
 	useEffect(() => {
+    switch (type) {
+      case TransactionType.deposit:
+        setStatusList(Object.values(DepositStatus));
+        break;
+      case TransactionType.withdrawal:
+        setStatusList(Object.values(WithdrawalStatus));
+        break;
+      case TransactionType.trade:
+        setStatusList(Object.values(TradeStatus));
+        break;
+      default:
+        setStatusList(Object.values(TransactionStatusEnum));
+        break;
+    }
+
 		props.fetchTransactions({
 			...options,
 			type: type || undefined,
 			status: status || undefined,
-		})
-	}, [type, status]);
-
-	const totalPages = useMemo(() => {
-		return Math.ceil(props.totalTransactions / options.limit);
-	}, [options.limit, props.totalTransactions]);
-
-	const isExhausted = useCallback(() => {
-		if (props.transactions.length <= options.limit) {
-			return true;
-		}
-		return options.page * options.limit === props.totalTransactions;
-	}, [options.limit, options.page, props.totalTransactions, props.transactions.length]);
+		});
+	}, [type, status, options]);
 
 	const onPrevClick = () => {
 		if (options.page > 1) {
@@ -79,7 +93,7 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 	}
 
 	const onNextClick = () => {
-		if (!isExhausted()) {
+		if (options.page < props.totalPages) {
 			setOptions(prevState => ({
 				...prevState,
 				page: prevState.page + 1,
@@ -102,10 +116,29 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 	const TransactionFilters = () => {
 		return (
 			<div className={'filters'}>
-				<FilterDropdown title={"All Transaction Types"} options={Object.values(TransactionType)}
-				                default={"All"} action={onTypeSelect}/>
-				<FilterDropdown title={"Any Status"} options={Object.values(TransactionStatusEnum)}
-				                default={"All"} action={onStatusSelect}/>
+				<div>
+          <FilterDropdown title={"All Transaction Types"}
+                          options={Object.values(TransactionType)}
+                          default={"All"} action={onTypeSelect}/>
+            {type && (
+              <span className="selected-filter">
+                {capitalizeFirstLetter(type)}
+                  <i className="fa-solid fa-xmark" onClick={() => setType("")}
+                     style={{ marginLeft: '4px', cursor: 'pointer' }}></i>
+              </span>
+            )}
+        </div>
+				<div>
+          <FilterDropdown title={"Any Status"} options={statusList}
+                          default={"All"} action={onStatusSelect}/>
+          {status && (
+            <span className="selected-filter">
+                {capitalizeFirstLetter(status)}
+              <i className="fa-solid fa-xmark" onClick={() => setStatus("")}
+                 style={{ marginLeft: '4px', cursor: 'pointer' }}></i>
+              </span>
+          )}
+        </div>
 			</div>
 		);
 	}
@@ -193,6 +226,9 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 					<div className={'assets-body'}>
 					<TransactionFilters/>
 					<div className={"trades"}>
+            {props.totalCount === 0 && (
+              <p className={"text-center"}>No transactions found.</p>
+            )}
 						{transactionBlocks.map((block, i) => (
 							<div className="history-block" key={i}>
 								<span className={"text"}>{formatDate(block[0].createdAt)}</span>
@@ -208,7 +244,9 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 			<div style={{display: 'flex', gap: '16px', justifyContent: "center", marginBottom: "1rem"}}>
 				<i className="cursor-pointer fa-solid fa-angles-left" style={{ color: "#ffffff" }}
 				   onClick={onPrevClick}></i>
-				<span style={{ color: "#ffffff" }}>Page {options.page} of {totalPages}</span>
+				<span style={{ color: "#ffffff" }}>
+          Page {props.totalCount === 0 ? 0 : options.page} of {props.totalPages}
+        </span>
 				<i className="cursor-pointer fa-solid fa-angles-right" style={{ color: "#ffffff" }}
 				   onClick={onNextClick}></i>
 			</div>

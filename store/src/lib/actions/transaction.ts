@@ -12,6 +12,7 @@ export const fetchTransactions = (query?: FindTransactionsQueryParams) => async 
 			payload: {
 				list: data.items,
 				totalCount: data.meta.totalItems,
+        totalPages: data.meta.totalPages,
 			},
 		});
 	} catch (error) {
