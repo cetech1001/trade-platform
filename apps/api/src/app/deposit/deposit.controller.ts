@@ -5,7 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  Delete, Query, UseGuards, UploadedFile, BadRequestException
+  Delete, Query, UseGuards, UploadedFile
 } from '@nestjs/common';
 import { DepositService } from './deposit.service';
 import { CreateDepositDto } from './dto/create-deposit.dto';
