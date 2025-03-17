@@ -59,6 +59,10 @@ export class UserService {
     return this.userRepo.findOne({ where: condition, relations: ['accounts'] });
   }
 
+  findByAccountID(accountID: string): Promise<User> {
+    return this.userRepo.findOne({ where: { accounts: { id: accountID } } });
+  }
+
   async update(id: string, updateUser: UpdateUser, queryRunner?: QueryRunner): Promise<User> {
     if (updateUser.email) {
       const user = await this.findOne({email: updateUser.email});

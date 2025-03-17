@@ -7,6 +7,8 @@ const initialState: TradeState = {
 	limit: 5,
   totalCount: 0,
   totalPages: 0,
+  totalActivePL: 0,
+  totalActiveBid: 0,
 	highlightedTrade: null,
 }
 
@@ -19,6 +21,16 @@ const reducer = (state: TradeState = initialState, action: PayloadAction<TradeSt
 				totalCount: action.payload.totalCount,
         totalPages: action.payload.totalPages,
 			};
+    case TradeActions.SET_TOTAL_ACTIVE_PL:
+      return {
+        ...state,
+        totalActivePL: action.payload.totalActivePL,
+      };
+    case TradeActions.SET_TOTAL_ACTIVE_BID:
+      return {
+        ...state,
+        totalActiveBid: action.payload.totalActiveBid,
+      };
 		case TradeActions.CREATE_TRADE:
       if (action.payload.highlightedTrade) {
         state.list = [

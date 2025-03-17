@@ -15,6 +15,7 @@ import { FilterDropdown } from '../shared/filter-dropdown';
 import { capitalizeFirstLetter, formatCurrency, formatDate, groupTransactionsByDate } from '../../../helpers';
 import { connect } from 'react-redux';
 import { closeModal, fetchTransactions, openModal, RootState } from '@coinvant/store';
+import { Pagination } from '../shared/pagination';
 
 interface IProps {
   account: Account | null;
@@ -82,24 +83,6 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 			status: status || undefined,
 		});
 	}, [type, status, options]);
-
-	const onPrevClick = () => {
-		if (options.page > 1) {
-			setOptions(prevState => ({
-				...prevState,
-				page: prevState.page - 1,
-			}));
-		}
-	}
-
-	const onNextClick = () => {
-		if (options.page < props.totalPages) {
-			setOptions(prevState => ({
-				...prevState,
-				page: prevState.page + 1,
-			}));
-		}
-	}
 
 	const onTypeSelect = (value: string) => {
 		if (value !== type) {
@@ -241,15 +224,8 @@ export const Transactions = connect(mapStateToProps, actions)((props: IProps) =>
 					</div>
 				</div>
 			</div>
-			<div style={{display: 'flex', gap: '16px', justifyContent: "center", marginBottom: "1rem"}}>
-				<i className="cursor-pointer fa-solid fa-angles-left" style={{ color: "#ffffff" }}
-				   onClick={onPrevClick}></i>
-				<span style={{ color: "#ffffff" }}>
-          Page {props.totalCount === 0 ? 0 : options.page} of {props.totalPages}
-        </span>
-				<i className="cursor-pointer fa-solid fa-angles-right" style={{ color: "#ffffff" }}
-				   onClick={onNextClick}></i>
-			</div>
+			<Pagination setOptions={setOptions} totalPages={props.totalPages}
+                  currentPage={props.totalCount === 0 ? 0 : options.page}/>
 		</div>
 	);
 });

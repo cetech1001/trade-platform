@@ -50,7 +50,7 @@ export class TradeJob {
           await this.tradeRepo.update(trade.id, obj);
         }
       } catch (error) {
-        this.logger.error(`Error processing pending trade ${trade.id}:`, error);
+        this.logger.error(`Error processing pending trade ${trade.id} (${trade.asset.symbol}):`, error);
       }
     }
   }
@@ -72,7 +72,7 @@ export class TradeJob {
         }
         await this.tradeService.checkAndCloseTrade(trade, false, currentPrice);
       } catch (error) {
-        this.logger.error(`Error processing active trade ${trade.id}:`, error);
+        this.logger.error(`Error processing active trade ${trade.id} (${trade.asset.symbol}):`, error);
       }
     }
   }

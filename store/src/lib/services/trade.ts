@@ -1,4 +1,11 @@
-import {CreateTrade, FindTradesQueryParams, Paginated, Trade, UpdateTrade} from "@coinvant/types";
+import {
+  CreateTrade,
+  FindTradeAmountsQueryParams,
+  FindTradesQueryParams,
+  Paginated,
+  Trade,
+  UpdateTrade
+} from '@coinvant/types';
 import {api} from "./api";
 
 export class TradeService {
@@ -11,6 +18,20 @@ export class TradeService {
 		const { data } = await api.post('/trade', payload);
 		return data;
 	}
+
+  static async fetchTotalActivePL(query: FindTradeAmountsQueryParams): Promise<number> {
+    const { data } = await api.get('/trade/total/pl', {
+      params: query,
+    });
+    return data;
+  }
+
+  static async fetchTotalActiveBid(query: FindTradeAmountsQueryParams): Promise<number> {
+    const { data } = await api.get('/trade/total/bid', {
+      params: query,
+    });
+    return data;
+  }
 
 	static async updateTrade(id: string, payload: UpdateTrade): Promise<Trade> {
 		const { data } = await api.patch(`/trade/${id}`, payload);

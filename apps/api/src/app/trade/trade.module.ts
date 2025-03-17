@@ -8,6 +8,7 @@ import {TransactionModule} from "../transaction/transaction.module";
 import { AccountModule } from '../account/account.module';
 import { EmailModule } from '../email/email.module';
 import { TradeJob } from './jobs/trade.job';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TradeJob } from './jobs/trade.job';
     TransactionModule,
     AccountModule,
     EmailModule,
+    UserModule,
   ],
   controllers: [TradeController],
   providers: [TradeService, TradeJob],

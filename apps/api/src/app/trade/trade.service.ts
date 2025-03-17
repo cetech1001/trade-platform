@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {TradeEntity} from "./entities/trade.entity";
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 import {TradeAssetService} from "../trade-asset/trade-asset.service";
 import {
-  CreateTrade, CryptoCurrency,
+  CreateTrade, FindTradeAmountsQueryParams,
   FindTradesQueryParams, Trade, TradeAsset, TradeAssetType, TradeClosureReason,
   TradeStatus,
   TransactionStatus,
@@ -18,8 +18,7 @@ import { AccountService } from '../account/account.service';
 import { EmailService } from '../email/email.service';
 import { environment } from '../../environments/environment';
 import { calculatePL, fetchAssetRate, getSymbol, getUnits } from './helpers';
-import { Simulate } from 'react-dom/test-utils';
-import error = Simulate.error;
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class TradeService {
@@ -31,6 +30,7 @@ export class TradeService {
 		private readonly tradeAssetService: TradeAssetService,
 		private readonly transactionService: TransactionService,
 		private readonly accountService: AccountService,
+    private readonly userService: UserService,
 		private readonly emailService: EmailService,
 	) {}
 
@@ -103,12 +103,16 @@ export class TradeService {
         profitOrLoss = await calculatePL(trade, trade.stopLoss);
       } else {
         profitOrLoss = await calculatePL(trade, currentPrice);
-        if (+trade.bidAmount + profitOrLoss <= 0) {
+        if (Number(trade.bidAmount) + Number(profitOrLoss) <= 0) {
           shouldClose = true;
           reason = TradeClosureReason.stopOut;
-          profitOrLoss = trade.bidAmount * -1;
+          profitOrLoss = Number(trade.bidAmount) * -1;
         }
       }
+
+      currentPrice = Number(currentPrice);
+      profitOrLoss = Number(profitOrLoss);
+      trade.bidAmount = Number(trade.bidAmount);
 
       if (!shouldClose) {
         await queryRunner.manager.update(TradeEntity, trade.id, {
@@ -138,7 +142,7 @@ export class TradeService {
           queryRunner
         );
 
-        const { user } = trade.account;
+        const user = await this.userService.findByAccountID(trade.account.id);
         this.emailService.sendMail(
           user.email,
           'Trade Order Closed',
@@ -260,12 +264,45 @@ export class TradeService {
 		}
 
 		queryBuilder
-			.orderBy('CASE WHEN TR.status = :active THEN 1 ELSE 2 END', 'ASC')
-			.addOrderBy('TR.createdAt', 'DESC')
+			.orderBy('TR.createdAt', 'DESC')
 			.setParameter('active', TradeStatus.active);
 
 		return paginate(queryBuilder, options);
 	}
+
+  async fetchTotalActivePL(query: FindTradeAmountsQueryParams, user: User) {
+    const accountBelongsToUser = user.accounts
+      .map(a => a.id).includes(query.accountID);
+    if (!accountBelongsToUser) {
+      throw new UnauthorizedException('Unauthorized action');
+    }
+
+    const data = await this.tradeRepo.createQueryBuilder('TR')
+      .leftJoinAndSelect('TR.account', 'A')
+      .select('SUM(TR.profitOrLoss)', 'total')
+      .where('A.id = :accountID', { accountID: query.accountID })
+      .andWhere('TR.status = :status', { status: query.status })
+      .andWhere('TR.assetType = :assetType', { assetType: query.assetType })
+      .getRawOne();
+    return data?.total;
+  }
+
+  async fetchTotalActiveBid(query: FindTradeAmountsQueryParams, user: User) {
+    const accountBelongsToUser = user.accounts
+      .map(a => a.id).includes(query.accountID);
+    if (!accountBelongsToUser) {
+      throw new UnauthorizedException('Unauthorized action');
+    }
+
+    const data = await this.tradeRepo.createQueryBuilder('TR')
+      .leftJoinAndSelect('TR.account', 'A')
+      .select('SUM(TR.bidAmount)', 'total')
+      .where('A.id = :accountID', { accountID: query.accountID })
+      .andWhere('TR.status = :status', { status: query.status })
+      .andWhere('TR.assetType = :assetType', { assetType: query.assetType })
+      .getRawOne();
+    return data?.total;
+  }
 
 	findOne(id: string) {
 		return this.tradeRepo.findOne({ where: { id }, relations: ['account', 'account.user'] });

@@ -55,6 +55,10 @@ export interface FindTradesQueryParams extends PaginationOptions, Partial<Pick<T
 	accountID?: string;
 }
 
+export interface FindTradeAmountsQueryParams extends Pick<Trade, 'status' | 'assetType'>{
+  accountID: string;
+}
+
 export enum TradeClosureReason {
 	stopLoss = 'Stop Loss',
 	takeProfit = 'Take Profit',
@@ -67,5 +71,7 @@ export interface TradeState {
 	limit: number;
   totalCount: number;
   totalPages: number;
+  totalActivePL: number;
+  totalActiveBid: number;
 	highlightedTrade: Trade | null;
 }

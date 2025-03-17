@@ -69,8 +69,7 @@ export class WithdrawalService {
   }
 
   findAll(query: FindWithdrawalsQueryParams, user: User): Promise<Pagination<Withdrawal>> {
-    // eslint-disable-next-line prefer-const
-    let { accountID, ...options } = query;
+    let { accountID } = query;
     const queryBuilder = this.withdrawalRepo.createQueryBuilder('W');
 
     if (user.role === UserRole.admin) {
@@ -88,17 +87,15 @@ export class WithdrawalService {
 
     queryBuilder.orderBy('W.createdAt', 'DESC');
 
-    return paginate(queryBuilder, options);
+    return paginate(queryBuilder, query);
   }
 
   async fetchTotalWithdrawalAmount() {
-    const withdrawals = await this.withdrawalRepo.find();
-    return withdrawals.reduce((prev, curr) => {
-      if (curr.status === WithdrawalStatus.paid) {
-        prev += curr.amount;
-      }
-      return prev;
-    }, 0);
+    const data = await this.withdrawalRepo.createQueryBuilder('W')
+      .select('SUM(W.amount)', 'total')
+      .where('W.status = :status', { status: WithdrawalStatus.paid })
+      .getRawOne();
+    return data?.total || 0;
   }
 
   findOne(id: string): Promise<Withdrawal> {

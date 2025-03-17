@@ -14,7 +14,7 @@ import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {JwtAuthGuard} from "../../guards";
 import {CurrentUser, Roles} from "../../decorators";
 import {User, UserRole} from "@coinvant/types";
-import {FindTradeQueryParamsDto} from "./dto/find-trade-query-params.dto";
+import { FindTradeAmountsQueryParamsDto, FindTradeQueryParamsDto } from './dto/find-trade-query-params.dto';
 import { RolesGuard } from '../../guards/roles.guard';
 
 @ApiTags('Trade Controller')
@@ -33,6 +33,16 @@ export class TradeController {
   @Get()
   findAll(@Query() query: FindTradeQueryParamsDto, @CurrentUser() user: User) {
     return this.tradeService.findAll(query, user);
+  }
+
+  @Get('total/pl')
+  fetchTotalActivePL(@Query() query: FindTradeAmountsQueryParamsDto, @CurrentUser() user: User) {
+    return this.tradeService.fetchTotalActivePL(query, user);
+  }
+
+  @Get('total/bid')
+  fetchTotalActiveBid(@Query() query: FindTradeAmountsQueryParamsDto, @CurrentUser() user: User) {
+    return this.tradeService.fetchTotalActiveBid(query, user);
   }
 
   @Get(':id')

@@ -3,7 +3,7 @@ import {TradeService} from "../services";
 import {TradeActions} from "../types";
 import { showAlert } from './alert';
 
-import { CreateTrade, UpdateTrade, FindTradesQueryParams, Trade } from '@coinvant/types';
+import { CreateTrade, UpdateTrade, FindTradesQueryParams, Trade, FindTradeAmountsQueryParams } from '@coinvant/types';
 import { getError } from '../helpers';
 
 export const fetchTrades = (query: FindTradesQueryParams) => async (dispatch: AppDispatch) => {
@@ -24,6 +24,44 @@ export const fetchTrades = (query: FindTradesQueryParams) => async (dispatch: Ap
 			show: true,
 		}));
 	}
+}
+
+export const fetchTotalActivePL = (query: FindTradeAmountsQueryParams) => async (dispatch: AppDispatch) => {
+  try {
+    const data = await TradeService.fetchTotalActivePL(query);
+    console.log("Total active PL", data);
+    dispatch({
+      type: TradeActions.SET_TOTAL_ACTIVE_PL,
+      payload: {
+        totalActivePL: data,
+      }
+    })
+  } catch (error) {
+    dispatch(showAlert({
+      message: 'Failed to fetch total active trade balance.',
+      type: 'error',
+      show: true,
+    }));
+  }
+}
+
+export const fetchTotalActiveBid = (query: FindTradeAmountsQueryParams) => async (dispatch: AppDispatch) => {
+  try {
+    const data = await TradeService.fetchTotalActiveBid(query);
+    console.log("Total active bid", data);
+    dispatch({
+      type: TradeActions.SET_TOTAL_ACTIVE_BID,
+      payload: {
+        totalActiveBid: data,
+      }
+    })
+  } catch (error) {
+    dispatch(showAlert({
+      message: 'Failed to fetch total active trade bids.',
+      type: 'error',
+      show: true,
+    }));
+  }
 }
 
 export const placeBid = (payload: CreateTrade) => async (dispatch: AppDispatch) => {
