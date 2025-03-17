@@ -161,7 +161,7 @@ export class TradeService {
 					obj['buyPrice'] = openingPrice;
 				}
 				obj['status'] = TradeStatus.active;
-				obj['executeAt'] = new Date().toDateString();
+				obj['executeAt'] = new Date().toISOString();
 			}
 			const trade = await queryRunner.manager.save(TradeEntity, obj);
 			await this.transactionService.create({

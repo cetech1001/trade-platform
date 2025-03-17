@@ -45,7 +45,7 @@ export class TradeJob {
           }
         }
         if (!trade.executeAt) {
-          obj['executeAt'] = new Date().toDateString();
+          obj['executeAt'] = new Date().toISOString();
         }
         const openingPrice = trade.buyPrice || trade.sellPrice || obj['buyPrice'] || obj['sellPrice'];
         obj['units'] = await getUnits(trade.assetType, openingPrice, trade.bidAmount, trade.leverage, symbol);

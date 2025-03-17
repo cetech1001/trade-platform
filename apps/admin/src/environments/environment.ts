@@ -1,5 +1,6 @@
 export const environment = {
 	production: false,
-	// apiUrl: 'http://localhost:3000',
-	apiUrl: 'https://api.trendpanther.com',
+	api: {
+    baseURL: process.env.NX_REACT_APP_API_URL || 'http://localhost:3000',
+  },
 };

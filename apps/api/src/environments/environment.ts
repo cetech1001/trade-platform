@@ -5,7 +5,7 @@ dotenv.config();
 export const environment = {
   production: false,
   port: process.env.PORT || 3000,
-  appName: process.env.APP_NAME,
+  appName: process.env.NX_REACT_APP_SITE_NAME,
   db: {
     type: (process.env.DB_TYPE as 'mysql' | 'mariadb') || 'mysql',
     host: process.env.DB_HOST || 'localhost',
@@ -34,5 +34,5 @@ export const environment = {
   },
   supportEmail: process.env.SUPPORT_EMAIL,
   polygonAPI: process.env.POLYGON_API,
-  assetsPath: path.join(process.cwd(), /*'apps', 'api', 'src', */'assets'),
+  assetsPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
 }

@@ -71,7 +71,7 @@ export const KycTable = connect(mapStateToProps, actions)((props: IProps) => {
         </td>
         <td>
           <span className="fw-normal">
-            <a href={`${environment.apiUrl}/uploads/${kyc.photo}`}
+            <a href={`${environment.api.baseURL}/uploads/${kyc.photo}`}
                target="_blank" rel={"noreferrer"}>
               <i className="fa-solid fa-file"></i>
             </a>
@@ -79,7 +79,7 @@ export const KycTable = connect(mapStateToProps, actions)((props: IProps) => {
         </td>
         <td>
           <span className="fw-normal">
-            <a href={`${environment.apiUrl}/uploads/${kyc.idCard}`}
+            <a href={`${environment.api.baseURL}/uploads/${kyc.idCard}`}
                target="_blank" rel={"noreferrer"}>
               <i className="fa-solid fa-file"></i>
             </a>
@@ -87,7 +87,7 @@ export const KycTable = connect(mapStateToProps, actions)((props: IProps) => {
         </td>
         <td>
           <span className="fw-normal">
-            <a href={`${environment.apiUrl}/uploads/${kyc.proofOfAddress}`}
+            <a href={`${environment.api.baseURL}/uploads/${kyc.proofOfAddress}`}
                target="_blank" rel={"noreferrer"}>
               <i className="fa-solid fa-file"></i>
             </a>

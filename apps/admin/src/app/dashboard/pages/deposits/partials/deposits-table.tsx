@@ -62,7 +62,7 @@ export const DepositsTable = connect(mapStateToProps, actions)((props: IProps) =
 				</td>
 				<td>
 	              <span className="fw-normal">
-	                <a href={`${environment.apiUrl}/uploads/${deposit.proof}`} target="_blank">
+	                <a href={`${environment.api.baseURL}/uploads/${deposit.proof}`} target="_blank">
 		                <i className="fa-solid fa-file"></i>
 	                </a>
 	              </span>
