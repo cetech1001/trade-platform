@@ -7,13 +7,14 @@ import {Logger, ValidationPipe} from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
+import { environment } from './environments/environment';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   const port = process.env.PORT || 3000;
 
   const config = new DocumentBuilder()
-    .setTitle('Coinvant API')
+    .setTitle(`${environment.appName} API`)
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
