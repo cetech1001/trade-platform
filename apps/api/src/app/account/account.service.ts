@@ -15,8 +15,12 @@ export class AccountService {
     return this.accountRepo.save(createAccount);
   }
 
-  find(userID: string) {
-    return this.accountRepo.find({ where: { user: { id: userID } } });
+  async find(userID: string) {
+    const accounts = await this.accountRepo.find({ where: { user: { id: userID } } });
+    if (accounts.length === 0) {
+      throw new BadRequestException('No accounts found for this user.');
+    }
+    return accounts;
   }
 
   async findOne(id: string) {
