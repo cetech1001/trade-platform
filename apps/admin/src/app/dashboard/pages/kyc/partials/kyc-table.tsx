@@ -150,7 +150,7 @@ export const KycTable = connect(mapStateToProps, actions)((props: IProps) => {
           </tbody>
         </Table>
         <TablePagination itemsCount={props.user.kycList.length}
-                         totalItemsCount={props.user.totalKycCount}
+                         totalCount={props.user.totalKycCount}
                          options={props.options}
                          totalPages={props.user.totalKycPages}
                          setOptions={props.setOptions}/>

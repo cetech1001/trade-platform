@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {TradeEntity} from "./entities/trade.entity";
-import { DataSource, QueryRunner, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {TradeAssetService} from "../trade-asset/trade-asset.service";
 import {
   CreateTrade, FindTradeAmountsQueryParams,
@@ -19,6 +19,7 @@ import { EmailService } from '../email/email.service';
 import { environment } from '../../environments/environment';
 import { calculatePL, fetchAssetRate, getSymbol, getUnits } from './helpers';
 import { UserService } from '../user/user.service';
+import { DBTransactionService } from '../common/db-transaction.service';
 
 @Injectable()
 export class TradeService {
@@ -26,33 +27,13 @@ export class TradeService {
 
 	constructor(
 		@InjectRepository(TradeEntity) private tradeRepo: Repository<TradeEntity>,
-		private dataSource: DataSource,
+		private readonly dbTransactionService: DBTransactionService,
 		private readonly tradeAssetService: TradeAssetService,
 		private readonly transactionService: TransactionService,
 		private readonly accountService: AccountService,
     private readonly userService: UserService,
 		private readonly emailService: EmailService,
 	) {}
-
-  private async executeTransaction<T>(callback: (queryRunner: QueryRunner) => Promise<T>): Promise<T> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const result = await callback(queryRunner);
-
-      await queryRunner.commitTransaction();
-
-      return result;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      this.logger.error("Transaction failed: ", error);
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
-  }
 
 	private getAssetObject(assetType: TradeAssetType, asset: TradeAsset) {
 		if (asset) {
@@ -70,7 +51,7 @@ export class TradeService {
 	}
 
   async checkAndCloseTrade(trade: Trade, forceClose?: boolean, currentPrice?: number) {
-    return this.executeTransaction(async (queryRunner) => {
+    return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       const symbol = getSymbol(trade.asset);
 
       if (!currentPrice) {
@@ -158,7 +139,7 @@ export class TradeService {
   }
 
 	async create(createTrade: CreateTrade, user: User) {
-    return this.executeTransaction(async (queryRunner) => {
+    return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       const account = await this.accountService.findOne(createTrade.accountID);
 
       if ((+account.walletBalance) < (+createTrade.bidAmount)) {
@@ -315,7 +296,7 @@ export class TradeService {
       throw new NotFoundException('Trade not found');
     }
 
-    return this.executeTransaction(async (queryRunner) => {
+    return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       if (updateTrade.status === TradeStatus.cancelled && trade.status !== TradeStatus.cancelled) {
         await this.accountService.increaseBalance(trade.account.id, trade.bidAmount, queryRunner);
         await this.transactionService.update(

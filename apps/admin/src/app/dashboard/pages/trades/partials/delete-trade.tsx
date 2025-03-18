@@ -8,7 +8,7 @@ interface IProps {
 	activeModal: Modals | null;
 	trade: Trade | null;
 	closeModal: () => void;
-	removeTrade: (id: string) => Promise<void>;
+	removeTrade: (highlightedTrade: Trade) => Promise<void>;
 	showAlert: (payload: AlertState) => void;
 }
 
@@ -31,7 +31,7 @@ export const DeleteTradeModal = connect(mapStateToProps, actions)((props: IProps
 		try {
 			if (props.trade) {
 				setIsDeleting(true);
-				await props.removeTrade(props.trade.id);
+				await props.removeTrade(props.trade);
 				props.closeModal();
 			} else {
 				props.showAlert({

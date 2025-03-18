@@ -41,7 +41,7 @@ const fetchRateFromFrankfurter = async (base: string, term: string): Promise<num
       to: term,
     },
   });
-  return data.rates[term];
+  return Number(data.rates[term]);
 };
 
 const fetchRateFromPolygon = async (base: string, term: string): Promise<number> => {
@@ -61,7 +61,7 @@ const fetchRateFromPolygon = async (base: string, term: string): Promise<number>
       },
     }
   );
-  return data.results[0].c;
+  return Number(data.results[0].c);
 };
 
 const formatDate = (date: Date) => {

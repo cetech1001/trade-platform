@@ -123,7 +123,7 @@ export const WithdrawalsTable = connect(mapStateToProps, actions)((props: IProps
 					</tbody>
 				</Table>
 				<TablePagination itemsCount={props.withdrawal.list.length}
-                         totalItemsCount={props.withdrawal.totalCount}
+                         totalCount={props.withdrawal.totalCount}
                          options={props.options}
                          totalPages={props.withdrawal.totalPages}
                          setOptions={props.setOptions}/>

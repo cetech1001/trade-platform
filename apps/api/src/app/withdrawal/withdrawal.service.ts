@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Injectable, Logger } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { WithdrawalEntity } from './entities/withdrawal.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -19,27 +19,30 @@ import { EmailService } from '../email/email.service';
 import { formatCurrency } from '../../helpers';
 import { environment } from '../../environments/environment';
 import { PaymentMethodService } from '../payment-method/payment-method.service';
+import { DBTransactionService } from '../common/db-transaction.service';
 
 @Injectable()
 export class WithdrawalService {
+  private readonly logger = new Logger(WithdrawalService.name);
+
   constructor(
       @InjectRepository(WithdrawalEntity) private readonly withdrawalRepo:
           Repository<WithdrawalEntity>,
-      private readonly dataSource: DataSource,
+      private readonly dbTransactionService: DBTransactionService,
       private readonly accountService: AccountService,
       private readonly paymentMethodService: PaymentMethodService,
       private readonly transactionService: TransactionService,
       private readonly emailService: EmailService) {}
 
   async create(createWithdrawal: CreateWithdrawal, user: User): Promise<Transaction> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    try {
+    return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       const account = await this.accountService.findOne(createWithdrawal.accountID);
       const paymentMethod = await this.paymentMethodService.findOne(createWithdrawal.paymentMethod);
       const withdrawal = await queryRunner.manager.save(WithdrawalEntity, {
         ...createWithdrawal,
         account,
       });
+
       const transaction = await this.transactionService.create({
         amount: withdrawal.amount,
         type: TransactionType.withdrawal,
@@ -47,6 +50,7 @@ export class WithdrawalService {
         transactionID: withdrawal.id,
         account,
       }, queryRunner);
+
       Promise.all([
         this.emailService.sendMail(user.email, 'Withdrawal Request Received', './user/new-withdrawal', {
           name: user.name,
@@ -57,15 +61,12 @@ export class WithdrawalService {
           amount: formatCurrency(withdrawal.amount),
           method: `${paymentMethod.name} (${paymentMethod.network})`,
         }),
-      ]).catch(console.error);
+      ]).catch(error => {
+        this.logger.error("Failed to send email:", error);
+      });
+
       return transaction;
-    } catch (e) {
-      console.error(e);
-      await queryRunner.rollbackTransaction();
-      throw e;
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 
   findAll(query: FindWithdrawalsQueryParams, user: User): Promise<Pagination<Withdrawal>> {
@@ -103,37 +104,41 @@ export class WithdrawalService {
   }
 
   async update(id: string, updateWithdrawal: UpdateWithdrawal): Promise<Withdrawal> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    try {
+    return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       await queryRunner.manager.update(WithdrawalEntity, id, updateWithdrawal);
+
       const withdrawal = await this.findOne(id);
+
       if (updateWithdrawal.status === WithdrawalStatus.paid) {
         await this.accountService
           .increaseBalance(withdrawal.account.id, withdrawal.amount, queryRunner);
       }
+
       const { user } = withdrawal.account;
+
       if (updateWithdrawal.status === WithdrawalStatus.paid) {
         await this.accountService.increaseBalance(withdrawal.account.id, withdrawal.amount, queryRunner);
         this.emailService.sendMail(user.email, 'Withdrawal Confirmed', './user/withdrawal-confirmed', {
           name: user.name,
           amount: formatCurrency(withdrawal.amount),
-        }).catch(console.error);
+        }).catch(error => {
+          this.logger.error("Failed to send email:", error);
+        });
       }
+
       if (updateWithdrawal.status === WithdrawalStatus.cancelled) {
         this.emailService.sendMail(user.email, 'Withdrawal Rejected', './user/withdrawal-rejected', {
           name: user.name,
           amount: formatCurrency(withdrawal.amount),
-        }).catch(console.error);
+        }).catch(error => {
+          this.logger.error("Failed to send email:", error);
+        });
       }
+
       await this.transactionService.update(withdrawal.id, updateWithdrawal, queryRunner);
+
       return withdrawal;
-    } catch (e) {
-      console.error(e);
-      await queryRunner.rollbackTransaction();
-      throw e;
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 
   async remove(id: string) {

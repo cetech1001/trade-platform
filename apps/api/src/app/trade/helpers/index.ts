@@ -73,16 +73,16 @@ export async function getUnits(
   symbol?: string) {
   if (assetType === TradeAssetType.stock
     || assetType === TradeAssetType.crypto) {
-    return bidAmount * leverage / currentPrice;
+    return (bidAmount * leverage) / currentPrice;
   }
   const [base, term] = symbol.split('/');
   if (base === 'USD') {
     return bidAmount * leverage;
   } else if (term === 'USD') {
-    return bidAmount * leverage / currentPrice;
+    return (bidAmount * leverage) / currentPrice;
   }
   const rate = await fetchForexRate(`${base}/USD`);
-  return bidAmount * leverage / rate;
+  return (bidAmount * leverage) / rate;
 }
 
 export const getSymbol = (asset: TradeAsset) => {

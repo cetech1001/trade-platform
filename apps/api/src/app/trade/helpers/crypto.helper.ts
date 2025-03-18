@@ -3,7 +3,7 @@ import { Trade } from '@coinvant/types';
 
 export const fetchCryptoRate = async (currencyID: string) => {
   const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${currencyID}`);
-  return data[0].current_price;
+  return Number(data[0].current_price);
 }
 
 export const calculateCryptoPL = (trade: Trade, currentPrice: number) => {

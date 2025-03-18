@@ -109,7 +109,7 @@ export const PaymentMethodsTable = connect(mapStateToProps, actions)((props: IPr
 					</tbody>
 				</Table>
 				<TablePagination itemsCount={props.paymentMethod.list.length}
-				                 totalItemsCount={props.paymentMethod.totalCount}
+				                 totalCount={props.paymentMethod.totalCount}
                          totalPages={props.paymentMethod.totalPages}
 				                 options={props.options} setOptions={props.setOptions}/>
 			</Card.Body>

@@ -40,10 +40,13 @@ export const Home = connect(mapStateToProps, actions) ((props: IProps) => {
   });
 
   useEffect(() => {
-    props.fetchUsers(options);
     props.setTotalDepositAmount();
     props.setTotalWithdrawalAmount();
   }, []);
+
+  useEffect(() => {
+    props.fetchUsers(options);
+  }, [options]);
 
   return (
     <>

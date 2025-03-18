@@ -1,5 +1,5 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { DataSource, QueryRunner, Repository } from 'typeorm';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { QueryRunner, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateKYC, CreateUser, KYCStatus, PaginationOptions, UpdateUser, User, UserRole } from '@coinvant/types';
@@ -9,11 +9,14 @@ import { KycEntity } from './entities/kyc.entity';
 import { EmailService } from '../email/email.service';
 import { formatDate } from '../../helpers';
 import { environment } from '../../environments/environment';
+import { DBTransactionService } from '../common/db-transaction.service';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
   constructor(
-    private readonly dataSource: DataSource,
+    private readonly dbTransactionService: DBTransactionService,
     private readonly accountService: AccountService,
     private readonly emailService: EmailService,
     @InjectRepository(UserEntity) private readonly userRepo: Repository<UserEntity>,
@@ -21,8 +24,7 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUser): Promise<User> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    try {
+    return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       const userExists = await this.findOne({email: createUserDto.email});
       if (userExists) {
         throw new BadRequestException("Email address already exists");
@@ -41,14 +43,11 @@ export class UserService {
           email: user.email,
           registrationDate: formatDate(user.createdAt),
         }),
-      ]).catch(console.error);
+      ]).catch(error => {
+        this.logger.error("Failed to send email:", error);
+      });
       return this.findOne({ id: user.id });
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 
   findAll(options: PaginationOptions): Promise<Pagination<User>> {
@@ -80,19 +79,22 @@ export class UserService {
       if (updateUser.kycStatus === KYCStatus.verified) {
         this.emailService.sendMail(user.email, 'KYC Approved', './user/kyc-approved', {
           name: user.name,
-        }).catch(console.error);
+        }).catch(error => {
+          this.logger.error("Failed to send email:", error);
+        });
       } else if (updateUser.kycStatus === KYCStatus.notStarted) {
         this.emailService.sendMail(user.email, 'KYC Rejected', './user/kyc-rejected', {
           name: user.name,
-        }).catch(console.error);
+        }).catch(error => {
+          this.logger.error("Failed to send email:", error);
+        });
       }
     }
     return user;
   }
 
   async uploadKYC(files: Express.Multer.File[], createKYC: CreateKYC, user: User) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    try {
+    return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       const photo = files.find(f => f.fieldname === 'photo');
       const idCard = files.find(f => f.fieldname === 'idCard');
       const proofOfAddress = files.find(f => f.fieldname === 'proofOfAddress');
@@ -113,14 +115,11 @@ export class UserService {
           email: user.email,
           submissionDate: formatDate(kyc.createdAt),
         }),
-      ]).catch(console.error);
+      ]).catch(error => {
+        this.logger.error("Failed to send email:", error);
+      });
       return updatedUser;
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw e;
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 
   async findKYC(options: PaginationOptions){
@@ -128,19 +127,13 @@ export class UserService {
   }
 
   async removeKYC(id: string) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    try {
+    return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       const kyc = await this.kycRepo.findOneBy({ id });
       if (kyc) {
         await queryRunner.manager.delete(KycEntity, id);
         return await this.update(kyc.user.id, { kycStatus: KYCStatus.notStarted }, queryRunner);
       }
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw e;
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 
   remove(id: string) {

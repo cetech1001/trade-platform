@@ -26,7 +26,7 @@ export const Users = connect(null, actions) ((props: IProps) => {
 
   useEffect(() => {
     props.fetchUsers(options);
-  }, []);
+  }, [options]);
 
   return (
     <>

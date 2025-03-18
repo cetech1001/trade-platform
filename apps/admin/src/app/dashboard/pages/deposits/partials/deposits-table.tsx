@@ -120,7 +120,7 @@ export const DepositsTable = connect(mapStateToProps, actions)((props: IProps) =
 					</tbody>
 				</Table>
 				<TablePagination itemsCount={props.deposit.list.length}
-                         totalItemsCount={props.deposit.totalCount}
+                         totalCount={props.deposit.totalCount}
                          options={props.options} setOptions={props.setOptions}
                          totalPages={props.deposit.totalPages} />
 			</Card.Body>

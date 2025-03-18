@@ -4,7 +4,7 @@ import {PaginationOptions} from "@coinvant/types";
 
 interface IProps {
 	itemsCount: number;
-	totalItemsCount: number;
+	totalCount: number;
   totalPages: number;
 	options: PaginationOptions;
 	setOptions: Dispatch<SetStateAction<PaginationOptions>>;
@@ -12,10 +12,10 @@ interface IProps {
 
 export const TablePagination = (props: IProps) => {
   const isExhausted = useCallback(() => {
-		if ((props.options.limit * props.options.page) >= props.totalItemsCount) {
+		if ((props.options.limit * props.options.page) >= props.totalCount) {
 			return true;
 		}
-		return props.options.page * props.options.limit === props.totalItemsCount;
+		return props.options.page * props.options.limit === props.totalCount;
 	}, [props]);
 
 	const onPrevClick = () => {
@@ -64,7 +64,7 @@ export const TablePagination = (props: IProps) => {
 				</Pagination>
 			</Nav>
 			<small className="fw-bold">
-				Showing <b>{props.itemsCount + ((props.options.page - 1) * props.options.limit)}</b> out of <b>{props.totalItemsCount}</b> entries
+				Showing <b>{props.itemsCount + ((props.options.page - 1) * props.options.limit)}</b> out of <b>{props.totalCount}</b> entries
 			</small>
 		</Card.Footer>
 	);

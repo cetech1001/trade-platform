@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {StockEntity} from "./entities/stock.entity";
 import {Brackets, Repository} from "typeorm";
@@ -23,6 +23,8 @@ import {environment} from "../../environments/environment";
 
 @Injectable()
 export class TradeAssetService {
+  private readonly logger = new Logger(TradeAssetService.name);
+
 	constructor(
 		@InjectRepository(StockEntity) private readonly stockRepo: Repository<StockEntity>,
 		@InjectRepository(ForexEntity) private readonly forexRepo: Repository<ForexEntity>,
@@ -49,12 +51,12 @@ export class TradeAssetService {
 						const savedStocks = await this.stockRepo.save(stocks);
 						resolve(savedStocks);
 					} catch (error) {
-						console.error('Error storing data in the database', error);
+						this.logger.error('Error storing data in the database', error);
 						reject(error);
 					}
 				})
 				.on('error', (error) => {
-					console.error('Error reading the CSV file', error);
+					this.logger.error('Error reading the CSV file', error);
 					reject(error);
 				});
 		});

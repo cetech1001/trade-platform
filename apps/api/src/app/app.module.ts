@@ -14,6 +14,7 @@ import { EmailModule } from './email/email.module';
 import { AccountModule } from './account/account.module';
 import { OTPModule } from './otp/otp.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     EmailModule,
     AccountModule,
     OTPModule,
+    CommonModule,
   ],
 })
 export class AppModule {}

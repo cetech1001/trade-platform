@@ -29,7 +29,6 @@ export const fetchTrades = (query: FindTradesQueryParams) => async (dispatch: Ap
 export const fetchTotalActivePL = (query: FindTradeAmountsQueryParams) => async (dispatch: AppDispatch) => {
   try {
     const data = await TradeService.fetchTotalActivePL(query);
-    console.log("Total active PL", data);
     dispatch({
       type: TradeActions.SET_TOTAL_ACTIVE_PL,
       payload: {
@@ -48,7 +47,6 @@ export const fetchTotalActivePL = (query: FindTradeAmountsQueryParams) => async 
 export const fetchTotalActiveBid = (query: FindTradeAmountsQueryParams) => async (dispatch: AppDispatch) => {
   try {
     const data = await TradeService.fetchTotalActiveBid(query);
-    console.log("Total active bid", data);
     dispatch({
       type: TradeActions.SET_TOTAL_ACTIVE_BID,
       payload: {
@@ -111,11 +109,14 @@ export const updateTrade = (id: string, payload: UpdateTrade) => async (dispatch
 	}
 }
 
-export const removeTrade = (id: string) => async (dispatch: AppDispatch) => {
+export const removeTrade = (highlightedTrade: Trade) => async (dispatch: AppDispatch) => {
 	try {
-		await TradeService.deleteTrade(id);
+		await TradeService.deleteTrade(highlightedTrade.id);
 		dispatch({
 			type: TradeActions.DELETE_TRADE,
+      payload: {
+        highlightedTrade,
+      }
 		});
 		dispatch(showAlert({
 			message: 'Trade deleted successfully.',

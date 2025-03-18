@@ -108,7 +108,7 @@ export const UsersTable = connect(mapStateToProps, actions)((props: IProps) => {
           </tbody>
         </Table>
         <TablePagination itemsCount={props.user.list.length}
-                         totalItemsCount={props.user.totalUserCount}
+                         totalCount={props.user.totalUserCount}
                          options={props.options}
                          totalPages={props.user.totalUserPages}
                          setOptions={props.setOptions}/>
