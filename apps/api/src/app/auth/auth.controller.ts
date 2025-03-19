@@ -27,7 +27,6 @@ export class AuthController {
       ...createUserDto,
       role: UserRole.user,
     });
-    const {password, ...result} = user;
-    return await this.authService.login(result);
+    return await this.authService.login(user);
   }
 }

@@ -46,7 +46,7 @@ export class UserService {
       ]).catch(error => {
         this.logger.error("Failed to send email:", error);
       });
-      return this.findOne({ id: user.id });
+      return user;
     });
   }
 
@@ -54,7 +54,10 @@ export class UserService {
     return paginate(this.userRepo, options, { where: { role: UserRole.user } });
   }
 
-  findOne(condition: { id?: string; email?: string; }): Promise<User> {
+  findOne(condition: { id?: string; email?: string; password?: string }): Promise<User> {
+    if (condition.password && !condition.email) {
+      throw new BadRequestException("Unauthorized action");
+    }
     return this.userRepo.findOne({ where: condition, relations: ['accounts'] });
   }
 
@@ -64,8 +67,8 @@ export class UserService {
 
   async update(id: string, updateUser: UpdateUser, queryRunner?: QueryRunner): Promise<User> {
     if (updateUser.email) {
-      const user = await this.findOne({email: updateUser.email});
-      if (user && user.id !== id) {
+      const emailExists = await this.findOne({email: updateUser.email});
+      if (emailExists && emailExists.id !== id) {
         throw new BadRequestException("Email address already exists");
       }
     }
@@ -89,6 +92,12 @@ export class UserService {
           this.logger.error("Failed to send email:", error);
         });
       }
+    }
+    if (queryRunner) {
+      return {
+        ...user,
+        ...updateUser,
+      };
     }
     return user;
   }
@@ -131,7 +140,7 @@ export class UserService {
       const kyc = await this.kycRepo.findOneBy({ id });
       if (kyc) {
         await queryRunner.manager.delete(KycEntity, id);
-        return await this.update(kyc.user.id, { kycStatus: KYCStatus.notStarted }, queryRunner);
+        return this.update(kyc.user.id, { kycStatus: KYCStatus.notStarted }, queryRunner);
       }
     });
   }

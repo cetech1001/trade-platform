@@ -28,7 +28,7 @@ export class DepositController {
   @Post()
   @ApiFile(
   'proof',
-  ['proof', 'paymentMethod', 'amount'],
+  ['proof', 'paymentMethod', 'amount', 'accountID'],
   {
     paymentMethod: {
       type: 'string',
@@ -36,6 +36,9 @@ export class DepositController {
     amount: {
       type: 'string',
     },
+    accountID: {
+      type: 'string',
+    }
   })
   create(@UploadedFile() file: Express.Multer.File,
          @Body() createDepositDto: CreateDepositDto,

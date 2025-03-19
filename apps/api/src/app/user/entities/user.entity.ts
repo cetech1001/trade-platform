@@ -24,7 +24,7 @@ export class UserEntity implements User{
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ type: String, required: true, example: 'Pa$$word1' })
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Column({
