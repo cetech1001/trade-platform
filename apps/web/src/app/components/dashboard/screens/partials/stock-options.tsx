@@ -3,6 +3,8 @@ import {useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import {fetchStockOptions, RootState, setCurrentAsset} from "@coinvant/store";
 import {wrapWord} from "../../../../helpers";
+import { USER_ROUTES } from '../../../../../routes';
+import { useIsMobile } from '../../../../../hooks';
 
 interface IProps {
 	symbol: string;
@@ -11,6 +13,7 @@ interface IProps {
 	totalPages: number;
 	fetchStockOptions: (query: FindStockOptions) => Promise<void>;
 	setCurrentAsset: (asset: CurrentAsset) => void;
+  toggleNav: (route: USER_ROUTES) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -32,6 +35,7 @@ export const StockOptions = connect(mapStateToProps, actions)((props: IProps) =>
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [stockOptions, setStockOptions]
 		= useState<(StockOption & { isActive: boolean })[]>([]);
+  const isMobile = useIsMobile();
 
 	const handleScroll = () => {
 		const container = scrollContainerRef.current;
@@ -105,6 +109,9 @@ export const StockOptions = connect(mapStateToProps, actions)((props: IProps) =>
 			symbol: stock.symbol,
 			type: TradeAssetType.stock,
 		});
+    if (isMobile) {
+      props.toggleNav(USER_ROUTES.chart);
+    }
 	}
 
 	const AssetItem = (

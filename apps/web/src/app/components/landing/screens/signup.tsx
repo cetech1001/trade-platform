@@ -22,6 +22,7 @@ export const Signup = connect(null, actions)((props: IProps) => {
     setIsSubmitting(true);
     props.register({ name, email, password })
       .then(() => navigateTo('/platform'))
+      .catch()
       .finally(() => setIsSubmitting(false));
   };
 

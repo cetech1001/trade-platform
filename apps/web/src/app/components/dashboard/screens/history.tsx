@@ -31,7 +31,7 @@ export const TradeHistory = connect(mapStateToProps, actions)((props: IProps) =>
   const [activeTab, setActiveTab] = useState<'trades' | 'orders'>('trades');
   const [options, setOptions] = useState<FindTradesQueryParams>({
     page: 1,
-    limit: 7,
+    limit: 6,
     accountID: props.account?.id,
   });
   const [tradeBlocks, setTradeBlocks] = useState<Trade[][]>([]);
@@ -71,7 +71,7 @@ export const TradeHistory = connect(mapStateToProps, actions)((props: IProps) =>
           </button>
         </div>
         <div className={'assets-body'}>
-          <div className={"trades"}>
+          <div className={"trades"} style={{ height: '75vh', overflowY: 'auto' }}>
             {props.totalCount === 0 && (
               <p>No trades.</p>
             )}

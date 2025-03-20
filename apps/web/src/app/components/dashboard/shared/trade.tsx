@@ -55,9 +55,14 @@ export const TradeItem = connect(null, actions)((props: IProps) => {
 					<p className={"text"}>Bid Amount</p>
 					<p style={{fontSize: "0.875rem"}}>{formatCurrency(props.trade.bidAmount)}</p>
 				</div>
+        <div className="flex-row-space-between">
+          <p className={"text"}>Trade Type</p>
+          <p style={{fontSize: "0.875rem"}}>
+            {props.trade.isShort ? "Sell" : "Buy"}
+          </p>
+        </div>
 				<div className="flex-row-space-between">
-					<p className={"text"}>Trade ID</p>
-					<p style={{fontSize: "0.875rem"}}>{props.trade.id}</p>
+					<p style={{fontSize: "0.875rem"}}>#{props.trade.id}</p>
 				</div>
 				<div className="flex-row-space-between">
 					<p className={"text"}>Time</p>
@@ -100,10 +105,12 @@ export const TradeItem = connect(null, actions)((props: IProps) => {
 					<p className={"text"}>Bid Amount</p>
 					<p style={{fontSize: "0.875rem"}}>{formatCurrency(props.trade.bidAmount)}</p>
 				</div>
-				<div className="flex-row-space-between">
-					<p className={"text"}>Trade ID</p>
-					<p style={{fontSize: "0.875rem"}}>{props.trade.id}</p>
-				</div>
+        <div className="flex-row-space-between">
+          <p className={"text"}>Trade Type</p>
+          <p style={{fontSize: "0.875rem"}}>
+            {props.trade.isShort ? "Sell" : "Buy"}
+          </p>
+        </div>
 				<div className="flex-row-space-between">
 					<p className={"text"}>Stop Loss</p>
 					<p style={{fontSize: "0.875rem"}}>{props.trade.stopLoss || '-'}</p>
@@ -120,6 +127,9 @@ export const TradeItem = connect(null, actions)((props: IProps) => {
 					<p className={"text"}>Trade Closed</p>
 					<p style={{fontSize: "0.875rem"}}>{formatDate(props.trade.closedAt)}</p>
 				</div>
+        <div className="flex-row-space-between">
+          <p style={{fontSize: "0.875rem"}}>#{props.trade.id}</p>
+        </div>
 			</div>
 		);
 	}
@@ -152,20 +162,14 @@ export const TradeItem = connect(null, actions)((props: IProps) => {
 						</span>
 					</div>
 				</div>
-				{props.trade.status === TradeStatus.active && (
+				{[TradeStatus.active, TradeStatus.closed].includes(props.trade.status) && (
 					<span className={props.trade.profitOrLoss >= 0 ? 'positive' : 'negative'}>
-						{props.trade.profitOrLoss > 0 && '+'}{formatCurrency(props.trade.profitOrLoss)}&nbsp;
+						{+props.trade.profitOrLoss > 0 && '+'}{formatCurrency(props.trade.profitOrLoss)}&nbsp;
 						{+props.trade.profitOrLoss !== 0 && (
 							<i className={`fa-solid fa-long-arrow-${+props.trade.profitOrLoss > 0
 								? 'up' : 'down'} ${+props.trade.profitOrLoss > 0 ? 'positive' : 'negative'}`}></i>
 						)}
 					</span>
-				)}
-				{props.trade.status === TradeStatus.pending && (
-					<span>{formatCurrency(0)}</span>
-				)}
-				{props.trade.status === TradeStatus.pending && (
-					<span>{formatCurrency(props.trade.profitOrLoss)}</span>
 				)}
 			</div>
 			{isExpanded && (props.trade.status === TradeStatus.active
