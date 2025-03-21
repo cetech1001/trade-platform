@@ -10,6 +10,7 @@ export interface User {
   status: UserStatus;
   role: UserRole;
   accounts: Account[];
+  twoFA: boolean;
   createdAt: string;
   updatedAt: string;
 }

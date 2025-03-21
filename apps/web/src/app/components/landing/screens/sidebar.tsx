@@ -1,22 +1,20 @@
 import {useState} from 'react';
 import {Login} from "./login";
 import {Signup} from "./signup";
+import { OTP } from './otp';
+import { ActiveTab } from '@coinvant/types';
 
 interface IProps {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
 }
 
-enum ActiveTab {
-  login = 'login',
-  signup = 'signup',
-}
-
 export const Sidebar = (props: IProps) => {
-  if(!props.isSidebarOpen) return null;
+  const [activeTab, setActiveTab] = useState<ActiveTab>(ActiveTab.login);
 
-  const [activeTab, setActiveTab]
-    = useState<ActiveTab>(ActiveTab.login);
+  if(!props.isSidebarOpen) {
+    return null;
+  }
 
   return (
     <div className={'sidebar open'}>
@@ -27,14 +25,22 @@ export const Sidebar = (props: IProps) => {
              onClick={props.toggleSidebar}></i>
         </div>
         <div className="tabs">
-          <button className={`${activeTab === ActiveTab.login && 'active'}`}
-                  onClick={() => setActiveTab(ActiveTab.login)}>Login
-          </button>
-          <button className={`${activeTab === ActiveTab.signup && 'active'}`}
-                  onClick={() => setActiveTab(ActiveTab.signup)}>Sign Up
-          </button>
+          {activeTab !== ActiveTab.otp ? (
+            <>
+              <button className={`${activeTab === ActiveTab.login && 'active'}`}
+                      onClick={() => setActiveTab(ActiveTab.login)}>Login
+              </button>
+              <button className={`${activeTab === ActiveTab.signup && 'active'}`}
+                      onClick={() => setActiveTab(ActiveTab.signup)}>Sign Up
+              </button>
+            </>
+          ) : (
+            <button className={'active'}>OTP</button>
+          )}
         </div>
-        {activeTab === ActiveTab.login ? <Login/> : <Signup/>}
+        {activeTab === ActiveTab.login && <Login setActiveTab={setActiveTab}/>}
+        {activeTab === ActiveTab.signup && <Signup setActiveTab={setActiveTab}/>}
+        {activeTab === ActiveTab.otp && <OTP setActiveTab={setActiveTab}/>}
       </div>
     </div>
   );

@@ -31,7 +31,7 @@ interface IProps {
   showAlert: (payload: AlertState) => void;
   addWithdrawal: (payload: CreateWithdrawal) => Promise<void>;
   fetchPaymentMethods: (options?: PaginationOptions) => void;
-  sendOTP: () => Promise<void>;
+  sendOTP: (email: string) => Promise<void>;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -130,7 +130,7 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
     if (validateInputs() && method) {
       try {
         setIsSubmitting(true);
-        await props.sendOTP();
+        await props.sendOTP(props.user?.email || '');
         setIsOTPOpen(true);
       } finally {
         setIsSubmitting(false);
@@ -278,7 +278,8 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
           {step === 1 ? (!isSubmitting ? 'Confirm' : 'Processing...') : 'Done'}
         </button>
       </div>
-      <OTPModal isOpen={isOTPOpen} onClose={() => setIsOTPOpen(false)} onSubmit={submit}/>
+      <OTPModal isOpen={isOTPOpen} onClose={() => setIsOTPOpen(false)}
+                onSubmit={submit} email={props.user?.email || ''}/>
     </div>
   );
 });
