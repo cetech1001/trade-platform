@@ -1,4 +1,4 @@
-import {Controller, Post, UseGuards, Body} from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {LocalAuthGuard} from "../../guards";
 import {ApiTags} from "@nestjs/swagger";
@@ -27,7 +27,6 @@ export class AuthController {
       ...createUserDto,
       role: UserRole.user,
     });
-    const {password, ...result} = user;
-    return await this.authService.login(result);
+    return await this.authService.login(user);
   }
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,6 +15,7 @@ import { AccountModule } from './account/account.module';
 import { OTPModule } from './otp/otp.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CommonModule } from './common/common.module';
+import { OriginMiddleware } from './middleware/origin.middleware';
 
 @Module({
   imports: [
@@ -37,4 +38,9 @@ import { CommonModule } from './common/common.module';
     CommonModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(OriginMiddleware)
+      .forRoutes('/auth/login');
+  }
+}

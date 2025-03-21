@@ -1,9 +1,9 @@
 import {CurrentAsset, FindForexPairs, ForexPair, TradeAssetType} from "@coinvant/types";
 import {useEffect, useRef, useState} from "react";
-import axios from "axios";
 import {connect} from "react-redux";
 import {fetchForexPairs, RootState, setCurrentAsset} from "@coinvant/store";
 import { USER_ROUTES } from '../../../../../routes';
+import { useIsMobile } from '../../../../../hooks';
 
 interface IProps {
 	base: string;
@@ -34,6 +34,7 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [pairs, setPairs]
 		= useState<(ForexPair & { isActive: boolean })[]>([]);
+  const isMobile = useIsMobile();
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -107,7 +108,9 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 			symbol: `${pair.base}/${pair.term}`,
 			type: TradeAssetType.forex,
 		});
-    props.toggleNav(USER_ROUTES.chart);
+    if (isMobile) {
+      props.toggleNav(USER_ROUTES.chart);
+    }
 	}
 
 	const AssetItem = (
@@ -115,15 +118,6 @@ export const ForexPairs = connect(mapStateToProps, actions)((props: IProps) => {
 			asset: ForexPair & { isActive: boolean };
 		}
 	) => {
-		/*const [rate, setRate] = useState(0);*/
-
-		/*useEffect(() => {
-			if (asset) {
-				axios.get(`https://api.frankfurter.app/latest?amount=1&from=${asset.base}&to=${asset.term}`)
-					.then(({ data }) => setRate(data.rates[asset.term]));
-			}
-		}, [asset]);*/
-
 		return (
 			<div className={`asset-item ${asset.isActive && 'asset-active'}`}
 			     onClick={() => setAsActive(asset)}>

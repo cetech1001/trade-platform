@@ -20,7 +20,7 @@ interface IProps {
 
 const initialState = {
 	status: TradeStatus.pending,
-  currentPrice: 0,
+  openingPrice: 0,
   profitOrLoss: 0,
 };
 
@@ -43,8 +43,8 @@ export const EditTradeModal = connect(mapStateToProps, actions)((props: IProps) 
 		if (props.trade) {
 			setPayload({
 				status: props.trade.status,
-        currentPrice: props.trade.currentPrice,
-        profitOrLoss: props.trade.profitOrLoss,
+        openingPrice: props.trade.isShort
+          ? props.trade.sellPrice : props.trade.buyPrice,
 			});
 		}
 	}, [props.trade]);
@@ -96,18 +96,18 @@ export const EditTradeModal = connect(mapStateToProps, actions)((props: IProps) 
 					</Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Current Price</Form.Label>
-            <Form.Control type="text" placeholder="Enter current price"
-                          name={"currentPrice"} value={payload.currentPrice}
+            <Form.Label>Opening Price</Form.Label>
+            <Form.Control type="text" placeholder="Enter opening price"
+                          name={"openingPrice"} value={payload.openingPrice}
                           onChange={onChange} required/>
           </Form.Group>
 
-          <Form.Group className="mb-3">
+          {/*<Form.Group className="mb-3">
             <Form.Label>Profit/Loss</Form.Label>
             <Form.Control type="text" placeholder="Enter profit/loss"
                           name={"profitOrLoss"} value={payload.profitOrLoss}
                           onChange={onChange} required/>
-          </Form.Group>
+          </Form.Group>*/}
 
 					<Button variant="primary" type="submit" disabled={isSubmitting}>
 						{isSubmitting ? 'Submitting...' : 'Submit'}

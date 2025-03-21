@@ -40,6 +40,8 @@ const authenticate = async (payload: LoginRequest | RegisterRequest, actionType:
         show: true,
       }));
     }
+
+    return Promise.reject();
   }
 }
 

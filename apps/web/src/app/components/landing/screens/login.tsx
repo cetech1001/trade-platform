@@ -22,6 +22,7 @@ export const Login = connect(null, actions)((props: IProps) => {
     setIsSubmitting(true);
     props.login({email, password})
         .then(() => navigateTo('/platform'))
+        .catch()
         .finally(() => setIsSubmitting(false));
   };
 

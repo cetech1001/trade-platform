@@ -4,6 +4,8 @@ import axios from "axios";
 import {formatCurrency, roundPercent} from "../../../../helpers";
 import {connect} from "react-redux";
 import {fetchCryptoCurrencies, RootState, setCurrentAsset} from "@coinvant/store";
+import { useIsMobile } from '../../../../../hooks';
+import { USER_ROUTES } from '../../../../../routes';
 
 interface IProps {
 	symbol: string;
@@ -12,6 +14,7 @@ interface IProps {
 	totalPages: number;
 	fetchCryptoCurrencies: (query: FindCryptoCurrencies) => Promise<void>;
 	setCurrentAsset: (asset: CurrentAsset) => void;
+  toggleNav: (route: USER_ROUTES) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -34,6 +37,7 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 	const [currencies, setCurrencies]
 		= useState<(CryptoCurrency & { isActive: boolean })[]>([]);
 	const [coins, setCoins] = useState([]);
+  const isMobile = useIsMobile();
 
 	const handleScroll = () => {
 		const container = scrollContainerRef.current;
@@ -112,6 +116,10 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 			type: TradeAssetType.crypto,
 			currencyID: currency.currencyID,
 		});
+
+    if (isMobile) {
+      props.toggleNav(USER_ROUTES.chart);
+    }
 	}
 
 	const AssetItem = (
