@@ -1,6 +1,3 @@
-@import url("https://myaccount.startrader.com/static/css/styles.696889e.css");
-@import url("https://myaccount.startrader.com/static/css/app.b08a5f1.css");
-
 body {
   overflow-x: hidden;
 }
@@ -23,6 +20,10 @@ body {
 .landing .title h5 {
   font-size: 1.75rem;
   color: #9cb0c2;
+}
+
+.landing > .main-content {
+  height: 100vh;
 }
 
 .landing .home {
@@ -75,9 +76,8 @@ body {
 
 .landing .home .content {
   width: 40%;
-  height: 100vh;
-  border: 1px solid black;
-  min-width: 380px;
+  height: 100%;
+  /*min-width: 380px;*/
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -91,19 +91,31 @@ body {
   gap: 1rem;
 }
 
+.landing .home .content .form-box .title {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d0f3b;
+  text-align: center;
+}
+
 .landing .home .content .form-box .tabs {
   display: flex;
-  justify-content: space-between;
-  border-bottom: 0.0625rem solid rgba(85, 89, 104, 0.35);
   padding-bottom: 0.1rem;
+  border-bottom: 0.0625rem solid #e3eafa;
 }
 
 .landing .home .content .form-box .tabs .tab {
-  border: 0.0625rem solid rgba(85, 89, 104, 0.35);
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+}
+
+.landing .home .content .form-box .tabs .tab span {
+  cursor: pointer;
+  display: block;
 }
 
 .landing .home .content .form-box .tabs .tab .active-block {
@@ -111,7 +123,97 @@ body {
   max-width: 100%;
   height: 4px;
   border-radius: 2px;
-  -webkit-transform: translateX(-50%);
-  transform: translateX(-50%);
   background-color: #16b7ad;
+}
+
+.landing .home .content .form-box .input-group {
+  line-height: 40px;
+}
+
+.landing .home .content .form-box .input-group label {
+  color: #243459;
+  font-size: 14px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.landing .home .content .form-box .input-group label span {
+  color: red;
+}
+
+.landing .home .content .form-box .input-group .input {
+  background-color: transparent;
+  background-image: none;
+  border-radius: 12px;
+  border: 1px solid #e3eafa;
+  box-sizing: border-box;
+  color: #00091f;
+  display: inline-block;
+  font-size: inherit;
+  outline: none;
+  padding: 0 15px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+}
+
+.landing .home .content .form-box button {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background-color: #0d0f3b;
+  border: 1px solid #0d0f3b;
+  color: #fff;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  transition: .1s;
+  font-weight: 500;
+  padding: 12px 23px;
+  font-size: 14px;
+  border-radius: 20px;
+}
+
+@media (max-width: 768px) {
+  body {
+    background-image: url("/assets/images/auth-bg.png");
+    height: 100vh;
+  }
+  .landing {
+    background-size: cover;
+    padding: 0 1rem;
+  }
+
+  .landing .navbar {
+    height: 10vh;
+  }
+
+  .landing .navbar img.logo {
+    width: 100px;
+    height: auto;
+  }
+
+  .landing > .main-content {
+    height: 80vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .landing .home .image {
+    display: none;
+  }
+
+  .landing .home .content {
+    background-color: #FFFFFF;
+    flex: 1;
+    border-radius: 15px;
+    padding: 0 2rem;
+    max-width: 80%;
+  }
 }

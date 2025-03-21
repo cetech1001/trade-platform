@@ -1,18 +1,15 @@
-import { useState } from 'react';
 import {Home} from "./screens/home";
 import '../../styles/Landing.css';
+import { useIsMobile } from '../../../hooks';
+import { Navbar } from './screens/navbar';
 
 export const Landing = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
+  const isMobile = useIsMobile();
   return (
     <div className="landing">
+      {isMobile && <Navbar />}
       <div className="main-content">
-        <Home toggleSidebar={toggleSidebar}/>
+        <Home/>
       </div>
     </div>
   );

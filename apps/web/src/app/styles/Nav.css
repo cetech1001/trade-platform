@@ -108,7 +108,7 @@
     border-right: none;
   }
 
-  .navbar .logo {
+  .navbar > .logo {
     display: none;
   }
 
