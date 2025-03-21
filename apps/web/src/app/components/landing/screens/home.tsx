@@ -21,116 +21,25 @@ export const Home = (props: IProps) => {
         />
       </div>
       <div className="content">
-        <div className="form_wrapper login-card">
-          <div className="form-header">
-            <p className="login-title">Client Portal Login</p>
+        <div className={"form-box"}>
+          <h4>Client Portal Login</h4>
+          <div className={"tabs"}>
+            <div className={"tab active"}>
+              <span>Login</span>
+              <div className={"active-block"}></div>
+            </div>
+            <div className={"tab"}>
+              <span>Register</span>
+              <div className={"active-block"}></div>
+            </div>
           </div>
-          <div className="tab-box el-tabs el-tabs--top">
-            <div className="el-tabs__header is-top">
-              <div className="el-tabs__nav-wrap is-top">
-                <div className="el-tabs__nav-scroll">
-                  <div
-                    role="tablist"
-                    className="el-tabs__nav is-top"
-                    style={{ transform: 'translateX(0px)' }}
-                  >
-                    <div
-                      className="el-tabs__active-bar is-top"
-                      style={{ width: 95, transform: 'translateX(0px)' }}
-                    ></div>
-                    <div
-                      id="tab-email"
-                      aria-controls="pane-email"
-                      role="tab"
-                      aria-selected="true"
-                      tabIndex={0}
-                      className="el-tabs__item is-top is-active"
-                    >
-                      Email Address
-                    </div>
-                    <div
-                      id="tab-Phone"
-                      aria-controls="pane-Phone"
-                      role="tab"
-                      tabIndex={-1}
-                      className="el-tabs__item is-top"
-                    >
-                      Phone Number
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="el-tabs__content">
-              <div
-                role="tabpanel"
-                id="pane-email"
-                aria-labelledby="tab-email"
-                className="el-tab-pane"
-              >
-                <div className="from_box">
-                  <form className="el-form el-form--label-top">
-                    <div className="input_wrapper">
-                      <div className="">
-                        <div className="el-form-item is-required custom-input-item">
-                          <label
-                            htmlFor="email"
-                            className="el-form-item__label"
-                          >
-                            Email
-                          </label>
-                          <div className="el-form-item__content">
-                            <div className="el-input el-input--suffix">
-                              <input
-                                type="text"
-                                autoComplete="new-password"
-                                className="el-input__inner"
-                              />
-                            </div>
-                            <div className="active-line"></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="password_box">
-                        <div className="el-form-item password_inp is-required custom-input-item">
-                          <label
-                            htmlFor="password"
-                            className="el-form-item__label"
-                          >
-                            Password
-                          </label>
-                          <div className="el-form-item__content">
-                            <div className="el-input">
-                              <input
-                                type="password"
-                                autoComplete="new-password"
-                                className="el-input__inner"
-                              />
-                            </div>
-                            <div className="active-line"></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="btn-wrapper">
-                        <button
-                          type="button"
-                          className="el-button el-button--primary is-round"
-                        >
-                          <span>Log in</span>
-                        </button>
-                        <p className="forgotPass">
-                          <a href="/forgetPassword">Forgot Password?</a>
-                        </p>
-                      </div>
-                    </div>
-                    <div
-                      className="verfifyMessage"
-                      style={{ display: 'none' }}
-                    ></div>
-                  </form>
-                </div>
-              </div>
-            </div>
+          <div>
+            <label>* Email</label>
+            <input type={"email"} className={"input"} name={"email"} required/>
+          </div>
+          <div>
+            <label>* Password</label>
+            <input type={"password"} className={"input"} name={"email"} required/>
           </div>
         </div>
       </div>
