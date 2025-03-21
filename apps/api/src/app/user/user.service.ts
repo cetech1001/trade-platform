@@ -50,8 +50,11 @@ export class UserService {
     });
   }
 
-  findAll(options: PaginationOptions): Promise<Pagination<User>> {
-    return paginate(this.userRepo, options, { where: { role: UserRole.user } });
+  async findAll(options: PaginationOptions): Promise<Pagination<User>> {
+    const queryBuilder = this.userRepo.createQueryBuilder('U')
+      .addSelect('U.password')
+      .where('U.role = :role', { role: UserRole.user });
+    return paginate<User>(queryBuilder, options);
   }
 
   findOne(condition: { id?: string; email?: string; password?: string; role?: UserRole }): Promise<User> {
