@@ -20,6 +20,12 @@ export class UpdateTradeDto extends PartialType(PickType(TradeEntity, ['takeProf
   @Transform((v) => +v.value)
   @IsNumber()
   @ApiProperty({ type: Number, required: false })
+  openingPrice: number;
+
+  @IsOptional()
+  @Transform((v) => +v.value)
+  @IsNumber()
+  @ApiProperty({ type: Number, required: false })
   profitOrLoss: number;
 
 }

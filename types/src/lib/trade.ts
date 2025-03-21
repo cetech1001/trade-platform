@@ -49,7 +49,15 @@ export interface CreateTrade
 	openingPrice?: number;
 }
 
-export type UpdateTrade = Partial<Pick<Trade, 'status' | 'stopLoss' | 'takeProfit' | 'currentPrice' | 'profitOrLoss'>>;
+export interface UpdateTrade extends Partial<Pick<Trade, 'status'
+  | 'stopLoss'
+  | 'takeProfit'
+  | 'currentPrice'
+  | 'profitOrLoss'
+  | 'buyPrice'
+  | 'sellPrice'>> {
+  openingPrice?: number;
+}
 
 export interface FindTradesQueryParams extends PaginationOptions, Partial<Pick<Trade, 'status' | 'assetType'>>{
 	accountID?: string;

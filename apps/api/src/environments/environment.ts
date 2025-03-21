@@ -7,6 +7,7 @@ export const environment = {
   production: false,
   port: process.env.PORT || 3000,
   appName: process.env.NX_REACT_APP_SITE_NAME,
+  adminUrl: process.env.NX_REACT_APP_ADMIN_URL,
   db: {
     type: (process.env.DB_TYPE as 'mysql' | 'mariadb') || 'mysql',
     host: process.env.DB_HOST || 'localhost',

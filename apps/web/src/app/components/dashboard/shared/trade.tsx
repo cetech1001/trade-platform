@@ -119,6 +119,10 @@ export const TradeItem = connect(null, actions)((props: IProps) => {
 					<p className={"text"}>Take Profit</p>
 					<p style={{fontSize: "0.875rem"}}>{props.trade.takeProfit || '-'}</p>
 				</div>
+        <div className="flex-row-space-between">
+          <p className={"text"}>Multiplier</p>
+          <p style={{fontSize: "0.875rem"}}>{props.trade.leverage || '-'}</p>
+        </div>
 				<div className="flex-row-space-between">
 					<p className={"text"}>Trade Opened</p>
 					<p style={{fontSize: "0.875rem"}}>{formatDate(props.trade.executeAt)}</p>

@@ -292,6 +292,15 @@ export class TradeService {
 	async update(id: string, updateTrade: UpdateTrade) {
     const trade = await this.findOne(id);
 
+    if (updateTrade.openingPrice) {
+      if (trade.isShort) {
+        updateTrade.sellPrice = updateTrade.openingPrice;
+      } else {
+        updateTrade.buyPrice = updateTrade.openingPrice;
+      }
+      delete updateTrade.openingPrice;
+    }
+
     if (!trade) {
       throw new NotFoundException('Trade not found');
     }
@@ -325,7 +334,10 @@ export class TradeService {
       }
       await queryRunner.manager.update(TradeEntity, id, updateTrade);
 
-      return this.findOne(id);
+      return {
+        ...trade,
+        ...updateTrade,
+      };
     });
   }
 

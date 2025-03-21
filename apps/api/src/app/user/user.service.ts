@@ -54,7 +54,7 @@ export class UserService {
     return paginate(this.userRepo, options, { where: { role: UserRole.user } });
   }
 
-  findOne(condition: { id?: string; email?: string; password?: string }): Promise<User> {
+  findOne(condition: { id?: string; email?: string; password?: string; role?: UserRole }): Promise<User> {
     if (condition.password && !condition.email) {
       throw new BadRequestException("Unauthorized action");
     }

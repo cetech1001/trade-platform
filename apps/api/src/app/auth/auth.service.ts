@@ -1,14 +1,25 @@
-import {Injectable} from '@nestjs/common';
-import {UserService} from "../user/user.service";
-import {JwtService} from "@nestjs/jwt";
-import { User } from '@coinvant/types';
+import { Injectable } from '@nestjs/common';
+import { UserService } from '../user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { User, UserRole } from '@coinvant/types';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UserService, private jwtService: JwtService) {}
+  constructor(
+    private usersService: UserService,
+    private jwtService: JwtService
+  ) {}
 
-  async validateUser(email: string, password: string): Promise<User> {
-    return this.usersService.findOne({ email, password });
+  async validateUser(
+    email: string,
+    password: string,
+    role = UserRole.user
+  ): Promise<User> {
+    return this.usersService.findOne({
+      email,
+      password,
+      role,
+    });
   }
 
   async login(user: User) {
