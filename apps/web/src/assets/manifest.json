@@ -1,7 +1,7 @@
 {
-  "name": "TrendPanther",
-  "short_name": "TPanther",
-  "start_url": "/",
+  "name": "Star Trader",
+  "short_name": "Star Trader",
+  "start_url": "https://user.startrader.info",
   "icons": [
     {
       "src": "/assets/favicons/web-app-manifest-192x192.png",
