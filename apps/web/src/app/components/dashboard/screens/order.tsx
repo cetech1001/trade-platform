@@ -168,6 +168,16 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 						<span className={'x-sign'}>x</span>50
 					</div>
 				</div>
+        <div className={'options'}>
+          <div className={`option ${leverage === 75 && 'active'}`}
+               onClick={() => setLeverage(75)}>
+            <span className={'x-sign'}>x</span>75
+          </div>
+          <div className={`option ${leverage === 100 && 'active'}`}
+               onClick={() => setLeverage(100)}>
+            <span className={'x-sign'}>x</span>100
+          </div>
+        </div>
 			</div>
 		</div>
 	);

@@ -48,7 +48,8 @@ export const TradeItem = connect(null, actions)((props: IProps) => {
 				<div className="flex-row-space-between">
 					<p className={"text"}>Opening Quote</p>
 					<p style={{fontSize: "0.875rem"}}>
-						{formatCurrency(props.trade.buyPrice || props.trade.sellPrice)}
+						{formatCurrency(props.trade.isShort
+              ? props.trade.sellPrice : props.trade.buyPrice)}
 					</p>
 				</div>
 				<div className="flex-row-space-between">
@@ -61,12 +62,16 @@ export const TradeItem = connect(null, actions)((props: IProps) => {
             {props.trade.isShort ? "Sell" : "Buy"}
           </p>
         </div>
+        <div className="flex-row-space-between">
+          <p className={"text"}>Time</p>
+          <p style={{fontSize: "0.875rem"}}>{formatDate(props.trade.executeAt)}</p>
+        </div>
+        <div className="flex-row-space-between">
+          <p className={"text"}>Multiplier</p>
+          <p style={{fontSize: "0.875rem"}}>x{props.trade.leverage}</p>
+        </div>
 				<div className="flex-row-space-between">
 					<p style={{fontSize: "0.875rem"}}>#{props.trade.id}</p>
-				</div>
-				<div className="flex-row-space-between">
-					<p className={"text"}>Time</p>
-					<p style={{fontSize: "0.875rem"}}>{formatDate(props.trade.executeAt)}</p>
 				</div>
 				<StopLossTakeProfitOptions takeProfit={takeProfit} setTakeProfit={setTakeProfit}
 				                           stopLoss={stopLoss} setStopLoss={setStopLoss}
@@ -121,7 +126,7 @@ export const TradeItem = connect(null, actions)((props: IProps) => {
 				</div>
         <div className="flex-row-space-between">
           <p className={"text"}>Multiplier</p>
-          <p style={{fontSize: "0.875rem"}}>{props.trade.leverage || '-'}</p>
+          <p style={{fontSize: "0.875rem"}}>x{props.trade.leverage}</p>
         </div>
 				<div className="flex-row-space-between">
 					<p className={"text"}>Trade Opened</p>
