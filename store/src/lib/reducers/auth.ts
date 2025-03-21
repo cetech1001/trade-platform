@@ -12,8 +12,12 @@ let initialState: AuthState = {
 
 const _authData = localStorage.getItem("authData");
 if (_authData) {
-  const bytes = CryptoJS.AES.decrypt(_authData, environment.encryptionKey || 'default-1');
-  initialState = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  try {
+    const bytes = CryptoJS.AES.decrypt(_authData, environment.encryptionKey || 'default-1');
+    initialState = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 const reducer = (state = initialState, action: PayloadAction<AuthState>) => {
