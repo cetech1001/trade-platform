@@ -196,3 +196,13 @@ input::placeholder {
   font-size: .8125rem;
   cursor: pointer;
 }
+
+.main-content {
+  width: 100vw;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-top: 60px;
+  }
+}

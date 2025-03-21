@@ -22,7 +22,8 @@ export class AuthService {
     });
   }
 
-  async login(user: User) {
+  async login(userID: string) {
+    const user = await this.usersService.findOne({ id: userID });
     return {
       access_token: this.jwtService.sign({ ...user }),
       user,
