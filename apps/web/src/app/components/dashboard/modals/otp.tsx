@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { verifyOTP } from '@coinvant/store';
 import { connect } from 'react-redux';
+import { VerifyOTP } from '@coinvant/types';
 
 interface IProps {
+  email: string;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (isValid: boolean) => Promise<void>;
-  verifyOTP: (otp: string) => Promise<boolean>;
+  verifyOTP: (payload: VerifyOTP) => Promise<boolean>;
 }
 
 const actions = {
@@ -22,7 +24,7 @@ export const OTPModal = connect(null, actions)((props: IProps) => {
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      const isValid = await props.verifyOTP(otp);
+      const isValid = await props.verifyOTP({ otp, email: props.email });
       await props.onSubmit(isValid);
     } finally {
       setOtp('');

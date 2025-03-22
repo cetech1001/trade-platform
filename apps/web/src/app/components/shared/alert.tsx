@@ -18,7 +18,9 @@ const mapStateToProps = (state: RootState) => {
 const actions = { hideAlert };
 
 export const Alert = connect(mapStateToProps, actions)((props: IProps) => {
-  if (!props.alert.show) return null;
+  if (!props.alert.show) {
+    return null;
+  }
 
   useEffect(() => {
     if (props.alert.show) {

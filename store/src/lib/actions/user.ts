@@ -5,6 +5,8 @@ import { Account, CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@
 import { getDemoAccount, getError } from '../helpers';
 import { showAlert } from './alert';
 import { AccountService } from '../services/account';
+import * as CryptoJS from 'crypto-js';
+import { environment } from '../../environments/environment';
 
 export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -206,13 +208,19 @@ export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
 		});
 		const _authData = localStorage.getItem('authData');
 		if (_authData) {
-			const { access_token } = JSON.parse(_authData);
+      const bytes = CryptoJS.AES.decrypt(_authData, environment.encryptionKey || 'default-1');
+      const { access_token } = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
 			const authData = {
 				access_token,
 				user,
 			};
 
-			localStorage.setItem('authData', JSON.stringify(authData));
+      const encrypted = CryptoJS.AES.encrypt(
+        JSON.stringify(authData),
+        environment.encryptionKey || 'default-1'
+      ).toString();
+			localStorage.setItem('authData', encrypted);
 
 			dispatch({
 				type: AuthActions.LOGIN,
