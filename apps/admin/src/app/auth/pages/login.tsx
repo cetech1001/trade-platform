@@ -7,7 +7,7 @@ import {connect} from "react-redux";
 import {LoginRequest} from "@coinvant/types";
 
 interface IProps {
-  login: (payload: LoginRequest) => Promise<void>;
+  login: (payload: LoginRequest) => Promise<void | { skipVerification: boolean }>;
 }
 
 export const Login = connect(null, { login })((props: IProps) => {
@@ -21,7 +21,7 @@ export const Login = connect(null, { login })((props: IProps) => {
     setIsSubmitting(true);
     props.login({ email, password })
       .then(() => navigateTo(`/${AdminRoutes.overview}`))
-      .catch(() => {})
+      .catch(() => null)
       .finally(() => setIsSubmitting(false));
   }
 

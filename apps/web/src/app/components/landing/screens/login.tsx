@@ -2,15 +2,18 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { ActiveTab, LoginRequest } from '@coinvant/types';
 import {connect} from "react-redux";
 import {login} from "@coinvant/store";
+import { useNavigate } from 'react-router-dom';
 
 interface IProps {
-  login: (payload: LoginRequest) => Promise<void>;
+  login: (payload: LoginRequest) => Promise<void | { skipVerification: boolean; }>;
   setActiveTab: Dispatch<SetStateAction<ActiveTab>>;
 }
 
 const actions = { login };
 
 export const Login = connect(null, actions)((props: IProps) => {
+  const navigateTo = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,10 +21,16 @@ export const Login = connect(null, actions)((props: IProps) => {
 
   const onSubmit = () => {
     setIsSubmitting(true);
-    props.login({email, password})
-        .then(() => props.setActiveTab(ActiveTab.otp))
-        .catch(() => null)
-        .finally(() => setIsSubmitting(false));
+    props
+      .login({ email, password })
+      .then((data) => {
+        if (data?.skipVerification) {
+          return navigateTo('/platform');
+        }
+        props.setActiveTab(ActiveTab.otp);
+      })
+      .catch(() => null)
+      .finally(() => setIsSubmitting(false));
   };
 
   return (

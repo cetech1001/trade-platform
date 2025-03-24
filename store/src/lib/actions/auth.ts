@@ -1,16 +1,30 @@
 import * as CryptoJS from 'crypto-js';
 import { AuthService } from '../services';
-import { LoginRequest, LoginResponse, RegisterRequest } from '@coinvant/types';
-import { AppDispatch, sendOTP, setCurrentAccount, showAlert } from '../../index';
+import {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  UserRole,
+} from '@coinvant/types';
+import {
+  AppDispatch,
+  sendOTP,
+  setCurrentAccount,
+  showAlert,
+} from '../../index';
 import { AuthActions } from '../types';
 import { getDemoAccount, getError } from '../helpers';
 import { environment } from '../../environments/environment';
 
-const authenticate = async (payload: LoginRequest | RegisterRequest, actionType: 'login' | 'register', dispatch: AppDispatch) => {
+const authenticate = async (
+  payload: LoginRequest | RegisterRequest,
+  actionType: 'login' | 'register',
+  dispatch: AppDispatch
+) => {
   try {
     let response: LoginResponse;
 
-    if (actionType === "login") {
+    if (actionType === 'login') {
       response = await AuthService.login(payload as LoginRequest);
     } else {
       response = await AuthService.register(payload as RegisterRequest);
@@ -24,27 +38,36 @@ const authenticate = async (payload: LoginRequest | RegisterRequest, actionType:
 
     localStorage.setItem('email', payload.email);
 
-    return dispatch(sendOTP(payload.email));
+    if (response.user.role === UserRole.user && response.user.twoFA) {
+      return dispatch(sendOTP(payload.email));
+    } else {
+      await dispatch(completeAuth());
+      return { skipVerification: true };
+    }
   } catch (error) {
     const { message, status } = getError(error);
 
     if (status === 401) {
-      dispatch(showAlert({
-        message: 'Invalid login details.',
-        type: 'error',
-        show: true,
-      }));
+      dispatch(
+        showAlert({
+          message: 'Invalid login details.',
+          type: 'error',
+          show: true,
+        })
+      );
     } else {
-      dispatch(showAlert({
-        message,
-        type: 'error',
-        show: true,
-      }));
+      dispatch(
+        showAlert({
+          message,
+          type: 'error',
+          show: true,
+        })
+      );
     }
 
     return Promise.reject(message);
   }
-}
+};
 
 export const completeAuth = () => (dispatch: AppDispatch) => {
   try {
