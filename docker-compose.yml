@@ -1,0 +1,48 @@
+name: trade-platform
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "3000:3000"
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "4200:4200"
+  admin:
+    container_name: admin
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    ports:
+      - "4300:4300"
+  db:
+    container_name: db
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: trade_platform
+      MYSQL_USER: test
+      MYSQL_PASSWORD: 12345678
+    volumes:
+      - trade_platform_data:/var/lib/mysql
+  phpmyadmin:
+    container_name: pma
+    image: phpmyadmin/phpmyadmin:latest
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - "8080:80"
+
+volumes:
+  trade_platform_data:
