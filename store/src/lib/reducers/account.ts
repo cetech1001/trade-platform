@@ -60,7 +60,7 @@ const reducer = (state = initialState, action: PayloadAction<AccountState>) => {
 		case AccountActions.SET_CURRENT_ACCOUNT:
 			return {
 				...state,
-				selectedAccount: action.payload.selectedAccount,
+				highlightedAccount: action.payload.highlightedAccount,
 			}
 		default:
 			return state;

@@ -1,14 +1,14 @@
 import {Button, Col, Row} from "@themesberg/react-bootstrap";
 import {connect} from "react-redux";
 import { addAccount, fetchAccounts, openModal, RootState } from '@coinvant/store';
-import { Modals, PaginationOptions, User } from '@coinvant/types';
+import { Modals, PaginationOptions } from '@coinvant/types';
 import {useEffect, useState} from "react";
 import {AccountsTable} from "./partials/accounts-table";
 import { useParams } from 'react-router-dom';
 
 interface IProps {
   fetchAccounts: (userID: string) => void;
-  addAccount: () => void;
+  addAccount: (userID?: string) => void;
   openModal: (activeModal: Modals) => void;
 }
 
@@ -33,7 +33,7 @@ export const Accounts = connect(null, actions) ((props: IProps) => {
     <>
       <Row>
         <Col xs={12} sm={6} xl={4} className="mb-4">
-          <Button variant="outline-primary" onClick={props.addAccount}>
+          <Button variant="outline-primary" onClick={() => props.addAccount(userID)}>
             Add Account
           </Button>
         </Col>

@@ -2,8 +2,8 @@ import {api} from "./api";
 import { UpdateAccount, Account } from '@coinvant/types';
 
 export class AccountService {
-  static async createAccount(): Promise<Account> {
-    const { data } = await api.post('/account');
+  static async createAccount(userID?: string): Promise<Account> {
+    const { data } = await api.post(`/account/${userID}`);
     return data;
   }
 

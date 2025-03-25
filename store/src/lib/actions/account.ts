@@ -23,9 +23,9 @@ export const fetchAccounts = (accountID: string) => async (dispatch: AppDispatch
 	}
 }
 
-export const addAccount = () => async (dispatch: AppDispatch) => {
+export const addAccount = (userID?: string) => async (dispatch: AppDispatch) => {
 	try {
-		const data = await AccountService.createAccount();
+		const data = await AccountService.createAccount(userID);
 		dispatch({
 			type: AccountActions.CREATE,
 			payload: {
@@ -38,8 +38,9 @@ export const addAccount = () => async (dispatch: AppDispatch) => {
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to create account.',
+			message: message || 'Failed to create account.',
 			type: 'error',
 			show: true,
 		}));
@@ -94,7 +95,7 @@ export const setCurrentAccount = (account?: Account) => async (dispatch: AppDisp
 	dispatch({
 		type: AccountActions.SET_CURRENT_ACCOUNT,
 		payload: {
-			selectedAccount: account,
+			highlightedAccount: account,
 		},
 	});
 }

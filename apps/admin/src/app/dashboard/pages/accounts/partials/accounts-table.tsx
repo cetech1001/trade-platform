@@ -1,22 +1,33 @@
-import {Button, ButtonGroup, Card, Dropdown, Table} from "@themesberg/react-bootstrap";
-import { Modals, PaginationOptions, Account, AccountState } from '@coinvant/types';
-import {Dispatch, SetStateAction, useCallback} from "react";
-import {connect} from "react-redux";
-import {openModal, RootState, setCurrentAccount} from "@coinvant/store";
-import {EditAccountModal} from "./edit-account";
-import {DeleteAccountModal} from "./delete-account";
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  Dropdown,
+  Table,
+} from '@themesberg/react-bootstrap';
+import {
+  Account,
+  AccountType,
+  Modals,
+  PaginationOptions,
+} from '@coinvant/types';
+import { Dispatch, SetStateAction, useCallback } from 'react';
+import { connect } from 'react-redux';
+import { openModal, RootState, setCurrentAccount } from '@coinvant/store';
+import { EditAccountModal } from './edit-account';
+import { DeleteAccountModal } from './delete-account';
 import { formatCurrency, formatDate } from '../../../../helpers';
 
 interface IProps {
   options: PaginationOptions;
   setOptions: Dispatch<SetStateAction<PaginationOptions>>;
-  account: AccountState;
+  accounts: Account[];
   setCurrentAccount: (account: Account) => void;
   openModal: (activeModal: Modals) => void;
 }
 
 const mapStateToProps = (state: RootState) => ({
-  account: state.account,
+  accounts: state.account.list,
 });
 
 const actions = {
@@ -65,9 +76,11 @@ export const AccountsTable = connect(mapStateToProps, actions)((props: IProps) =
               <Dropdown.Item onClick={onEditClick}>
                 <i className="fa-solid fa-pen-to-square me-2"/> Edit
               </Dropdown.Item>
-              <Dropdown.Item className="text-danger" onClick={onDeleteClick}>
-                <i className="fa-solid fa-delete-left me-2"/> Remove
-              </Dropdown.Item>
+              {account.type !== AccountType.demo && (
+                <Dropdown.Item className="text-danger" onClick={onDeleteClick}>
+                  <i className="fa-solid fa-delete-left me-2"/> Remove
+                </Dropdown.Item>
+              )}
             </Dropdown.Menu>
           </Dropdown>
         </td>
@@ -88,7 +101,7 @@ export const AccountsTable = connect(mapStateToProps, actions)((props: IProps) =
           </tr>
           </thead>
           <tbody>
-          {props.account.list.map(account => (
+          {props.accounts.map(account => (
             <TableRow key={account.id} {...account}/>
           ))}
           </tbody>
