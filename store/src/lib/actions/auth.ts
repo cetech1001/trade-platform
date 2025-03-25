@@ -3,8 +3,8 @@ import { AuthService } from '../services';
 import {
   LoginRequest,
   LoginResponse,
-  RegisterRequest,
-  UserRole,
+  RegisterRequest, ResetPasswordRequest,
+  UserRole
 } from '@coinvant/types';
 import {
   AppDispatch,
@@ -133,6 +133,25 @@ export const sendResetLink = (email: string) => async (dispatch: AppDispatch) =>
       type: 'error',
       show: true,
     }));
+  }
+}
+
+export const resetPassword = (payload: ResetPasswordRequest) => async (dispatch: AppDispatch) => {
+  try {
+    await AuthService.resetPassword(payload);
+    dispatch(showAlert({
+      message: 'Password reset successfully',
+      type: 'success',
+      show: true,
+    }));
+  } catch (e) {
+    const { message } = getError(e);
+    dispatch(showAlert({
+      message,
+      type: 'error',
+      show: true,
+    }));
+    throw e;
   }
 }
 

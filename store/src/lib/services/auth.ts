@@ -1,6 +1,6 @@
 import axios from "axios"
 import {environment} from "../../environments/environment";
-import {LoginRequest, LoginResponse, RegisterRequest} from "@coinvant/types";
+import { LoginRequest, LoginResponse, RegisterRequest, ResetPasswordRequest, User } from '@coinvant/types';
 
 export class AuthService {
   static async login(payload: LoginRequest): Promise<LoginResponse> {
@@ -14,6 +14,10 @@ export class AuthService {
   }
 
   static sendResetLink(email: string) {
-    return axios.post(environment.api.baseURL + '/auth/reset-password', { email });
+    return axios.post(environment.api.baseURL + '/auth/send-reset-link', { email });
+  }
+
+  static resetPassword(payload: ResetPasswordRequest): Promise<User> {
+    return axios.post(environment.api.baseURL + '/auth/reset-password', payload);
   }
 }

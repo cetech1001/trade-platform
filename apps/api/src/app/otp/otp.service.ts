@@ -76,7 +76,7 @@ export class OTPService {
     this.otpStore.set(email, { otp, expiresAt });
     return this.emailService.sendMail(email, 'Reset Password', './reset-password', {
       name: user.name,
-      link: `${user.role === UserRole.admin ? environment.adminUrl : environment.webUrl}/reset/password?token=${otp}`,
+      link: `${user.role === UserRole.admin ? environment.adminUrl : environment.webUrl}/reset/password?token=${otp}&email=${user.email}`,
     });
   }
 
