@@ -1,18 +1,20 @@
-import { Controller, Post, UseGuards, Body, Req } from '@nestjs/common';
+import { Controller, Post, UseGuards, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {LocalAuthGuard} from "../../guards";
 import {ApiTags} from "@nestjs/swagger";
 import {CreateUserDto} from "../user/dto/create-user.dto";
 import {UserService} from "../user/user.service";
-import {LoginDto} from "./dto/login.dto";
+import { LoginDto, SendResetTokenDto } from './dto/login.dto';
 import {User, UserRole} from "@coinvant/types";
 import {CurrentUser} from "../../decorators";
+import { OTPService } from '../otp/otp.service';
 
 @ApiTags('Auth Controller')
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+    private otpService: OTPService,
     private userService: UserService) {}
 
   @UseGuards(LocalAuthGuard)
@@ -28,5 +30,10 @@ export class AuthController {
       role: UserRole.user,
     });
     return await this.authService.login(user);
+  }
+
+  @Post('reset-password')
+  async sendResetLink(@Body() resetDto: SendResetTokenDto) {
+    return this.otpService.generateResetLink(resetDto.email);
   }
 }

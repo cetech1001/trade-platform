@@ -118,6 +118,24 @@ export const register = (payload: RegisterRequest) => async (dispatch: AppDispat
   return authenticate(payload, 'register', dispatch);
 }
 
+export const sendResetLink = (email: string) => async (dispatch: AppDispatch) => {
+  try {
+    await AuthService.sendResetLink(email);
+    dispatch(showAlert({
+      message: 'Reset link sent to your email address',
+      type: 'success',
+      show: true,
+    }));
+  } catch (e) {
+    const { message } = getError(e);
+    dispatch(showAlert({
+      message,
+      type: 'error',
+      show: true,
+    }));
+  }
+}
+
 export const logout = () => async (dispatch: AppDispatch) => {
   localStorage.removeItem('authData');
   dispatch({

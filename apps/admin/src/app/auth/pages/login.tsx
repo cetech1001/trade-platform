@@ -15,6 +15,7 @@ export const Login = connect(null, { login })((props: IProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,7 +31,10 @@ export const Login = connect(null, { login })((props: IProps) => {
       <section className="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
         <Container>
           <Row className="justify-content-center form-bg-image">
-            <Col xs={12} className="d-flex align-items-center justify-content-center">
+            <Col
+              xs={12}
+              className="d-flex align-items-center justify-content-center"
+            >
               <div className="bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                 <div className="text-center text-md-center mb-4 mt-md-0">
                   <h3 className="mb-0">Sign in to our platform</h3>
@@ -40,10 +44,15 @@ export const Login = connect(null, { login })((props: IProps) => {
                     <Form.Label>Email</Form.Label>
                     <InputGroup>
                       <InputGroup.Text>
-                        <i className="fa-solid fa-envelope"/>
+                        <i className="fa-solid fa-envelope" />
                       </InputGroup.Text>
-                      <Form.Control autoFocus required type="email" value={email}
-                                    onChange={(e) => setEmail(e.target.value)} />
+                      <Form.Control
+                        autoFocus
+                        required
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
                     </InputGroup>
                   </Form.Group>
                   <Form.Group>
@@ -51,24 +60,54 @@ export const Login = connect(null, { login })((props: IProps) => {
                       <Form.Label>Password</Form.Label>
                       <InputGroup>
                         <InputGroup.Text>
-                          <i className="fa-solid fa-lock"/>
+                          <i className="fa-solid fa-lock" />
                         </InputGroup.Text>
-                        <Form.Control required type="password" value={password} autoComplete={'current-password'}
-                                      onChange={(e) => setPassword(e.target.value)} />
+                        <Form.Control
+                          required
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          autoComplete={'current-password'}
+                          onChange={(e) =>
+                            setPassword(e.target.value)}
+                        />
                       </InputGroup>
                     </Form.Group>
                     <div className="d-flex justify-content-between align-items-center mb-4">
                       <Form.Check type="checkbox">
-                        <FormCheck.Input id="defaultCheck5" className="me-2"/>
-                        <FormCheck.Label htmlFor="defaultCheck5" className="mb-0">Remember me</FormCheck.Label>
+                        <FormCheck.Input
+                          id="defaultCheck5"
+                          className="me-2"
+                          checked={showPassword}
+                          onChange={(e: {
+                            target: {
+                              checked:
+                                | boolean
+                                | ((prevState: boolean) => boolean);
+                            };
+                          }) => setShowPassword(e.target.checked)}
+                        />
+                        <FormCheck.Label
+                          htmlFor="defaultCheck5"
+                          className="mb-0"
+                        >
+                          Show Password
+                        </FormCheck.Label>
                       </Form.Check>
-                      <Card.Link as={Link} to={`/${AuthRoutes.forgotPassword}`} className="small text-end">
+                      <Card.Link
+                        as={Link}
+                        to={`/${AuthRoutes.forgotPassword}`}
+                        className="small text-end"
+                      >
                         Lost password?
                       </Card.Link>
                     </div>
                   </Form.Group>
-                  <Button variant="primary" type="submit" disabled={isSubmitting}
-                          className="w-100">
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-100"
+                  >
                     {isSubmitting ? 'Signing in...' : 'Sign in'}
                   </Button>
                 </Form>

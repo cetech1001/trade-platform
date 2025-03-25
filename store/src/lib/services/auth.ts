@@ -12,4 +12,8 @@ export class AuthService {
     const { data } = await axios.post(environment.api.baseURL + '/auth/register', payload);
     return data;
   }
+
+  static sendResetLink(email: string) {
+    return axios.post(environment.api.baseURL + '/auth/reset-password', { email });
+  }
 }

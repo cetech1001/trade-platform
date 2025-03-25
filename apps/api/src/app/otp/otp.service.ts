@@ -1,8 +1,10 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { EmailService } from '../email/email.service';
 import { UserService } from '../user/user.service';
 import { VerifyOTPDto } from './dto/verify-otp.dto';
+import { UserRole } from '@coinvant/types';
+import { environment } from '../../environments/environment';
 
 interface OTPData {
   otp: string;
@@ -52,6 +54,29 @@ export class OTPService {
     return this.emailService.sendMail(email, 'One Time Pin', './user/otp', {
       name: user.name,
       otp,
+    });
+  }
+
+  async generateResetLink(email: string) {
+    const user = await this.userService.findOne({ email });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const now = Date.now();
+    const lastRequestTime = this.rateLimitStore.get(email);
+    if (lastRequestTime && now - lastRequestTime < 60000) {
+      throw new BadRequestException('Too many reset requests. Please wait before trying again.');
+    }
+    this.rateLimitStore.set(email, now);
+
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const expiresAt = Date.now() + 5 * 60 * 1000;
+
+    this.otpStore.set(email, { otp, expiresAt });
+    return this.emailService.sendMail(email, 'Reset Password', './reset-password', {
+      name: user.name,
+      link: `${user.role === UserRole.admin ? environment.adminUrl : environment.webUrl}/reset/password?token=${otp}`,
     });
   }
 

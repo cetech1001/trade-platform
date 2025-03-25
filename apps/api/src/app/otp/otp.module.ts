@@ -8,5 +8,6 @@ import { UserModule } from '../user/user.module';
   imports: [EmailModule, UserModule],
   controllers: [OTPController],
   providers: [OTPService],
+  exports: [OTPService],
 })
 export class OTPModule {}
