@@ -1,26 +1,11 @@
-import { useState } from 'react';
-import {Navbar} from './screens/navbar';
-import {Sidebar} from './screens/sidebar';
-import {Home} from "./screens/home";
 import '../../styles/Landing.css';
+import { Route, Routes } from 'react-router-dom';
+import { Auth } from './auth';
 
 export const Landing = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
   return (
-    <div className="landing">
-      <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={sidebarOpen}/>
-      <Sidebar
-        isSidebarOpen={sidebarOpen}
-        toggleSidebar={toggleSidebar}
-      />
-      <div className="main-content">
-        <Home toggleSidebar={toggleSidebar}/>
-      </div>
-    </div>
+    <Routes>
+      <Route path={"/auth/*"} element={<Auth/>}/>
+    </Routes>
   );
 };

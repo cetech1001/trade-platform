@@ -17,10 +17,6 @@
   padding-top: 36px;
 }
 
-.navbar .logo {
-  color: rgba(255, 255, 255, 1);
-}
-
 .nav-item {
   display: flex;
   flex-direction: column;

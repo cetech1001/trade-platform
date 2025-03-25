@@ -1,6 +1,18 @@
 import {Trade, TradeAssetType} from "@coinvant/types";
 import axios from "axios";
 
+export const AUTH_ROUTES = {
+  login: '',
+  forgotPassword: 'forgot/password',
+  resetPassword: 'reset/password',
+};
+
+export enum AuthRoutes {
+  login = '/auth',
+  forgotPassword = '/auth/forgot/password',
+  resetPassword = '/auth/reset/password',
+}
+
 export const formatCurrency = (amount: number | string = 0): string => {
 	return Intl.NumberFormat('en-US', {
 		style: 'currency',

@@ -7,6 +7,7 @@ import { Dashboard } from './components/dashboard';
 import { refreshUserProfile, RootState } from '@coinvant/store';
 import { useEffect } from 'react';
 import PullToRefresh from 'pulltorefreshjs';
+import { AuthRoutes } from './helpers';
 
 interface IProps {
   auth: AuthState;
@@ -34,7 +35,6 @@ export const App = connect(mapStateToProps, actions)((props: IProps) => {
     PullToRefresh.init({
       mainElement: 'body',
       onRefresh() {
-        // window.location.reload();
         props.refreshUserProfile();
       },
       instructionsPullToRefresh: 'Pull down to refresh...',
@@ -52,10 +52,11 @@ export const App = connect(mapStateToProps, actions)((props: IProps) => {
       <Alert />
       <Routes>
         <Route path="/" element={<GuestRoute />}>
-          <Route path="/" element={<Landing />} />
+          <Route path={"/*"} element={<Landing />} />
+          <Route path={"/"} element={<Navigate to={AuthRoutes.login}/>}/>
         </Route>
         <Route path={'/platform'} element={<ProtectedRoute />}>
-          <Route path="/platform" element={<Dashboard />} />
+          <Route path={'/platform'} element={<Dashboard />} />
         </Route>
       </Routes>
     </>

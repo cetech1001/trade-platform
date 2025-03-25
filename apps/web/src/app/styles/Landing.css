@@ -1,34 +1,10 @@
+body {
+  overflow-x: hidden;
+}
+
 .landing {
-  background-color: rgba(14, 15, 18, 1);
   height: 100vh;
-  padding: 0 16px;
-}
-
-.landing .tabs button {
-  flex: 1;
-  justify-content: center;
-  color: #9cb0c2;
-}
-
-.landing .tabs button.active {
-  color: rgba(0, 148, 255, 1);
-  border-color: rgba(0, 148, 255, 1);
-}
-
-.landing .sidebar {
-  background-color: rgba(14, 15, 25, 1);
-}
-
-.landing .navbar {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.landing .navbar .button {
-  padding: 8px 16px;
-  font-size: 0.875rem;
-  margin-top: 0;
+  width: 100vw;
 }
 
 .landing .title {
@@ -46,72 +22,217 @@
   color: #9cb0c2;
 }
 
-.landing .home {
-  display: flex;
-  justify-content: center;
+.landing > .main-content {
+  height: 100vh;
 }
 
-.landing .home .content {
-  flex: 1;
-  padding: 5rem 0 0 5rem;
+.landing .home {
+  height: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .landing .home .image {
-  flex: 1;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 80vh;
+  background-image: url("/assets/images/auth-bg.png");
+  background-size: cover;
+  height: 100vh;
+  width: 60%;
+  position: relative;
 }
 
-.auth-error {
-  padding: 8px 16px;
-  background-color: #E24F32;
-  border-radius: 8px;
+.landing .home .image .logo-wrap {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  z-index: 5;
+}
+
+.landing .home .image .logo-wrap .logo {
+  height: 70px;
+  max-width: 100%;
+  border: none;
+  vertical-align: middle;
+}
+
+.landing .home .image .logo-wrap h4 {
   color: #fff;
+  font-size: 24px;
+  font-weight: 900;
+  margin-top: 76px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.landing .home .image .logo-wrap p {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 76px;
+  line-height: 1.5;
+}
+
+.landing .home .image .astronaut {
+  width: 430px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30%;
+  bottom: 20%;
+  margin: auto;
+  z-index: 3;
+}
+
+.landing .home .content {
+  width: 40%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  gap: 2rem;
+}
+
+.landing .home .content .logo {
+  height: 50px;
+}
+
+.landing .home .content .form-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.landing .home .content .form-box .title {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d0f3b;
   text-align: center;
 }
 
-/* Mobile view adjustments */
+.landing .home .content .form-box .tabs {
+  display: flex;
+  padding-bottom: 0.1rem;
+  border-bottom: 0.0625rem solid #e3eafa;
+}
+
+.landing .home .content .form-box .tabs .tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.landing .home .content .form-box .tabs .tab span {
+  cursor: pointer;
+  display: block;
+}
+
+.landing .home .content .form-box .tabs .tab .active-block {
+  width: 20px;
+  max-width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background-color: #16b7ad;
+}
+
+.landing .home .content .form-box .auth-link {
+  font-size: 14px;
+  text-decoration: none;
+  color: #00091f;
+}
+
+.landing .home .content .form-box .input-group {
+  line-height: 40px;
+}
+
+.landing .home .content .form-box .input-group label {
+  color: #243459;
+  font-size: 14px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.landing .home .content .form-box .input-group label span {
+  color: red;
+}
+
+.landing .home .content .form-box .input-group .input {
+  background-color: transparent;
+  background-image: none;
+  border-radius: 12px;
+  border: 1px solid #e3eafa;
+  box-sizing: border-box;
+  color: #00091f;
+  display: inline-block;
+  font-size: inherit;
+  outline: none;
+  padding: 0 15px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+}
+
+.landing .home .content .form-box button {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background-color: #0d0f3b;
+  border: 1px solid #0d0f3b;
+  color: #fff;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  transition: .1s;
+  font-weight: 500;
+  padding: 12px 23px;
+  font-size: 14px;
+  border-radius: 20px;
+}
+
 @media (max-width: 768px) {
-  .landing {
+  body {
+    background-image: url("/assets/images/auth-bg.png");
     height: 100vh;
-    padding: 16px;
+  }
+  .landing {
+    background-size: cover;
+    padding: 0 1rem;
   }
 
-  .landing .title {
+  .landing .navbar {
+    height: 10vh;
+  }
+
+  .landing .navbar img.logo {
+    width: 100px;
+    height: auto;
+  }
+
+  .landing > .main-content {
+    height: 80vh;
     width: 100%;
-    padding: 0;
-  }
-
-  .landing .title h3 {
-    font-size: 2rem;
-  }
-
-  .landing .title h5 {
-    font-size: 1.25rem;
-  }
-
-  .landing .home {
-    display: block;
-  }
-
-  .landing .home .content {
-    padding: 2rem 0;
+    display: flex;
+    justify-content: center;
   }
 
   .landing .home .image {
-    height: auto;
-    margin: 0 auto;
-    padding: 2rem 0;
+    display: none;
   }
 
-  .landing .tabs button {
-    font-size: 0.75rem;
-  }
-
-  .landing .navbar .button {
-    padding: 6px 12px;
-    font-size: 0.75rem;
+  .landing .home .content {
+    background-color: #FFFFFF;
+    flex: 1;
+    border-radius: 15px;
+    padding: 0 2rem;
+    max-width: 80%;
   }
 }
