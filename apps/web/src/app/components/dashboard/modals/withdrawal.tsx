@@ -38,7 +38,7 @@ const mapStateToProps = (state: RootState) => ({
   activeModal: state.modal.activeModal,
   paymentMethods: state.paymentMethod.list,
   user: state.auth.user,
-  account: state.user.selectedAccount,
+  account: state.account.highlightedAccount,
 });
 
 const actions = {

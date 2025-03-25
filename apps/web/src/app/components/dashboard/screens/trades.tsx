@@ -35,7 +35,7 @@ interface IProps {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  account: state.user.selectedAccount,
+  account: state.account.highlightedAccount,
   trades: state.trade.list,
   limit: state.trade.limit,
   totalCount: state.trade.totalCount,

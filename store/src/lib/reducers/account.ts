@@ -17,8 +17,7 @@ if (_authData) {
 
 const initialState: AccountState = {
 	list: [],
-	highlightedAccount: null,
-	selectedAccount: selectedAccount,
+	highlightedAccount: selectedAccount,
 }
 
 const reducer = (state = initialState, action: PayloadAction<AccountState>) => {

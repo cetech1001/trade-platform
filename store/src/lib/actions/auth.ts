@@ -34,8 +34,8 @@ const authenticate = async (
       JSON.stringify(response),
       environment.encryptionKey || 'default-1'
     ).toString();
-    localStorage.setItem('userData', encrypted);
 
+    localStorage.setItem('userData', encrypted);
     localStorage.setItem('email', payload.email);
 
     if (response.user.role === UserRole.user && response.user.twoFA) {

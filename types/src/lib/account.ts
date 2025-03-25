@@ -12,7 +12,6 @@ export interface Account {
 export interface AccountState {
   list: Account[];
   highlightedAccount: Account | null;
-  selectedAccount: Account | null;
 }
 
 export enum AccountType {

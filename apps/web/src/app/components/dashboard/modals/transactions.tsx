@@ -29,7 +29,7 @@ interface IProps {
 }
 
 const mapStateToProps = (state: RootState) => ({
-	account: state.user.selectedAccount,
+	account: state.account.highlightedAccount,
 	transactions: state.transaction.list,
 	totalCount: state.transaction.totalCount,
 	activeModal: state.modal.activeModal,
