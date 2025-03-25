@@ -23,7 +23,6 @@ export interface UserState {
   totalUserCount: number;
   totalUserPages: number;
   highlightedUser: User | null;
-  selectedAccount: Account | null;
   highlightedKYC: KYC | null;
 }
 

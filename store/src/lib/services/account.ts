@@ -7,6 +7,11 @@ export class AccountService {
     return data;
   }
 
+  static async getAccounts(userID: string): Promise<Account[]> {
+    const { data } = await api.get(`/account/${userID}`);
+    return data;
+  }
+
   static async updateAccount(id: string, payload: UpdateAccount): Promise<Account> {
     const { data } = await api.patch(`/account/${id}`, payload);
     return data;

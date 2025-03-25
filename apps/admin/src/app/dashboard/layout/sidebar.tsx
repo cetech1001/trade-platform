@@ -13,13 +13,6 @@ interface IProps {
   logout: () => void;
 }
 
-/*interface CollapsableNavItemProps {
-  eventKey: string;
-  title: string;
-  icon: string;
-  children: React.JSX.Element[];
-}*/
-
 interface NavItemProps {
   title: string;
   link: string;
@@ -42,29 +35,6 @@ export const Sidebar = connect(null, { logout })((props: IProps) => {
   }
 
   const onCollapse = () => setShow(!show);
-
-  /*const CollapsableNavItem: FC<CollapsableNavItemProps> = (props) => {
-    const { eventKey, title, icon, children = null } = props;
-    const defaultKey = pathname.indexOf(eventKey) !== -1 ? eventKey : "";
-
-    return (
-      <Accordion as={Nav.Item} defaultActiveKey={defaultKey}>
-        <Accordion.Item eventKey={eventKey}>
-          <Accordion.Button as={Nav.Link} className="d-flex justify-content-between align-items-center">
-            <span>
-              <span className="sidebar-icon"><i className={`fa-solid fa-${icon}`}/> </span>
-              <span className="sidebar-text">{title}</span>
-            </span>
-          </Accordion.Button>
-          <Accordion.Body className="multi-level">
-            <Nav className="flex-column">
-              {children}
-            </Nav>
-          </Accordion.Body>
-        </Accordion.Item>
-      </Accordion>
-    );
-  };*/
 
   const NavItem: FC<NavItemProps> = (props) => {
     const classNames = props.badgeText ? "d-flex justify-content-start align-items-center justify-content-between" : "";

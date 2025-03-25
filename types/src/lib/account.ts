@@ -9,6 +9,12 @@ export interface Account {
   updatedAt: string;
 }
 
+export interface AccountState {
+  list: Account[];
+  highlightedAccount: Account | null;
+  selectedAccount: Account | null;
+}
+
 export enum AccountType {
   live = 'live',
   demo = 'demo',

@@ -1,10 +1,9 @@
-import { AppDispatch } from '../../index';
+import { AppDispatch, setCurrentAccount } from '../../index';
 import { UserService } from '../services';
 import { AuthActions, UserActions } from '../types';
-import { Account, CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@coinvant/types';
+import { CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@coinvant/types';
 import { getDemoAccount, getError } from '../helpers';
 import { showAlert } from './alert';
-import { AccountService } from '../services/account';
 import * as CryptoJS from 'crypto-js';
 import { environment } from '../../environments/environment';
 
@@ -151,33 +150,6 @@ export const setCurrentKYC = (kyc: KYC) => async (dispatch: AppDispatch) => {
 			highlightedKYC: kyc,
 		},
 	});
-}
-
-export const setCurrentAccount = (account?: Account) => async (dispatch: AppDispatch) => {
-	dispatch({
-		type: UserActions.SET_CURRENT_ACCOUNT,
-		payload: {
-			selectedAccount: account,
-		},
-	});
-}
-
-export const addAccount = () => async (dispatch: AppDispatch) => {
-	try {
-		await AccountService.createAccount();
-		dispatch(refreshUserProfile());
-		dispatch(showAlert({
-			message: 'Account created successfully.',
-			type: 'success',
-			show: true,
-		}));
-	} catch (error) {
-		dispatch(showAlert({
-			message: 'Failed to create account',
-			type: 'error',
-			show: true,
-		}));
-	}
 }
 
 export const uploadKYC = (formData: FormData) => async (dispatch: AppDispatch) => {

@@ -7,6 +7,7 @@ export enum AuthRoutes {
 export enum AdminRoutes {
   overview = 'dashboard',
   users = 'dashboard/users',
+  accounts = 'dashboard/accounts',
   paymentMethods = 'dashboard/payment/methods',
   deposits = 'dashboard/deposits',
   withdrawals = 'dashboard/withdrawals',

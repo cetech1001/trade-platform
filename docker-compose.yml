@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
       - "3000:3000"
   web:
@@ -12,6 +15,9 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
       - "4200:4200"
   admin:
@@ -19,6 +25,9 @@ services:
     build:
       context: .
       dockerfile: apps/admin/Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
       - "4300:4300"
   db:
