@@ -8,7 +8,7 @@ const ASSETS_TO_CACHE = [
   '/assets/favicons/favicon-96x96.png',
   '/assets/favicons/web-app-manifest-192x192.png',
   '/assets/favicons/web-app-manifest-512x512.png',
-  '/assets/home_img_desktop.webp',
+  '/assets/images/auth-bg.png',
   '/assets/manifest.json'
 ];
 

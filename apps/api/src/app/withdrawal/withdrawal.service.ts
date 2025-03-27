@@ -52,10 +52,10 @@ export class WithdrawalService {
       }, queryRunner);
 
       Promise.all([
-        this.emailService.sendMail(user.email, 'Withdrawal Request Received', './user/new-withdrawal', {
+        /*this.emailService.sendMail(user.email, 'Withdrawal Request Received', './user/new-withdrawal', {
           name: user.name,
           amount: formatCurrency(withdrawal.amount),
-        }),
+        }),*/
         this.emailService.sendMail(environment.supportEmail, 'New Withdrawal Alert', './admin/new-withdrawal', {
           name: user.name,
           amount: formatCurrency(withdrawal.amount),

@@ -1,16 +1,6 @@
-import { Account, AccountType, UserState } from '@coinvant/types';
+import { UserState } from '@coinvant/types';
 import {PayloadAction} from "@reduxjs/toolkit";
 import {UserActions} from "../types";
-
-let selectedAccount = null;
-const _authData = localStorage.getItem("authData");
-if (_authData) {
-	const authData = JSON.parse(_authData);
-	if (authData?.user?.accounts) {
-		selectedAccount = authData.user.accounts.find(({ type }: Account) =>
-			type === AccountType.demo);
-	}
-}
 
 const initialState: UserState = {
 	totalUserCount: 0,
@@ -21,7 +11,6 @@ const initialState: UserState = {
 	kycList: [],
 	highlightedUser: null,
 	highlightedKYC: null,
-	selectedAccount: selectedAccount,
 }
 
 const reducer = (state = initialState, action: PayloadAction<UserState>) => {
@@ -87,11 +76,6 @@ const reducer = (state = initialState, action: PayloadAction<UserState>) => {
 			return {
 				...state,
 				highlightedKYC: action.payload.highlightedKYC,
-			}
-		case UserActions.SET_CURRENT_ACCOUNT:
-			return {
-				...state,
-				selectedAccount: action.payload.selectedAccount,
 			}
 		default:
 			return state;

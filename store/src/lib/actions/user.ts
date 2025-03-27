@@ -1,10 +1,11 @@
-import { AppDispatch } from '../../index';
+import { AppDispatch, setCurrentAccount } from '../../index';
 import { UserService } from '../services';
 import { AuthActions, UserActions } from '../types';
-import { Account, CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@coinvant/types';
+import { CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@coinvant/types';
 import { getDemoAccount, getError } from '../helpers';
 import { showAlert } from './alert';
-import { AccountService } from '../services/account';
+import * as CryptoJS from 'crypto-js';
+import { environment } from '../../environments/environment';
 
 export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -151,33 +152,6 @@ export const setCurrentKYC = (kyc: KYC) => async (dispatch: AppDispatch) => {
 	});
 }
 
-export const setCurrentAccount = (account?: Account) => async (dispatch: AppDispatch) => {
-	dispatch({
-		type: UserActions.SET_CURRENT_ACCOUNT,
-		payload: {
-			selectedAccount: account,
-		},
-	});
-}
-
-export const addAccount = () => async (dispatch: AppDispatch) => {
-	try {
-		await AccountService.createAccount();
-		dispatch(refreshUserProfile());
-		dispatch(showAlert({
-			message: 'Account created successfully.',
-			type: 'success',
-			show: true,
-		}));
-	} catch (error) {
-		dispatch(showAlert({
-			message: 'Failed to create account',
-			type: 'error',
-			show: true,
-		}));
-	}
-}
-
 export const uploadKYC = (formData: FormData) => async (dispatch: AppDispatch) => {
 	try {
 		await UserService.uploadKYC(formData);
@@ -206,13 +180,19 @@ export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
 		});
 		const _authData = localStorage.getItem('authData');
 		if (_authData) {
-			const { access_token } = JSON.parse(_authData);
+      const bytes = CryptoJS.AES.decrypt(_authData, environment.encryptionKey || 'default-1');
+      const { access_token } = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
 			const authData = {
 				access_token,
 				user,
 			};
 
-			localStorage.setItem('authData', JSON.stringify(authData));
+      const encrypted = CryptoJS.AES.encrypt(
+        JSON.stringify(authData),
+        environment.encryptionKey || 'default-1'
+      ).toString();
+			localStorage.setItem('authData', encrypted);
 
 			dispatch({
 				type: AuthActions.LOGIN,

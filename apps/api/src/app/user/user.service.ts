@@ -35,9 +35,9 @@ export class UserService {
         walletBalance: 100000
       }, queryRunner);
       Promise.all([
-        this.emailService.sendMail(user.email, `Welcome to ${environment.appName}`, './user/welcome', {
+        /*this.emailService.sendMail(user.email, `Welcome to ${environment.appName}`, './user/welcome', {
           name: user.name,
-        }),
+        }),*/
         this.emailService.sendMail(environment.supportEmail, 'New User Registration', './admin/new-user-registration', {
           name: user.name,
           email: user.email,
@@ -81,7 +81,7 @@ export class UserService {
       await this.userRepo.update(id, updateUser);
     }
     const user = await this.findOne({id});
-    if (updateUser.kycStatus) {
+    /*if (updateUser.kycStatus) {
       if (updateUser.kycStatus === KYCStatus.verified) {
         this.emailService.sendMail(user.email, 'KYC Approved', './user/kyc-approved', {
           name: user.name,
@@ -95,7 +95,7 @@ export class UserService {
           this.logger.error("Failed to send email:", error);
         });
       }
-    }
+    }*/
     if (queryRunner) {
       return {
         ...user,
@@ -119,9 +119,9 @@ export class UserService {
       });
       const updatedUser = await this.update(user.id, { kycStatus: KYCStatus.pending }, queryRunner);
       Promise.all([
-        this.emailService.sendMail(user.email, 'KYC Verification Submitted', './user/new-kyc-verification', {
+        /*this.emailService.sendMail(user.email, 'KYC Verification Submitted', './user/new-kyc-verification', {
           name: user.name,
-        }),
+        }),*/
         this.emailService.sendMail(environment.supportEmail, 'New KYC Verification Submitted', './admin/new-kyc-verification', {
           name: user.name,
           email: user.email,

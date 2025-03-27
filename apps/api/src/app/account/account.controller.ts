@@ -1,4 +1,15 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards
+} from '@nestjs/common';
 import { AccountService } from './account.service';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -14,19 +25,20 @@ import { RolesGuard } from '../../guards/roles.guard';
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
-  @Post()
-  @Roles(UserRole.user)
-  create(@CurrentUser() user: User) {
-    if (user.accounts.find(a => a.type === AccountType.live)) {
+  @Post(':userID?')
+  @Roles(UserRole.user, UserRole.admin)
+  create(@Param('userID') userID: string, @CurrentUser() user: User) {
+    if (user.role === UserRole.user
+      && user.accounts.find(a => a.type === AccountType.live)) {
       throw new BadRequestException('You already have a live account');
     }
-    if (user.kycStatus !== KYCStatus.verified) {
+    if (user.role === UserRole.user && user.kycStatus !== KYCStatus.verified) {
       throw new BadRequestException('Please verify your identity first');
     }
     return this.accountService.create({
       type: AccountType.live,
       user,
-    });
+    }, undefined, userID);
   }
 
   @Get(':userID')

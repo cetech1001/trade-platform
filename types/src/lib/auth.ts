@@ -19,4 +19,10 @@ export interface RegisterRequest extends LoginRequest {
   name: string;
 }
 
-export interface AuthUser extends Omit<User, 'password'> {}
+export interface ResetPasswordRequest {
+  email: string;
+  password: string;
+  otp: string;
+}
+
+export type AuthUser = Omit<User, 'password'>;

@@ -7,6 +7,7 @@ export const environment = {
   production: false,
   port: process.env.PORT || 3000,
   appName: process.env.NX_REACT_APP_SITE_NAME,
+  webUrl: process.env.NX_REACT_APP_WEB_URL,
   adminUrl: process.env.NX_REACT_APP_ADMIN_URL,
   db: {
     type: (process.env.DB_TYPE as 'mysql' | 'mariadb') || 'mysql',
@@ -36,6 +37,6 @@ export const environment = {
   },
   supportEmail: process.env.SUPPORT_EMAIL,
   polygonAPIKey: process.env.POLYGON_API_KEY,
-  alphaVantageAPIKey: process.env.ALPHA_VANTAGE_KEY,
+  alphaVantageAPIKey: process.env.ALPHA_VANTAGE_API_KEY,
   assetsPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
 }

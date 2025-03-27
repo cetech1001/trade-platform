@@ -1,16 +1,11 @@
-import {Home} from "./screens/home";
 import '../../styles/Landing.css';
-import { useIsMobile } from '../../../hooks';
-import { Navbar } from './screens/navbar';
+import { Route, Routes } from 'react-router-dom';
+import { Auth } from './auth';
 
 export const Landing = () => {
-  const isMobile = useIsMobile();
   return (
-    <div className="landing">
-      {isMobile && <Navbar />}
-      <div className="main-content">
-        <Home/>
-      </div>
-    </div>
+    <Routes>
+      <Route path={"/auth/*"} element={<Auth/>}/>
+    </Routes>
   );
 };

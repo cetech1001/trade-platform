@@ -16,6 +16,7 @@ const initialState = {
 	name: "",
 	password: "",
 	role: UserRole.user,
+  twoFA: true,
 	status: UserStatus.active,
 };
 

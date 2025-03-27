@@ -10,3 +10,4 @@ export * from "./trade-asset";
 export * from "./trade";
 export * from "./email";
 export * from "./otp";
+export * from "./account";

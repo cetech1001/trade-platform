@@ -1,13 +1,24 @@
 import { AuthState } from '@coinvant/types';
 import {PayloadAction} from "@reduxjs/toolkit";
 import {AuthActions} from "../types";
+import * as CryptoJS from 'crypto-js';
+import { environment } from '../../environments/environment';
 
-const _authData = localStorage.getItem("authData");
 
-const initialState: AuthState = _authData ? JSON.parse(_authData) : {
+let initialState: AuthState = {
   user: null,
   accessToken: '',
 };
+
+const _authData = localStorage.getItem("authData");
+if (_authData) {
+  try {
+    const bytes = CryptoJS.AES.decrypt(_authData, environment.encryptionKey || 'default-1');
+    initialState = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 const reducer = (state = initialState, action: PayloadAction<AuthState>) => {
   const { type, payload } = action;

@@ -6,6 +6,8 @@ import {connect} from "react-redux";
 import {openModal, RootState, setCurrentUser} from "@coinvant/store";
 import {EditUserModal} from "./edit-user";
 import {DeleteUserModal} from "./delete-user";
+import { useNavigate } from 'react-router-dom';
+import { AdminRoutes } from '../../../../routes';
 
 interface IProps {
   options: PaginationOptions;
@@ -26,6 +28,7 @@ const actions = {
 
 export const UsersTable = connect(mapStateToProps, actions)((props: IProps) => {
   const TableRow = (user: User) => {
+    const navigateTo = useNavigate();
     const statusVariant = useMemo(() =>
       user.status === UserStatus.active ? "success" : "danger", [user]);
 
@@ -37,6 +40,11 @@ export const UsersTable = connect(mapStateToProps, actions)((props: IProps) => {
     const onDeleteClick = useCallback(() => {
       props.setCurrentUser(user);
       props.openModal(Modals.deleteUser);
+    }, [user]);
+
+    const onAccountsViewClick = useCallback(() => {
+      props.setCurrentUser(user);
+      navigateTo(`/${AdminRoutes.accounts}/${user.id}`)
     }, [user]);
 
     return (
@@ -69,9 +77,9 @@ export const UsersTable = connect(mapStateToProps, actions)((props: IProps) => {
         <td>
           <Dropdown as={ButtonGroup}>
             <Dropdown.Toggle as={Button} split variant="link" className="text-dark m-0 p-0">
-			              <span className="icon icon-sm">
-			                <i className="fa-solid fa-ellipsis icon-dark"/>
-			              </span>
+              <span className="icon icon-sm">
+                <i className="fa-solid fa-ellipsis icon-dark"/>
+              </span>
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item onClick={onEditClick}>
@@ -79,6 +87,10 @@ export const UsersTable = connect(mapStateToProps, actions)((props: IProps) => {
               </Dropdown.Item>
               <Dropdown.Item className="text-danger" onClick={onDeleteClick}>
                 <i className="fa-solid fa-delete-left me-2"/> Remove
+              </Dropdown.Item>
+              <Dropdown.Item className="text-warning"
+                             onClick={onAccountsViewClick}>
+                <i className="fa-solid fa-eye me-2"/> View Accounts
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>

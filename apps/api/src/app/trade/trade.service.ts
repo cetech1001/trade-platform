@@ -123,7 +123,7 @@ export class TradeService {
           queryRunner
         );
 
-        const user = await this.userService.findByAccountID(trade.account.id);
+        /*const user = await this.userService.findByAccountID(trade.account.id);
         this.emailService.sendMail(
           user.email,
           'Trade Order Closed',
@@ -133,7 +133,7 @@ export class TradeService {
             orderID: trade.id,
             asset: trade.asset.symbol,
           }
-        ).catch(console.error);
+        ).catch(console.error);*/
       }
     });
   }
@@ -189,11 +189,11 @@ export class TradeService {
       await this.accountService.decreaseBalance(account.id, createTrade.bidAmount, queryRunner);
 
       Promise.all([
-        this.emailService.sendMail(user.email, 'Trade Order Placed', './user/new-order', {
+        /*this.emailService.sendMail(user.email, 'Trade Order Placed', './user/new-order', {
           name: user.name,
           orderID: trade.id,
           asset: asset.symbol,
-        }),
+        }),*/
         this.emailService.sendMail(environment.supportEmail, 'New Trade Order', './admin/new-order', {
           name: user.name,
           orderID: trade.id,

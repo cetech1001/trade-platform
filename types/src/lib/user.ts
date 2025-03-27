@@ -10,6 +10,7 @@ export interface User {
   status: UserStatus;
   role: UserRole;
   accounts: Account[];
+  twoFA: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -22,7 +23,6 @@ export interface UserState {
   totalUserCount: number;
   totalUserPages: number;
   highlightedUser: User | null;
-  selectedAccount: Account | null;
   highlightedKYC: KYC | null;
 }
 

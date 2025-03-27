@@ -56,10 +56,10 @@ export class DepositService {
       }, queryRunner);
 
       Promise.all([
-        this.emailService.sendMail(user.email, 'Deposit Request Received', './user/new-deposit', {
+        /*this.emailService.sendMail(user.email, 'Deposit Request Received', './user/new-deposit', {
           name: user.name,
           amount: formatCurrency(deposit.amount),
-        }),
+        }),*/
         this.emailService.sendMail(environment.supportEmail, 'New Deposit Alert', './admin/new-deposit', {
           name: user.name,
           amount: formatCurrency(deposit.amount),
@@ -115,21 +115,21 @@ export class DepositService {
       if (updateDeposit.status === DepositStatus.confirmed) {
         await this.accountService.increaseBalance(deposit.account.id, deposit.amount, queryRunner);
 
-        this.emailService.sendMail(user.email, 'Deposit Confirmed', './user/deposit-confirmed', {
+        /*this.emailService.sendMail(user.email, 'Deposit Confirmed', './user/deposit-confirmed', {
           name: user.name,
           amount: formatCurrency(deposit.amount),
         }).catch(error => {
           this.logger.error("Failed to send email: ", error);
-        });
+        });*/
       }
 
       if (updateDeposit.status === DepositStatus.rejected) {
-        this.emailService.sendMail(user.email, 'Deposit Rejected', './user/deposit-rejected', {
+        /*this.emailService.sendMail(user.email, 'Deposit Rejected', './user/deposit-rejected', {
           name: user.name,
           amount: formatCurrency(deposit.amount),
         }).catch(error => {
           this.logger.error("Failed to send email: ", error);
-        });
+        });*/
       }
 
       await this.transactionService.update(id, updateDeposit, queryRunner);

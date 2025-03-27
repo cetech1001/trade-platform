@@ -3,4 +3,5 @@ export const environment = {
   api: {
     baseURL: process.env['NX_REACT_APP_API_URL'] || 'http://localhost:3000',
   },
+  encryptionKey: process.env['NX_REACT_APP_ENCRYPTION_KEY'],
 }

@@ -2,13 +2,43 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccountEntity } from './entities/account.entity';
 import { QueryRunner, Repository } from 'typeorm';
-import { CreateAccount, UpdateAccount } from '@coinvant/types';
+import {
+  AccountType,
+  CreateAccount,
+  UpdateAccount,
+  UserRole,
+} from '@coinvant/types';
 
 @Injectable()
 export class AccountService {
-  constructor(@InjectRepository(AccountEntity) private readonly accountRepo: Repository<AccountEntity>) {}
+  constructor(
+    @InjectRepository(AccountEntity)
+    private readonly accountRepo: Repository<AccountEntity>
+  ) {}
 
-  create(createAccount: CreateAccount, queryRunner?: QueryRunner) {
+  async create(
+    createAccount: CreateAccount,
+    queryRunner?: QueryRunner,
+    userID?: string
+  ) {
+    const accountExists = await this.accountRepo.findOne({
+      where: {
+        user: { id: userID },
+        type: createAccount.type,
+      }
+    });
+
+    if (accountExists) {
+      throw new BadRequestException(`User already has a ${accountExists.type} account`);
+    }
+
+    if (createAccount.user.role === UserRole.admin) {
+      return this.accountRepo.save({
+        type: AccountType.live,
+        user: (userID as any),
+      });
+    }
+
     if (queryRunner) {
       return queryRunner.manager.save(AccountEntity, createAccount);
     }
@@ -16,7 +46,9 @@ export class AccountService {
   }
 
   async find(userID: string) {
-    const accounts = await this.accountRepo.find({ where: { user: { id: userID } } });
+    const accounts = await this.accountRepo.find({
+      where: { user: { id: userID } },
+    });
     if (accounts.length === 0) {
       throw new BadRequestException('No accounts found for this user.');
     }
@@ -26,12 +58,16 @@ export class AccountService {
   async findOne(id: string) {
     const account = await this.accountRepo.findOneBy({ id });
     if (!account) {
-      throw new BadRequestException("Account does not exist");
+      throw new BadRequestException('Account does not exist');
     }
     return account;
   }
 
-  async update(id: string, updateAccount: UpdateAccount, queryRunner?: QueryRunner) {
+  async update(
+    id: string,
+    updateAccount: UpdateAccount,
+    queryRunner?: QueryRunner
+  ) {
     if (queryRunner) {
       await queryRunner.manager.update(AccountEntity, id, updateAccount);
     } else {
@@ -45,8 +81,12 @@ export class AccountService {
     if (!accountExists) {
       throw new BadRequestException('Account does not exist');
     }
-    return queryRunner.manager
-      .increment(AccountEntity, { id }, 'walletBalance', amount);
+    return queryRunner.manager.increment(
+      AccountEntity,
+      { id },
+      'walletBalance',
+      amount
+    );
   }
 
   async decreaseBalance(id: string, amount: number, queryRunner: QueryRunner) {
@@ -54,8 +94,12 @@ export class AccountService {
     if (!accountExists) {
       throw new BadRequestException('Account does not exist');
     }
-    return queryRunner.manager
-      .decrement(AccountEntity, { id }, 'walletBalance', amount);
+    return queryRunner.manager.decrement(
+      AccountEntity,
+      { id },
+      'walletBalance',
+      amount
+    );
   }
 
   remove(id: string) {

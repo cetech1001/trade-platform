@@ -4,9 +4,10 @@ import process from 'node:process';
 dotenv.config();
 
 export const environment = {
-  production: false,
+  production: true,
   port: process.env.PORT || 3000,
   appName: process.env.NX_REACT_APP_SITE_NAME,
+  webUrl: process.env.NX_REACT_APP_WEB_URL,
   adminUrl: process.env.NX_REACT_APP_ADMIN_URL,
   db: {
     type: (process.env.DB_TYPE as 'mysql' | 'mariadb') || 'mysql',

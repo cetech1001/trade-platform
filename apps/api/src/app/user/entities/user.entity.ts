@@ -1,6 +1,6 @@
 import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
-import {IsEmail, IsIn, IsNotEmpty, IsOptional, IsString} from "class-validator";
+import { IsBoolean, IsEmail, IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Account, KYCStatus, User, UserRole, UserStatus } from '@coinvant/types';
 import { AccountEntity } from '../../account/entities/account.entity';
 
@@ -58,6 +58,12 @@ export class UserEntity implements User{
     default: UserStatus.active,
   })
   status: UserStatus;
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean, required: false })
+  @Column({ default: false })
+  twoFA: boolean;
 
   @OneToMany(
     () => AccountEntity,

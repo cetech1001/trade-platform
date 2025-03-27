@@ -18,7 +18,7 @@ interface IProps {
 
 const mapStateToProps = (state: RootState) => ({
 	asset: state.tradeAsset.currentAsset,
-	account: state.user.selectedAccount,
+	account: state.account.highlightedAccount,
 });
 
 const actions = {
