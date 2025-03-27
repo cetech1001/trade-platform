@@ -36,7 +36,7 @@ export const environment = {
     },
   },
   supportEmail: process.env.SUPPORT_EMAIL,
-  polygonAPI: process.env.POLYGON_API,
-  alphaVantageAPIKey: process.env.ALPHA_VANTAGE_KEY,
+  polygonAPIKey: process.env.POLYGON_API_KEY,
+  alphaVantageAPIKey: process.env.ALPHA_VANTAGE_API_KEY,
   assetsPath: path.join(process.cwd(), 'assets'),
 }
