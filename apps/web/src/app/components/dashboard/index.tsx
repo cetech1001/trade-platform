@@ -53,6 +53,10 @@ export const Dashboard = connect(null, actions)((props: IProps) => {
 		};
 	}, []);
 
+  useEffect(() => {
+    console.log(activeNav);
+  }, [activeNav]);
+
 	return (
 		<div className={'main'}>
 			<TopBar/>
