@@ -2,6 +2,7 @@ import {AppDispatch, showAlert} from "../../index";
 import {PaymentMethodService} from "../services";
 import {PaymentMethodActions} from "../types";
 import {CreatePaymentMethod, PaginationOptions, UpdatePaymentMethod, PaymentMethod} from "@coinvant/types";
+import { getError } from '../helpers';
 
 export const fetchPaymentMethods = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -15,8 +16,9 @@ export const fetchPaymentMethods = (options?: PaginationOptions) => async (dispa
 			},
 		});
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to fetch payment methods.',
+			message: message || 'Failed to fetch payment methods.',
 			type: 'error',
 			show: true,
 		}));
@@ -38,8 +40,9 @@ export const addPaymentMethod = (payload: CreatePaymentMethod) => async (dispatc
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to create payment method.',
+			message: message || 'Failed to create payment method.',
 			type: 'error',
 			show: true,
 		}));
@@ -61,8 +64,9 @@ export const editPaymentMethod = (id: string, payload: UpdatePaymentMethod) => a
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to update payment method.',
+			message: message || 'Failed to update payment method.',
 			type: 'error',
 			show: true,
 		}));
@@ -81,8 +85,9 @@ export const removePaymentMethod = (id: string) => async (dispatch: AppDispatch)
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to delete payment method.',
+			message: message || 'Failed to delete payment method.',
 			type: 'error',
 			show: true,
 		}));

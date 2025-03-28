@@ -15,8 +15,9 @@ export const fetchAccounts = (accountID: string) => async (dispatch: AppDispatch
 			},
 		});
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to fetch accounts.',
+			message: message || 'Failed to fetch accounts.',
 			type: 'error',
 			show: true,
 		}));
@@ -83,8 +84,9 @@ export const removeAccount = (id: string) => async (dispatch: AppDispatch) => {
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to delete account.',
+			message: message || 'Failed to delete account.',
 			type: 'error',
 			show: true,
 		}));
