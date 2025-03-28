@@ -19,7 +19,7 @@ export class WithdrawalEntity implements Withdrawal {
 	id: string;
 
 	@Column('decimal', {
-		precision: 8,
+		precision: 10,
 		scale: 2,
 		default: 0,
 	})

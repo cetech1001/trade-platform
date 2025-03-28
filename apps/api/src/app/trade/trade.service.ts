@@ -298,6 +298,7 @@ export class TradeService {
       } else {
         updateTrade.buyPrice = updateTrade.openingPrice;
       }
+      updateTrade.units = (trade.bidAmount * trade.leverage) / updateTrade.openingPrice;
       delete updateTrade.openingPrice;
     }
 
