@@ -234,7 +234,8 @@ export const Order = connect(mapStateToProps, actions)((props: IProps) => {
 			<div>
 				<div className={'amount-input'}>
 					<span>Selected Trade Asset</span>
-					<input type={'text'} value={props.asset?.symbol || 'N/A'} readOnly={true}/>
+					<input type={'text'} value={props.asset?.symbol.toUpperCase() || 'N/A'}
+                 readOnly={true}/>
 				</div>
 				<div className={'amount-input'}>
 					<span>Amount, $</span>

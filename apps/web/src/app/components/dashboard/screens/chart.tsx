@@ -1,13 +1,16 @@
 import { useEffect, useRef } from 'react';
-import {connect} from "react-redux";
-import {RootState} from "@coinvant/store";
+import { connect } from 'react-redux';
+import { RootState } from '@coinvant/store';
+import { TradeAssetType } from '@coinvant/types';
 
 interface IProps {
     symbol: string | undefined;
+    type: TradeAssetType | undefined;
 }
 
 const mapStateToProps = (state: RootState) => ({
-    symbol: state.tradeAsset.currentAsset?.symbol,
+  symbol: state.tradeAsset.currentAsset?.symbol,
+  type: state.tradeAsset.currentAsset?.type,
 })
 
 export const Chart = connect(mapStateToProps)((props: IProps) => {
@@ -18,13 +21,23 @@ export const Chart = connect(mapStateToProps)((props: IProps) => {
           container.current.innerHTML = '';
       }
 
+      let symbol = "BTCUSDT";
+
+      if (props.symbol && props.type) {
+        if (props.type === TradeAssetType.crypto) {
+          symbol = `${props.symbol?.toUpperCase()}USDT`;
+        } else {
+          symbol = props.symbol?.toUpperCase().replace(/\//g, '');
+        }
+      }
+
       const script = document.createElement("script");
       script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
       script.type = "text/javascript";
       script.async = true;
       script.innerHTML = JSON.stringify({
           "autosize": true,
-          "symbol": props.symbol?.toUpperCase().replace(/\//g, '') || "BTC",
+          "symbol": symbol,
           "interval": "1",
           "timezone": "Etc/UTC",
           "theme": "dark",
