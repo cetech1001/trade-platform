@@ -41,12 +41,11 @@ export const Chart = connect(mapStateToProps)((props: IProps) => {
           "interval": "1",
           "timezone": "Etc/UTC",
           "theme": "dark",
-          "style": "3",
+          "style": "1",
           "locale": "en",
           "enable_publishing": false,
           "allow_symbol_change": true,
           "calendar": false,
-          "hide_volume": true,
           "support_host": "https://www.tradingview.com",
       });
 

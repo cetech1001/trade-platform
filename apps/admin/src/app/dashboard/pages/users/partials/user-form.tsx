@@ -55,6 +55,15 @@ export const UserForm = (props: IProps) => {
 				</Form.Select>
 			</Form.Group>
 
+      <Form.Group className="mb-3">
+        <Form.Label>Two-Factor Authentication?</Form.Label>
+        <Form.Select defaultValue={String(props.payload.twoFA)}
+                     name={"twoFA"} onChange={props.onChange} required>
+            <option value={"true"}>On</option>
+            <option value={"false"}>Off</option>
+        </Form.Select>
+      </Form.Group>
+
 			<Button variant="primary" type="submit" disabled={props.isSubmitting}>
 				{props.isSubmitting ? 'Submitting...' : 'Submit'}
 			</Button>

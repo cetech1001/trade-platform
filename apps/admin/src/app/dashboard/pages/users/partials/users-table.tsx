@@ -65,6 +65,11 @@ export const UsersTable = connect(mapStateToProps, actions)((props: IProps) => {
 	              </span>
         </td>
         <td>
+	              <span className="fw-normal">
+	                {user.twoFA ? "On" : "Off"}
+	              </span>
+        </td>
+        <td>
 	              <span className={`fw-normal text-${statusVariant}`}>
 	                {user.status}
 	              </span>
@@ -108,6 +113,7 @@ export const UsersTable = connect(mapStateToProps, actions)((props: IProps) => {
             <th className="border-bottom">Name</th>
             <th className="border-bottom">Email address</th>
             <th className="border-bottom">Password</th>
+            <th className="border-bottom">TwoFA</th>
             <th className="border-bottom">Status</th>
             <th className="border-bottom">Role</th>
             <th className="border-bottom">Action</th>

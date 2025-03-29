@@ -21,17 +21,15 @@ export class AccountService {
     queryRunner?: QueryRunner,
     userID?: string
   ) {
-    if (userID) {
-      const accountExists = await this.accountRepo.findOne({
-        where: {
-          user: { id: userID },
-          type: createAccount.type,
-        }
-      });
-
-      if (accountExists) {
-        throw new BadRequestException(`User already has a ${accountExists.type} account`);
+    const accountExists = await this.accountRepo.findOne({
+      where: {
+        user: { id: createAccount.user.id || userID },
+        type: createAccount.type,
       }
+    });
+
+    if (accountExists) {
+      throw new BadRequestException(`User already has a ${accountExists.type} account`);
     }
 
     if (createAccount.user.role === UserRole.admin) {
