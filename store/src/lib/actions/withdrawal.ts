@@ -53,6 +53,7 @@ export const addWithdrawal = (payload: CreateWithdrawal) => async (dispatch: App
 			type: 'error',
 			show: true,
 		}));
+    return Promise.reject(error);
 	}
 }
 

@@ -35,9 +35,10 @@ export class WithdrawalService {
       private readonly emailService: EmailService) {}
 
   async create(createWithdrawal: CreateWithdrawal, user: User): Promise<Transaction> {
+    console.log("Came in here");
+    console.log(createWithdrawal);
     return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       const account = await this.accountService.findOne(createWithdrawal.accountID);
-      const paymentMethod = await this.paymentMethodService.findOne(createWithdrawal.paymentMethod);
       const withdrawal = await queryRunner.manager.save(WithdrawalEntity, {
         ...createWithdrawal,
         account,
@@ -51,6 +52,8 @@ export class WithdrawalService {
         account,
       }, queryRunner);
 
+      console.log("Transaction", transaction);
+
       Promise.all([
         this.emailService.sendMail(user.email, 'Withdrawal Request Received', './user/new-withdrawal', {
           name: user.name,
@@ -59,9 +62,10 @@ export class WithdrawalService {
         this.emailService.sendMail(environment.supportEmail, 'New Withdrawal Alert', './admin/new-withdrawal', {
           name: user.name,
           amount: formatCurrency(withdrawal.amount),
-          method: `${paymentMethod.name} (${paymentMethod.network})`,
+          method: createWithdrawal.paymentMethod,
         }),
       ]).catch(error => {
+        console.log("Came to error");
         this.logger.error("Failed to send email:", error);
       });
 
