@@ -9,6 +9,7 @@ const initialState: PaymentMethodState = {
 	highlightedPaymentMethod: null,
 }
 
+let tempList = [];
 const reducer = (state = initialState, action: PayloadAction<PaymentMethodState>) => {
 	switch (action.type) {
 		case PaymentMethodActions.LIST:
@@ -20,26 +21,31 @@ const reducer = (state = initialState, action: PayloadAction<PaymentMethodState>
 			};
 		case PaymentMethodActions.CREATE:
       if (action.payload.highlightedPaymentMethod) {
-        state.list = [
+        tempList = [
           action.payload.highlightedPaymentMethod,
           ...state.list.filter((_, i) => i < 9)
         ];
+      } else {
+        tempList = [...state.list];
       }
 			return {
 				...state,
+        list: tempList,
 				totalCount: state.totalCount + 1,
 			};
 		case PaymentMethodActions.UPDATE:
       if (action.payload.highlightedPaymentMethod) {
         const updatedPaymentMethod = action.payload.highlightedPaymentMethod;
-        state.list = [
+        tempList = [
           ...state.list.map(user => {
             return user.id === state.highlightedPaymentMethod?.id
               ? updatedPaymentMethod : user;
           })
         ];
+      } else {
+        tempList = [...state.list];
       }
-			return state;
+			return { ...state, list: tempList };
 		case PaymentMethodActions.DELETE:
 			return {
 				...state,

@@ -12,6 +12,7 @@ const initialState: TradeState = {
 	highlightedTrade: null,
 }
 
+let tempList = [];
 const reducer = (state: TradeState = initialState, action: PayloadAction<TradeState>) => {
 	switch (action.type) {
 		case TradeActions.FETCH_TRADES:
@@ -33,13 +34,16 @@ const reducer = (state: TradeState = initialState, action: PayloadAction<TradeSt
       };
 		case TradeActions.CREATE_TRADE:
       if (action.payload.highlightedTrade) {
-        state.list = [
+        tempList = [
           action.payload.highlightedTrade,
           ...state.list.filter((_, i) => i < state.list.length - 1)
         ];
+      } else {
+        tempList = [...state.list];
       }
 			return {
 				...state,
+        list: tempList,
 				totalCount: state.totalCount + 1,
 			}
 		case TradeActions.SET_CURRENT_TRADE:
