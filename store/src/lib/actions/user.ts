@@ -2,7 +2,7 @@ import { AppDispatch, setCurrentAccount } from '../../index';
 import { UserService } from '../services';
 import { AuthActions, UserActions } from '../types';
 import { CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@coinvant/types';
-import { getDemoAccount, getError } from '../helpers';
+import { getCurrentAccount, getError } from '../helpers';
 import { showAlert } from './alert';
 import * as CryptoJS from 'crypto-js';
 import { environment } from '../../environments/environment';
@@ -205,7 +205,7 @@ export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
 				payload: authData,
 			});
 
-			dispatch(setCurrentAccount(getDemoAccount(user.accounts)));
+			dispatch(setCurrentAccount(getCurrentAccount(user.accounts)));
 		}
 	} catch (error) {
     const { message } = getError(error);

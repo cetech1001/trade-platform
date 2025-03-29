@@ -22,5 +22,7 @@ export const getError = (e: unknown | ErrorResponse) => {
   return { status, message };
 }
 
-export const getDemoAccount = (accounts: Account[]) =>
-  accounts.find(({ type }) => type === AccountType.demo);
+export const getCurrentAccount = (accounts: Account[]) => {
+  const accountType = localStorage.getItem('accountType');
+  return accounts.find(({ type }) => type === (accountType || AccountType.demo));
+}

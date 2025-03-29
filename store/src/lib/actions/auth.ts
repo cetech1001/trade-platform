@@ -13,7 +13,7 @@ import {
   showAlert,
 } from '../../index';
 import { AuthActions } from '../types';
-import { getDemoAccount, getError } from '../helpers';
+import { getCurrentAccount, getError } from '../helpers';
 import { environment } from '../../environments/environment';
 
 const authenticate = async (
@@ -94,7 +94,7 @@ export const completeAuth = () => (dispatch: AppDispatch) => {
       payload: response,
     });
 
-    dispatch(setCurrentAccount(getDemoAccount(response.user.accounts)));
+    dispatch(setCurrentAccount(getCurrentAccount(response.user.accounts)));
 
     return Promise.resolve();
   } catch (error) {

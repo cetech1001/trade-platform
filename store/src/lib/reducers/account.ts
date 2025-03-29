@@ -1,8 +1,9 @@
-import { Account, AccountType, AccountState } from '@coinvant/types';
+import { AccountState } from '@coinvant/types';
 import {PayloadAction} from "@reduxjs/toolkit";
 import {AccountActions} from "../types";
 import * as CryptoJS from 'crypto-js';
 import { environment } from '../../environments/environment';
+import { getCurrentAccount } from '../helpers';
 
 let selectedAccount = null;
 const _authData = localStorage.getItem("authData");
@@ -10,8 +11,7 @@ if (_authData) {
   const bytes = CryptoJS.AES.decrypt(_authData, environment.encryptionKey || 'default-1');
   const authData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 	if (authData?.user?.accounts) {
-		selectedAccount = authData.user.accounts.find(({ type }: Account) =>
-			type === AccountType.demo);
+		selectedAccount = getCurrentAccount(authData.user.accounts) || null;
 	}
 }
 
