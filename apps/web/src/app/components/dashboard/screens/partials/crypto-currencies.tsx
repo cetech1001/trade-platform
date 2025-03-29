@@ -112,7 +112,7 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 		}));
 		props.setCurrentAsset({
       id: currency.id,
-      symbol: `${currency.symbol}USD`,
+      symbol: currency.symbol,
       type: TradeAssetType.crypto,
       currencyID: currency.currencyID,
     });

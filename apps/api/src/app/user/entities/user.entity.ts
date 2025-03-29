@@ -62,7 +62,7 @@ export class UserEntity implements User{
   @IsOptional()
   @IsBoolean()
   @ApiProperty({ type: Boolean, required: false })
-  @Column({ default: false })
+  @Column({ default: true })
   twoFA: boolean;
 
   @OneToMany(
