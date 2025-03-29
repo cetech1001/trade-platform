@@ -32,11 +32,6 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get('profile')
-  getProfile(@CurrentUser() user: User) {
-    return this.userService.findOne({ id: user.id });
-  }
-
   @Get()
   @Roles(UserRole.admin)
   findAll(@Query() options: PaginationOptionsDto) {

@@ -4,4 +4,5 @@ export enum AccountActions {
 	DELETE = 'account.delete',
 	LIST = 'account.list',
 	SET_CURRENT_ACCOUNT = 'account.setCurrentAccount',
+  SET_ACCOUNTS = 'account.setAccounts',
 }

@@ -6,17 +6,19 @@ import { environment } from '../../environments/environment';
 import { getCurrentAccount } from '../helpers';
 
 let selectedAccount = null;
+let userAccounts = [];
 const _authData = localStorage.getItem("authData");
 if (_authData) {
   const bytes = CryptoJS.AES.decrypt(_authData, environment.encryptionKey || 'default-1');
   const authData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 	if (authData?.user?.accounts) {
+    userAccounts = authData.user.accounts;
 		selectedAccount = getCurrentAccount(authData.user.accounts) || null;
 	}
 }
 
 const initialState: AccountState = {
-	list: [],
+	list: userAccounts,
 	highlightedAccount: selectedAccount,
 }
 
@@ -60,7 +62,12 @@ const reducer = (state = initialState, action: PayloadAction<AccountState>) => {
 			return {
 				...state,
 				highlightedAccount: action.payload.highlightedAccount,
-			}
+			};
+    case AccountActions.SET_ACCOUNTS:
+      return {
+        ...state,
+        list: action.payload.list,
+      };
 		default:
 			return state;
 	}

@@ -23,6 +23,11 @@ export const getError = (e: unknown | ErrorResponse) => {
 }
 
 export const getCurrentAccount = (accounts: Account[]) => {
+  if (accounts.length === 0) {
+    return undefined;
+  } else if (accounts.length === 1) {
+    return accounts[0];
+  }
   const accountType = localStorage.getItem('accountType');
   return accounts.find(({ type }) => type === (accountType || AccountType.demo));
 }

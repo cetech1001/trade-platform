@@ -1,11 +1,9 @@
-import { AppDispatch, setCurrentAccount } from '../../index';
+import { AppDispatch } from '../../index';
 import { UserService } from '../services';
-import { AuthActions, UserActions } from '../types';
+import { UserActions } from '../types';
 import { CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@coinvant/types';
-import { getCurrentAccount, getError } from '../helpers';
+import { getError } from '../helpers';
 import { showAlert } from './alert';
-import * as CryptoJS from 'crypto-js';
-import { environment } from '../../environments/environment';
 
 export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -169,48 +167,6 @@ export const uploadKYC = (formData: FormData) => async (dispatch: AppDispatch) =
     const { message } = getError(error);
 		dispatch(showAlert({
 			message: message || 'Failed to upload data.',
-			type: 'error',
-			show: true,
-		}));
-	}
-}
-
-export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
-	try {
-		const user = await UserService.getProfile();
-		dispatch({
-			type: UserActions.UPDATE,
-			payload: {
-				highlightedUser: user,
-			},
-		});
-		const _authData = localStorage.getItem('authData');
-		if (_authData) {
-      const bytes = CryptoJS.AES.decrypt(_authData, environment.encryptionKey || 'default-1');
-      const { access_token } = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
-			const authData = {
-				access_token,
-				user,
-			};
-
-      const encrypted = CryptoJS.AES.encrypt(
-        JSON.stringify(authData),
-        environment.encryptionKey || 'default-1'
-      ).toString();
-			localStorage.setItem('authData', encrypted);
-
-			dispatch({
-				type: AuthActions.LOGIN,
-				payload: authData,
-			});
-
-			dispatch(setCurrentAccount(getCurrentAccount(user.accounts)));
-		}
-	} catch (error) {
-    const { message } = getError(error);
-		dispatch(showAlert({
-			message: message || 'Failed to get user.',
 			type: 'error',
 			show: true,
 		}));

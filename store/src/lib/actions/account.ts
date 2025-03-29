@@ -93,6 +93,15 @@ export const removeAccount = (id: string) => async (dispatch: AppDispatch) => {
 	}
 }
 
+export const setAccounts = (accounts: Account[]) => async (dispatch: AppDispatch) => {
+  dispatch({
+    type: AccountActions.SET_ACCOUNTS,
+    payload: {
+      list: accounts,
+    },
+  });
+}
+
 export const setCurrentAccount = (account?: Account) => async (dispatch: AppDispatch) => {
 	localStorage.setItem('accountType', account?.type || "");
 	dispatch({
