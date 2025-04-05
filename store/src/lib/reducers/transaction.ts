@@ -9,6 +9,7 @@ const initialState: TransactionState = {
   totalPages: 0,
 }
 
+let tempList = [];
 const reducer = (state = initialState, action: PayloadAction<TransactionState>) => {
 	switch (action.type) {
 		case TransactionActions.LIST:
@@ -20,13 +21,16 @@ const reducer = (state = initialState, action: PayloadAction<TransactionState>) 
 			};
 		case TransactionActions.ADD:
       if (action.payload.highlightedTransaction) {
-        state.list = [
+        tempList = [
           action.payload.highlightedTransaction,
           ...state.list.filter((_, i) => i < 9),
         ]
+      } else {
+        tempList = [...state.list];
       }
 			return {
 				...state,
+        list: tempList,
         totalCount: state.totalCount + 1,
 			};
 		default:

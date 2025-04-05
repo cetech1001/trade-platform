@@ -18,7 +18,6 @@ import { AccountService } from '../account/account.service';
 import { EmailService } from '../email/email.service';
 import { formatCurrency } from '../../helpers';
 import { environment } from '../../environments/environment';
-import { PaymentMethodService } from '../payment-method/payment-method.service';
 import { DBTransactionService } from '../common/db-transaction.service';
 
 @Injectable()
@@ -30,14 +29,12 @@ export class WithdrawalService {
           Repository<WithdrawalEntity>,
       private readonly dbTransactionService: DBTransactionService,
       private readonly accountService: AccountService,
-      private readonly paymentMethodService: PaymentMethodService,
       private readonly transactionService: TransactionService,
       private readonly emailService: EmailService) {}
 
   async create(createWithdrawal: CreateWithdrawal, user: User): Promise<Transaction> {
     return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       const account = await this.accountService.findOne(createWithdrawal.accountID);
-      const paymentMethod = await this.paymentMethodService.findOne(createWithdrawal.paymentMethod);
       const withdrawal = await queryRunner.manager.save(WithdrawalEntity, {
         ...createWithdrawal,
         account,
@@ -59,7 +56,7 @@ export class WithdrawalService {
         this.emailService.sendMail(environment.supportEmail, 'New Withdrawal Alert', './admin/new-withdrawal', {
           name: user.name,
           amount: formatCurrency(withdrawal.amount),
-          method: `${paymentMethod.name} (${paymentMethod.network})`,
+          method: createWithdrawal.paymentMethod,
         }),
       ]).catch(error => {
         this.logger.error("Failed to send email:", error);
