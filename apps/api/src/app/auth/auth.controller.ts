@@ -1,6 +1,6 @@
-import { Controller, Post, UseGuards, Body, BadRequestException } from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, BadRequestException, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {LocalAuthGuard} from "../../guards";
+import { JwtAuthGuard, LocalAuthGuard } from '../../guards';
 import {ApiTags} from "@nestjs/swagger";
 import {CreateUserDto} from "../user/dto/create-user.dto";
 import {UserService} from "../user/user.service";
@@ -29,7 +29,14 @@ export class AuthController {
       ...createUserDto,
       role: UserRole.user,
     });
-    return await this.authService.login(user);
+    return this.authService.login(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getProfile(@CurrentUser() currentUser: User) {
+    const user = await this.userService.findOne({ id: currentUser.id })
+    return this.authService.login(user);
   }
 
   @Post('send-reset-link')

@@ -1,11 +1,9 @@
-import { AppDispatch, setCurrentAccount } from '../../index';
+import { AppDispatch } from '../../index';
 import { UserService } from '../services';
-import { AuthActions, UserActions } from '../types';
+import { UserActions } from '../types';
 import { CreateUser, KYC, PaginationOptions, UpdateUser, User } from '@coinvant/types';
-import { getDemoAccount, getError } from '../helpers';
+import { getError } from '../helpers';
 import { showAlert } from './alert';
-import * as CryptoJS from 'crypto-js';
-import { environment } from '../../environments/environment';
 
 export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -19,8 +17,9 @@ export const fetchUsers = (options?: PaginationOptions) => async (dispatch: AppD
 			},
 		});
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to fetch users.',
+			message: message || 'Failed to fetch users.',
 			type: 'error',
 			show: true,
 		}));
@@ -39,8 +38,9 @@ export const fetchKYC = (options?: PaginationOptions) => async (dispatch: AppDis
 			},
 		});
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to fetch KYC list.',
+			message: message || 'Failed to fetch KYC list.',
 			type: 'error',
 			show: true,
 		}));
@@ -62,8 +62,9 @@ export const addUser = (payload: CreateUser) => async (dispatch: AppDispatch) =>
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to create user.',
+			message: message || 'Failed to create user.',
 			type: 'error',
 			show: true,
 		}));
@@ -106,8 +107,9 @@ export const removeUser = (id: string) => async (dispatch: AppDispatch) => {
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to delete user.',
+			message: message || 'Failed to delete user.',
 			type: 'error',
 			show: true,
 		}));
@@ -126,8 +128,9 @@ export const removeKYC = (id: string) => async (dispatch: AppDispatch) => {
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to delete KYC.',
+			message: message || 'Failed to delete KYC.',
 			type: 'error',
 			show: true,
 		}));
@@ -161,49 +164,9 @@ export const uploadKYC = (formData: FormData) => async (dispatch: AppDispatch) =
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to upload data.',
-			type: 'error',
-			show: true,
-		}));
-	}
-}
-
-export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
-	try {
-		const user = await UserService.getProfile();
-		dispatch({
-			type: UserActions.UPDATE,
-			payload: {
-				highlightedUser: user,
-			},
-		});
-		const _authData = localStorage.getItem('authData');
-		if (_authData) {
-      const bytes = CryptoJS.AES.decrypt(_authData, environment.encryptionKey || 'default-1');
-      const { access_token } = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
-			const authData = {
-				access_token,
-				user,
-			};
-
-      const encrypted = CryptoJS.AES.encrypt(
-        JSON.stringify(authData),
-        environment.encryptionKey || 'default-1'
-      ).toString();
-			localStorage.setItem('authData', encrypted);
-
-			dispatch({
-				type: AuthActions.LOGIN,
-				payload: authData,
-			});
-
-			dispatch(setCurrentAccount(getDemoAccount(user.accounts)));
-		}
-	} catch (error) {
-		dispatch(showAlert({
-			message: 'Failed to get user.',
+			message: message || 'Failed to upload data.',
 			type: 'error',
 			show: true,
 		}));

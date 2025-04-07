@@ -1,6 +1,7 @@
 import axios from "axios"
 import {environment} from "../../environments/environment";
 import { LoginRequest, LoginResponse, RegisterRequest, ResetPasswordRequest, User } from '@coinvant/types';
+import { api } from './api';
 
 export class AuthService {
   static async login(payload: LoginRequest): Promise<LoginResponse> {
@@ -10,6 +11,11 @@ export class AuthService {
 
   static async register(payload: RegisterRequest): Promise<LoginResponse> {
     const { data } = await axios.post(environment.api.baseURL + '/auth/register', payload);
+    return data;
+  }
+
+  static async getProfile(): Promise<LoginResponse> {
+    const { data } = await api.get('/auth/profile');
     return data;
   }
 

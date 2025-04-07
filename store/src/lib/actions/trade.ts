@@ -18,8 +18,9 @@ export const fetchTrades = (query: FindTradesQueryParams) => async (dispatch: Ap
 			},
 		});
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to fetch trades.',
+			message: message || 'Failed to fetch trades.',
 			type: 'error',
 			show: true,
 		}));
@@ -36,8 +37,9 @@ export const fetchTotalActivePL = (query: FindTradeAmountsQueryParams) => async 
       }
     })
   } catch (error) {
+    const { message } = getError(error);
     dispatch(showAlert({
-      message: 'Failed to fetch total active trade balance.',
+      message: message || 'Failed to fetch total active trade balance.',
       type: 'error',
       show: true,
     }));
@@ -54,8 +56,9 @@ export const fetchTotalActiveBid = (query: FindTradeAmountsQueryParams) => async
       }
     })
   } catch (error) {
+    const { message } = getError(error);
     dispatch(showAlert({
-      message: 'Failed to fetch total active trade bids.',
+      message: message || 'Failed to fetch total active trade bids.',
       type: 'error',
       show: true,
     }));
@@ -77,8 +80,9 @@ export const placeBid = (payload: CreateTrade) => async (dispatch: AppDispatch) 
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to place order.',
+			message: message || 'Failed to place order.',
 			type: 'error',
 			show: true,
 		}));
@@ -124,8 +128,9 @@ export const removeTrade = (highlightedTrade: Trade) => async (dispatch: AppDisp
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to delete trade.',
+			message: message || 'Failed to delete trade.',
 			type: 'error',
 			show: true,
 		}));

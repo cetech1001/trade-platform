@@ -7,7 +7,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   UseGuards
 } from '@nestjs/common';
 import { AccountService } from './account.service';
@@ -28,10 +27,6 @@ export class AccountController {
   @Post(':userID?')
   @Roles(UserRole.user, UserRole.admin)
   create(@Param('userID') userID: string, @CurrentUser() user: User) {
-    if (user.role === UserRole.user
-      && user.accounts.find(a => a.type === AccountType.live)) {
-      throw new BadRequestException('You already have a live account');
-    }
     if (user.role === UserRole.user && user.kycStatus !== KYCStatus.verified) {
       throw new BadRequestException('Please verify your identity first');
     }

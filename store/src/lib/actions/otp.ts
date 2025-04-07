@@ -30,7 +30,7 @@ export const verifyOTP = (payload: VerifyOTP) => async (dispatch: AppDispatch) =
     dispatch(showAlert({
       show: true,
       type: 'error',
-      message: message,
+      message,
     }));
     return Promise.reject(message);
   }

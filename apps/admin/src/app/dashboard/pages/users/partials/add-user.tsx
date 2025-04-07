@@ -16,7 +16,7 @@ const initialState = {
 	name: "",
 	password: "",
 	role: UserRole.user,
-  twoFA: true,
+  twoFA: false,
 	status: UserStatus.active,
 };
 
@@ -55,7 +55,7 @@ export const AddUserModal = connect(mapStateToProps, actions)((props: IProps) =>
 		const { name, value } = e.target;
 		setPayload(prevState => ({
 			...prevState,
-			[name]: value,
+      [name]: name !== "twoFA" ? value : (value === "true"),
 		}));
 	}
 

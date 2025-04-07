@@ -111,11 +111,11 @@ export const CryptoCurrencies = connect(mapStateToProps, actions)((props: IProps
 			return asset;
 		}));
 		props.setCurrentAsset({
-			id: currency.id,
-			symbol: currency.symbol,
-			type: TradeAssetType.crypto,
-			currencyID: currency.currencyID,
-		});
+      id: currency.id,
+      symbol: currency.symbol,
+      type: TradeAssetType.crypto,
+      currencyID: currency.currencyID,
+    });
 
     if (isMobile) {
       props.toggleNav(USER_ROUTES.chart);

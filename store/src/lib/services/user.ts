@@ -7,11 +7,6 @@ export class UserService {
     return data;
   }
 
-  static async getProfile(): Promise<User> {
-    const { data } = await api.get('/user/profile');
-    return data;
-  }
-
   static async createUser(payload: CreateUser): Promise<User> {
     const { data } = await api.post('/user', payload);
     return data;

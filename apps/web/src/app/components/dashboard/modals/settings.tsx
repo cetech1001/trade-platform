@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 interface IProps {
   user: AuthUser | null;
+  accounts: Account[];
   account: Account | null;
   activeModal: Modals | null;
   logout: () => void;
@@ -16,6 +17,7 @@ interface IProps {
 
 const mapStateToProps = (state: RootState) => ({
   user: state.auth.user,
+  accounts: state.account.list,
   account: state.account.highlightedAccount,
   activeModal: state.modal.activeModal,
 });
@@ -48,7 +50,7 @@ export const Settings = connect(mapStateToProps, actions)((props: IProps) => {
             <h5 style={{ color: "#FFF" }}>Accounts</h5>
           </div>
           <div className={'flex-column'}>
-            {props.user?.accounts.map((account) => (
+            {props.accounts.map((account) => (
               <div className={'sidebar-option'} key={account.id}
                    onClick={() => props.setCurrentAccount(account)}>
                 <i className="fa-solid fa-dollar-sign"></i>
@@ -59,11 +61,11 @@ export const Settings = connect(mapStateToProps, actions)((props: IProps) => {
                 </div>
               </div>
             ))}
-            {props.user?.accounts.length === 1
-              && props.user.kycStatus === KYCStatus.verified
+            {props.accounts.length === 1
+              && props.user?.kycStatus === KYCStatus.verified
               && (
               <div className={'sidebar-option'}
-                   onClick={props.addAccount}>
+                   onClick={() => props.addAccount()}>
                 <i className="fa-solid fa-plus"></i>
                 <div className={'info'}>
                   <h5>New Account</h5>

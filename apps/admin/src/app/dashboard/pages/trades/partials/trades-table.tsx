@@ -59,6 +59,9 @@ export const TradesTable = connect(mapStateToProps, actions)((props: IProps) => 
             {formatCurrency(trade.bidAmount)}
           </span>
 				</td>
+        <td>
+          <span className="fw-normal">{trade.leverage}</span>
+        </td>
 				<td>
           <span className="fw-normal">
             {trade.assetType === TradeAssetType.crypto && (
@@ -127,6 +130,7 @@ export const TradesTable = connect(mapStateToProps, actions)((props: IProps) => 
 						<th className="border-bottom">User</th>
 						<th className="border-bottom">Type</th>
 						<th className="border-bottom">Bid Amount</th>
+            <th className="border-bottom">Multiplier</th>
 						<th className="border-bottom">Asset</th>
 						<th className="border-bottom">Opening Price</th>
 						<th className="border-bottom">Current Price</th>

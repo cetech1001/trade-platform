@@ -8,6 +8,7 @@ import {
 	Withdrawal
 } from '@coinvant/types';
 import { showAlert } from './alert';
+import { getError } from '../helpers';
 
 
 export const fetchWithdrawals = (query?: FindWithdrawalsQueryParams) => async (dispatch: AppDispatch) => {
@@ -22,8 +23,9 @@ export const fetchWithdrawals = (query?: FindWithdrawalsQueryParams) => async (d
 			},
 		});
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to fetch withdrawals.',
+			message: message || 'Failed to fetch withdrawals.',
 			type: 'error',
 			show: true,
 		}));
@@ -45,11 +47,13 @@ export const addWithdrawal = (payload: CreateWithdrawal) => async (dispatch: App
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to create withdrawal.',
+			message: message || 'Failed to create withdrawal.',
 			type: 'error',
 			show: true,
 		}));
+    return Promise.reject(error);
 	}
 }
 
@@ -68,8 +72,9 @@ export const editWithdrawal = (id: string, payload: UpdateWithdrawal) => async (
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to update withdrawal.',
+			message: message || 'Failed to update withdrawal.',
 			type: 'error',
 			show: true,
 		}));
@@ -88,8 +93,9 @@ export const removeWithdrawal = (id: string) => async (dispatch: AppDispatch) =>
 			show: true,
 		}));
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to delete withdrawal.',
+			message: message || 'Failed to delete withdrawal.',
 			type: 'error',
 			show: true,
 		}));
@@ -106,8 +112,9 @@ export const setTotalWithdrawalAmount = () => async (dispatch: AppDispatch) => {
 			}
 		});
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to fetch total withdrawal amount.',
+			message: message || 'Failed to fetch total withdrawal amount.',
 			type: 'error',
 			show: true,
 		}));

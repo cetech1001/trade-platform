@@ -3,6 +3,7 @@ import {TransactionService} from "../services";
 import {TransactionActions} from "../types";
 import { FindTransactionsQueryParams } from '@coinvant/types';
 import { showAlert } from './alert';
+import { getError } from '../helpers';
 
 export const fetchTransactions = (query?: FindTransactionsQueryParams) => async (dispatch: AppDispatch) => {
 	try {
@@ -16,8 +17,9 @@ export const fetchTransactions = (query?: FindTransactionsQueryParams) => async 
 			},
 		});
 	} catch (error) {
+    const { message } = getError(error);
 		dispatch(showAlert({
-			message: 'Failed to fetch transactions.',
+			message: message || 'Failed to fetch transactions.',
 			type: 'error',
 			show: true,
 		}));

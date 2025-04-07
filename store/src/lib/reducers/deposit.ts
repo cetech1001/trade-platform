@@ -10,6 +10,7 @@ const initialState: DepositState = {
 	totalDepositAmount: 0,
 }
 
+let tempList = [];
 const reducer = (state: DepositState = initialState, action: PayloadAction<DepositState>) => {
 	switch (action.type) {
 		case DepositActions.LIST:
@@ -22,12 +23,15 @@ const reducer = (state: DepositState = initialState, action: PayloadAction<Depos
 		case DepositActions.UPDATE:
       if (action.payload.highlightedDeposit) {
         const updatedDeposit = action.payload.highlightedDeposit;
-        state.list = state.list.map(deposit =>
+        tempList = state.list.map(deposit =>
           deposit.id === updatedDeposit.id ? updatedDeposit : deposit
         );
+      } else {
+        tempList = [...state.list];
       }
 			return {
 				...state,
+        list: tempList,
 				totalDepositAmount: action.payload.highlightedDeposit?.status === DepositStatus.confirmed
 				&& state.list.find(deposit =>
           deposit.id === action.payload.highlightedDeposit?.id)?.status !== DepositStatus.confirmed

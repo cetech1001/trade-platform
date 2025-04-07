@@ -19,6 +19,7 @@ const initialState = {
 	password: "",
 	role: UserRole.user,
 	status: UserStatus.active,
+  twoFA: false,
 	walletBalance: 0,
 };
 
@@ -45,6 +46,7 @@ export const EditUserModal = connect(mapStateToProps, actions)((props: IProps) =
 				password: props.user.password,
 				role: props.user.role,
 				status: props.user.status,
+        twoFA: props.user.twoFA,
 			});
 		}
 	}, [props.user]);
@@ -74,7 +76,7 @@ export const EditUserModal = connect(mapStateToProps, actions)((props: IProps) =
 		const { name, value } = e.target;
 		setPayload(prevState => ({
 			...prevState,
-			[name]: value,
+			[name]: name !== "twoFA" ? value : (value === "true"),
 		}));
 	}
 

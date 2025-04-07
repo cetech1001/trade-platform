@@ -151,6 +151,8 @@ export const Withdrawal = connect(mapStateToProps, actions)((props: IProps) => {
           accountID: props.account.id,
         });
         setStep(2);
+      } catch (e) {
+        console.error(e);
       } finally {
         setIsSubmitting(false);
       }

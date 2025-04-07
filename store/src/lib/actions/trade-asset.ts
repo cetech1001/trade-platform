@@ -7,6 +7,7 @@ import {
 import {AppDispatch, showAlert} from "../../index";
 import {TradeAssetService} from "../services";
 import {TradeAssetActions} from "../types";
+import { getError } from '../helpers';
 
 export const fetchStockOptions = (query: FindStockOptions) => async (dispatch: AppDispatch) => {
 	try {
@@ -20,8 +21,9 @@ export const fetchStockOptions = (query: FindStockOptions) => async (dispatch: A
 			},
 		});
 	} catch (e) {
+    const { message } = getError(e);
 		dispatch(showAlert({
-			message: 'Failed to fetch stock options.',
+			message: message || 'Failed to fetch stock options.',
 			type: 'error',
 			show: true,
 		}));
@@ -40,8 +42,9 @@ export const fetchForexPairs = (query: FindForexPairs) => async (dispatch: AppDi
 			},
 		});
 	} catch (e) {
+    const { message } = getError(e);
 		dispatch(showAlert({
-			message: 'Failed to fetch forex pairs.',
+			message: message || 'Failed to fetch forex pairs.',
 			type: 'error',
 			show: true,
 		}));
@@ -60,8 +63,9 @@ export const fetchCryptoCurrencies = (query: FindCryptoCurrencies) => async (dis
 			},
 		});
 	} catch (e) {
+    const { message } = getError(e);
 		dispatch(showAlert({
-			message: 'Failed to fetch crypto currencies.',
+			message: message || 'Failed to fetch crypto currencies.',
 			type: 'error',
 			show: true,
 		}));

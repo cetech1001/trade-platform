@@ -23,7 +23,7 @@ export class AccountService {
   ) {
     const accountExists = await this.accountRepo.findOne({
       where: {
-        user: { id: userID },
+        user: { id: createAccount.user.id || userID },
         type: createAccount.type,
       }
     });

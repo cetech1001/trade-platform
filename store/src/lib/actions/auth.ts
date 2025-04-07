@@ -1,5 +1,5 @@
 import * as CryptoJS from 'crypto-js';
-import { AuthService } from '../services';
+import { AuthService, UserService } from '../services';
 import {
   LoginRequest,
   LoginResponse,
@@ -8,12 +8,12 @@ import {
 } from '@coinvant/types';
 import {
   AppDispatch,
-  sendOTP,
+  sendOTP, setAccounts,
   setCurrentAccount,
-  showAlert,
+  showAlert
 } from '../../index';
-import { AuthActions } from '../types';
-import { getDemoAccount, getError } from '../helpers';
+import { AuthActions, UserActions } from '../types';
+import { getCurrentAccount, getError } from '../helpers';
 import { environment } from '../../environments/environment';
 
 const authenticate = async (
@@ -94,7 +94,8 @@ export const completeAuth = () => (dispatch: AppDispatch) => {
       payload: response,
     });
 
-    dispatch(setCurrentAccount(getDemoAccount(response.user.accounts)));
+    dispatch(setCurrentAccount(getCurrentAccount(response.user.accounts)));
+    dispatch(setAccounts(response.user.accounts));
 
     return Promise.resolve();
   } catch (error) {
@@ -157,7 +158,41 @@ export const resetPassword = (payload: ResetPasswordRequest) => async (dispatch:
 
 export const logout = () => async (dispatch: AppDispatch) => {
   localStorage.removeItem('authData');
+  localStorage.removeItem('accountType');
   dispatch({
     type: AuthActions.LOGOUT,
   });
+}
+
+export const refreshUserProfile = () => async (dispatch: AppDispatch) => {
+  try {
+    const response = await AuthService.getProfile();
+    dispatch({
+      type: UserActions.UPDATE,
+      payload: {
+        highlightedUser: response.user,
+      },
+    });
+
+    const encrypted = CryptoJS.AES.encrypt(
+      JSON.stringify(response),
+      environment.encryptionKey || 'default-1'
+    ).toString();
+    localStorage.setItem('authData', encrypted);
+
+    dispatch({
+      type: AuthActions.LOGIN,
+      payload: response,
+    });
+
+    dispatch(setAccounts(response.user.accounts));
+    dispatch(setCurrentAccount(getCurrentAccount(response.user.accounts)));
+  } catch (error) {
+    const { message } = getError(error);
+    dispatch(showAlert({
+      message: message || 'Failed to get user.',
+      type: 'error',
+      show: true,
+    }));
+  }
 }
