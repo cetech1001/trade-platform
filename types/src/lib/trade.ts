@@ -57,6 +57,7 @@ export interface UpdateTrade extends Partial<Pick<Trade, 'status'
   | 'buyPrice'
   | 'sellPrice'>> {
   openingPrice?: number;
+  units?: number;
 }
 
 export interface FindTradesQueryParams extends PaginationOptions, Partial<Pick<Trade, 'status' | 'assetType'>>{
