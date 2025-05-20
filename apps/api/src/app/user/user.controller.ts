@@ -74,7 +74,7 @@ export class UserController {
   [
     'photo',
     'idCard',
-    'proofOfAddress',
+    // 'proofOfAddress',
     'firstName',
     'lastName',
     'dob',

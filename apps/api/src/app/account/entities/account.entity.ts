@@ -26,7 +26,7 @@ export class AccountEntity implements Account{
   @IsNumber()
   @ApiProperty({ type: Number, example: 0.00 })
   @Column('decimal', {
-    precision: 8,
+    precision: 10,
     scale: 2,
     default: 0,
   })

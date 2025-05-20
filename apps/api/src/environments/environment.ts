@@ -38,5 +38,7 @@ export const environment = {
   supportEmail: process.env.SUPPORT_EMAIL,
   polygonAPIKey: process.env.POLYGON_API_KEY,
   alphaVantageAPIKey: process.env.ALPHA_VANTAGE_API_KEY,
-  assetsPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
+  assetsPath: process.env.NODE_ENV === 'development'
+    ? path.join(process.cwd(), 'apps', 'api', 'src', 'assets')
+    : path.join(process.cwd(), 'assets'),
 }

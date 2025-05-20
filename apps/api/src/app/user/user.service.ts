@@ -114,7 +114,7 @@ export class UserService {
         ...createKYC,
         photo: photo.filename,
         idCard: idCard.filename,
-        proofOfAddress: proofOfAddress.filename,
+        proofOfAddress: proofOfAddress?.filename,
         user,
       });
       const updatedUser = await this.update(user.id, { kycStatus: KYCStatus.pending }, queryRunner);

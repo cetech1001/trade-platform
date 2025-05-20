@@ -63,7 +63,7 @@ export const KYCVerification = connect(mapStateToProps, actions)((props: IProps)
     try {
       setIsSubmitting(true);
       if (props.user) {
-        if (!photo || !idCard || !proofOfAddress) {
+        if (!photo || !idCard/* || !proofOfAddress*/) {
           return props.showAlert({
             type: 'error',
             message: 'Please fill out the form completely',
@@ -77,7 +77,9 @@ export const KYCVerification = connect(mapStateToProps, actions)((props: IProps)
         });
         formData.append('photo', photo);
         formData.append('idCard', idCard);
-        formData.append('proofOfAddress', proofOfAddress);
+        if (proofOfAddress) {
+          formData.append('proofOfAddress', proofOfAddress);
+        }
         await props.uploadKYC(formData);
         await props.refreshUserProfile();
         props.openModal(Modals.settings);
