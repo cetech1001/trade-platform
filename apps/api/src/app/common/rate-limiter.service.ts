@@ -16,7 +16,6 @@ interface RateLimitEntry {
   resetTime: number;
 }
 
-@Injectable()
 export class EnhancedRateLimiterService<T> {
   private requests: Map<string, RateLimitEntry> = new Map();
   private cache: Map<string, CacheEntry<T>> = new Map();

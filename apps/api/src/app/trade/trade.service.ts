@@ -83,6 +83,7 @@ export class TradeService {
         shouldClose = true;
         reason = TradeClosureReason.user;
         profitOrLoss = await calculatePL(trade, currentPrice);
+        closingPrice = currentPrice;
       } else if (trade.takeProfit) {
         const takeProfit = DecimalHelper.normalize(trade.takeProfit);
         if ((trade.isShort && DecimalHelper.isLessThan(currentPrice, takeProfit) || DecimalHelper.isEqual(currentPrice, takeProfit)) ||
