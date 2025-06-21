@@ -19,29 +19,40 @@ import { EmailService } from '../email/email.service';
 import { formatCurrency } from '../../helpers';
 import { environment } from '../../environments/environment';
 import { DBTransactionService } from '../common/db-transaction.service';
+import { DecimalHelper } from '../../helpers/decimal';
 
 @Injectable()
 export class WithdrawalService {
   private readonly logger = new Logger(WithdrawalService.name);
 
   constructor(
-      @InjectRepository(WithdrawalEntity) private readonly withdrawalRepo:
-          Repository<WithdrawalEntity>,
-      private readonly dbTransactionService: DBTransactionService,
-      private readonly accountService: AccountService,
-      private readonly transactionService: TransactionService,
-      private readonly emailService: EmailService) {}
+    @InjectRepository(WithdrawalEntity) private readonly withdrawalRepo:
+    Repository<WithdrawalEntity>,
+    private readonly dbTransactionService: DBTransactionService,
+    private readonly accountService: AccountService,
+    private readonly transactionService: TransactionService,
+    private readonly emailService: EmailService) {}
 
   async create(createWithdrawal: CreateWithdrawal, user: User): Promise<Transaction> {
     return this.dbTransactionService.executeTransaction(async (queryRunner) => {
       const account = await this.accountService.findOne(createWithdrawal.accountID);
+
+      // Validate withdrawal amount
+      const withdrawalAmount = DecimalHelper.normalize(createWithdrawal.amount);
+      const accountBalance = DecimalHelper.normalize(account.walletBalance);
+
+      if (DecimalHelper.isGreaterThan(withdrawalAmount, accountBalance)) {
+        throw new Error('Insufficient funds for withdrawal');
+      }
+
       const withdrawal = await queryRunner.manager.save(WithdrawalEntity, {
         ...createWithdrawal,
+        amount: withdrawalAmount,
         account,
       });
 
       const transaction = await this.transactionService.create({
-        amount: withdrawal.amount,
+        amount: withdrawalAmount,
         type: TransactionType.withdrawal,
         status: withdrawal.status,
         transactionID: withdrawal.id,
@@ -51,11 +62,11 @@ export class WithdrawalService {
       Promise.all([
         this.emailService.sendMail(user.email, 'Withdrawal Request Received', './user/new-withdrawal', {
           name: user.name,
-          amount: formatCurrency(withdrawal.amount),
+          amount: formatCurrency(withdrawalAmount),
         }),
         this.emailService.sendMail(environment.supportEmail, 'New Withdrawal Alert', './admin/new-withdrawal', {
           name: user.name,
-          amount: formatCurrency(withdrawal.amount),
+          amount: formatCurrency(withdrawalAmount),
           method: createWithdrawal.paymentMethod,
         }),
       ]).catch(error => {
@@ -93,7 +104,7 @@ export class WithdrawalService {
       .select('SUM(W.amount)', 'total')
       .where('W.status = :status', { status: WithdrawalStatus.paid })
       .getRawOne();
-    return data?.total || 0;
+    return DecimalHelper.normalize(data?.total || 0);
   }
 
   findOne(id: string): Promise<Withdrawal> {
@@ -105,19 +116,15 @@ export class WithdrawalService {
       await queryRunner.manager.update(WithdrawalEntity, id, updateWithdrawal);
 
       const withdrawal = await this.findOne(id);
-
-      if (updateWithdrawal.status === WithdrawalStatus.paid) {
-        await this.accountService
-          .increaseBalance(withdrawal.account.id, withdrawal.amount, queryRunner);
-      }
-
       const { user } = withdrawal.account;
+      const withdrawalAmount = DecimalHelper.normalize(withdrawal.amount);
 
       if (updateWithdrawal.status === WithdrawalStatus.paid) {
-        await this.accountService.increaseBalance(withdrawal.account.id, withdrawal.amount, queryRunner);
+        await this.accountService.decreaseBalance(withdrawal.account.id, withdrawalAmount, queryRunner);
+
         this.emailService.sendMail(user.email, 'Withdrawal Confirmed', './user/withdrawal-confirmed', {
           name: user.name,
-          amount: formatCurrency(withdrawal.amount),
+          amount: formatCurrency(withdrawalAmount),
         }).catch(error => {
           this.logger.error("Failed to send email:", error);
         });
@@ -126,7 +133,7 @@ export class WithdrawalService {
       if (updateWithdrawal.status === WithdrawalStatus.cancelled) {
         this.emailService.sendMail(user.email, 'Withdrawal Rejected', './user/withdrawal-rejected', {
           name: user.name,
-          amount: formatCurrency(withdrawal.amount),
+          amount: formatCurrency(withdrawalAmount),
         }).catch(error => {
           this.logger.error("Failed to send email:", error);
         });

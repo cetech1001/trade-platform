@@ -2,33 +2,10 @@ import { CryptoCurrency, Trade, TradeAsset, TradeAssetType } from '@coinvant/typ
 import { calculateStockPL, fetchStockRate } from './stock.helper';
 import { calculateCryptoPL, fetchCryptoRate } from './crypto.helper';
 import { calculateForexPL, fetchForexRate } from './forex.helper';
-
-const rateCache = new Map<string, { rate: number; timestamp: number }>();
-const CACHE_DURATION_MS = 5 * 60 * 1000;
-
-const cleanupRateCache = () => {
-  const now = Date.now();
-  for (const [key, { timestamp }] of rateCache.entries()) {
-    if (now - timestamp >= CACHE_DURATION_MS) {
-      rateCache.delete(key);
-    }
-  }
-};
-
-setInterval(cleanupRateCache, CACHE_DURATION_MS);
+import { DecimalHelper } from '../../../helpers/decimal';
 
 export async function fetchAssetRate(assetType: TradeAssetType, symbol: string): Promise<number> {
   try {
-    const cacheKey = symbol;
-    const now = Date.now();
-
-    if (rateCache.has(cacheKey)) {
-      const cached = rateCache.get(cacheKey);
-      if (now - cached.timestamp < CACHE_DURATION_MS) {
-        return cached.rate;
-      }
-    }
-
     let rate: number;
 
     if (assetType === TradeAssetType.stock) {
@@ -39,8 +16,7 @@ export async function fetchAssetRate(assetType: TradeAssetType, symbol: string):
       rate = await fetchForexRate(symbol);
     }
 
-    rateCache.set(cacheKey, { rate, timestamp: now });
-    return rate;
+    return DecimalHelper.normalize(rate);
   } catch (error) {
     console.error(`Error fetching asset rate for ${symbol}: ${error.message}`);
     throw error;
@@ -48,12 +24,23 @@ export async function fetchAssetRate(assetType: TradeAssetType, symbol: string):
 }
 
 export async function shouldOpenTrade(trade: Trade, currentPrice: number) {
+  const normalizedCurrentPrice = DecimalHelper.normalize(currentPrice);
+
   if (trade.executeAt && new Date() >= new Date(trade.executeAt)) {
     return true;
-  } else if (trade.sellPrice && trade.sellPrice >= currentPrice) {
-    return true
+  } else if (trade.sellPrice) {
+    const sellPrice = DecimalHelper.normalize(trade.sellPrice);
+    return DecimalHelper.isGreaterThan(sellPrice, normalizedCurrentPrice) ||
+      DecimalHelper.isEqual(sellPrice, normalizedCurrentPrice);
   }
-  return trade.buyPrice && trade.buyPrice <= currentPrice;
+
+  if (trade.buyPrice) {
+    const buyPrice = DecimalHelper.normalize(trade.buyPrice);
+    return DecimalHelper.isLessThan(buyPrice, normalizedCurrentPrice) ||
+      DecimalHelper.isEqual(buyPrice, normalizedCurrentPrice);
+  }
+
+  return false;
 }
 
 export function calculatePL(trade: Trade, currentPrice: number): number | Promise<number> {
@@ -70,19 +57,29 @@ export async function getUnits(
   currentPrice: number,
   bidAmount: number,
   leverage = 1,
-  symbol?: string) {
-  if (assetType === TradeAssetType.stock
-    || assetType === TradeAssetType.crypto) {
-    return (bidAmount * leverage) / currentPrice;
+  symbol?: string
+): Promise<number> {
+  const normalizedCurrentPrice = DecimalHelper.normalize(currentPrice);
+  const normalizedBidAmount = DecimalHelper.normalize(bidAmount);
+  const normalizedLeverage = DecimalHelper.normalize(leverage);
+
+  const leveragedAmount = DecimalHelper.multiply(normalizedBidAmount, normalizedLeverage);
+
+  if (assetType === TradeAssetType.stock || assetType === TradeAssetType.crypto) {
+    return DecimalHelper.divide(leveragedAmount, normalizedCurrentPrice);
   }
+
+  // For forex pairs
   const [base, term] = symbol.split('/');
   if (base === 'USD') {
-    return bidAmount * leverage;
+    return leveragedAmount;
   } else if (term === 'USD') {
-    return (bidAmount * leverage) / currentPrice;
+    return DecimalHelper.divide(leveragedAmount, normalizedCurrentPrice);
   }
+
   const rate = await fetchForexRate(`${base}/USD`);
-  return (bidAmount * leverage) / rate;
+  const normalizedRate = DecimalHelper.normalize(rate);
+  return DecimalHelper.divide(leveragedAmount, normalizedRate);
 }
 
 export const getSymbol = (asset: TradeAsset) => {

@@ -8,6 +8,7 @@ import {
   UpdateAccount,
   UserRole,
 } from '@coinvant/types';
+import { DecimalHelper } from '../../helpers/decimal';
 
 @Injectable()
 export class AccountService {
@@ -25,17 +26,19 @@ export class AccountService {
       where: {
         user: { id: createAccount.user.id || userID },
         type: createAccount.type,
-      }
+      },
     });
 
     if (accountExists) {
-      throw new BadRequestException(`User already has a ${accountExists.type} account`);
+      throw new BadRequestException(
+        `User already has a ${accountExists.type} account`
+      );
     }
 
     if (createAccount.user.role === UserRole.admin) {
       return this.accountRepo.save({
         type: AccountType.live,
-        user: (userID as any),
+        user: userID as any,
       });
     }
 
@@ -66,7 +69,7 @@ export class AccountService {
   async findOneForUpdate(id: string, queryRunner: QueryRunner) {
     const account = await queryRunner.manager.findOne(AccountEntity, {
       where: { id },
-      lock: { mode: 'pessimistic_write' }
+      lock: { mode: 'pessimistic_write' },
     });
     if (!account) {
       throw new BadRequestException('Account does not exist');
@@ -79,6 +82,11 @@ export class AccountService {
     updateAccount: UpdateAccount,
     queryRunner?: QueryRunner
   ) {
+    if (updateAccount.walletBalance) {
+      updateAccount.walletBalance = DecimalHelper.normalize(
+        updateAccount.walletBalance
+      );
+    }
     if (queryRunner) {
       await queryRunner.manager.update(AccountEntity, id, updateAccount);
     } else {
@@ -91,11 +99,16 @@ export class AccountService {
     // Lock the account row to prevent concurrent updates
     const account = await this.findOneForUpdate(id, queryRunner);
 
-    const newBalance = Number(account.walletBalance) + Number(amount);
+    // Use DecimalHelper for precise calculations
+    const normalizedAmount = DecimalHelper.normalize(amount);
+    const currentBalance = DecimalHelper.normalize(account.walletBalance);
+    const newBalance = DecimalHelper.add(currentBalance, normalizedAmount);
 
     // Validate balance doesn't become negative due to floating point issues
-    if (newBalance < 0) {
-      throw new BadRequestException('Operation would result in negative balance');
+    if (DecimalHelper.isLessThan(newBalance, 0)) {
+      throw new BadRequestException(
+        'Operation would result in negative balance'
+      );
     }
 
     await queryRunner.manager.update(
@@ -109,14 +122,15 @@ export class AccountService {
     // Lock the account row to prevent concurrent updates
     const account = await this.findOneForUpdate(id, queryRunner);
 
-    const currentBalance = Number(account.walletBalance);
-    const amountToDecrease = Number(amount);
+    // Use DecimalHelper for precise calculations
+    const currentBalance = DecimalHelper.normalize(account.walletBalance);
+    const amountToDecrease = DecimalHelper.normalize(amount);
 
-    if (currentBalance < amountToDecrease) {
+    if (DecimalHelper.isLessThan(currentBalance, amountToDecrease)) {
       throw new BadRequestException('Insufficient funds');
     }
 
-    const newBalance = currentBalance - amountToDecrease;
+    const newBalance = DecimalHelper.subtract(currentBalance, amountToDecrease);
 
     await queryRunner.manager.update(
       AccountEntity,

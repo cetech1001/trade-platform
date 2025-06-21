@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { TradeEntity } from '../entities/trade.entity';
 import { fetchAssetRate, getSymbol, getUnits, shouldOpenTrade } from '../helpers';
 import { TradeService } from '../trade.service';
+import { DecimalHelper } from '../../../helpers/decimal';
 
 interface CircuitBreakerState {
   failures: number;
@@ -85,7 +86,6 @@ export class TradeJob {
   @Cron(CronExpression.EVERY_MINUTE)
   async checkPendingTrades() {
     try {
-      const tradeMap = new Map<string, number>();
       const pendingTrades = await this.tradeRepo.find({
         where: { status: TradeStatus.pending }
       });
@@ -107,16 +107,14 @@ export class TradeJob {
             continue;
           }
 
-          let currentPrice = tradeMap.get(symbol);
-          if (!currentPrice) {
-            try {
-              currentPrice = await fetchAssetRate(trade.assetType, symbol);
-              tradeMap.set(symbol, currentPrice);
-              this.recordSuccess(symbol);
-            } catch (error) {
-              this.recordFailure(symbol);
-              throw error;
-            }
+          // Rate limiting is now handled in the individual helpers
+          let currentPrice: number;
+          try {
+            currentPrice = await fetchAssetRate(trade.assetType, symbol);
+            this.recordSuccess(symbol);
+          } catch (error) {
+            this.recordFailure(symbol);
+            throw error;
           }
 
           const shouldOpen = await shouldOpenTrade(trade, currentPrice);
@@ -138,18 +136,23 @@ export class TradeJob {
               updateData.executeAt = new Date().toISOString();
             }
 
-            const openingPrice = trade.buyPrice || trade.sellPrice ||
-              updateData.buyPrice || updateData.sellPrice;
+            const openingPrice = DecimalHelper.normalize(
+              trade.buyPrice || trade.sellPrice ||
+              updateData.buyPrice || updateData.sellPrice
+            );
 
-            if (!openingPrice || openingPrice <= 0) {
+            if (DecimalHelper.isLessThan(openingPrice, 0) || DecimalHelper.isEqual(openingPrice, 0)) {
               throw new Error(`Invalid opening price calculated: ${openingPrice}`);
             }
+
+            const bidAmount = DecimalHelper.normalize(trade.bidAmount);
+            const leverage = DecimalHelper.normalize(trade.leverage);
 
             updateData.units = await getUnits(
               trade.assetType,
               openingPrice,
-              trade.bidAmount,
-              trade.leverage,
+              bidAmount,
+              leverage,
               symbol
             );
 
@@ -178,7 +181,6 @@ export class TradeJob {
       const openTrades = await this.tradeRepo.find({
         where: { status: TradeStatus.active },
       });
-      const tradePriceMap = new Map<string, number>();
       const errors: string[] = [];
 
       for (const trade of openTrades) {
@@ -195,16 +197,14 @@ export class TradeJob {
             continue;
           }
 
-          let currentPrice = tradePriceMap.get(symbol);
-          if (!currentPrice) {
-            try {
-              currentPrice = await fetchAssetRate(trade.assetType, symbol);
-              tradePriceMap.set(symbol, currentPrice);
-              this.recordSuccess(symbol);
-            } catch (error) {
-              this.recordFailure(symbol);
-              throw error;
-            }
+          // Rate limiting is now handled in the individual helpers
+          let currentPrice: number;
+          try {
+            currentPrice = await fetchAssetRate(trade.assetType, symbol);
+            this.recordSuccess(symbol);
+          } catch (error) {
+            this.recordFailure(symbol);
+            throw error;
           }
 
           await this.tradeService.checkAndCloseTrade(trade, false, currentPrice);

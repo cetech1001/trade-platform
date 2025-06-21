@@ -20,6 +20,7 @@ import { environment } from '../../environments/environment';
 import { calculatePL, fetchAssetRate, getSymbol, getUnits } from './helpers';
 import { UserService } from '../user/user.service';
 import { DBTransactionService } from '../common/db-transaction.service';
+import { DecimalHelper } from '../../helpers/decimal';
 
 @Injectable()
 export class TradeService {
@@ -51,11 +52,15 @@ export class TradeService {
   }
 
   private validateAndNormalizeNumber(value: any, fieldName: string): number {
-    const num = Number(value);
-    if (isNaN(num) || num <= 0) {
+    try {
+      const num = DecimalHelper.normalize(value);
+      if (DecimalHelper.isLessThan(num, 0) || DecimalHelper.isEqual(num, 0)) {
+        throw new BadRequestException(`Invalid ${fieldName}: ${value}`);
+      }
+      return num;
+    } catch (error) {
       throw new BadRequestException(`Invalid ${fieldName}: ${value}`);
     }
-    return num;
   }
 
   async checkAndCloseTrade(trade: Trade, forceClose?: boolean, currentPrice?: number) {
@@ -78,36 +83,41 @@ export class TradeService {
         shouldClose = true;
         reason = TradeClosureReason.user;
         profitOrLoss = await calculatePL(trade, currentPrice);
-      } else if (
-        trade.takeProfit &&
-        ((trade.isShort && currentPrice <= trade.takeProfit) ||
-          (!trade.isShort && currentPrice >= trade.takeProfit))
-      ) {
-        shouldClose = true;
-        reason = TradeClosureReason.takeProfit;
-        closingPrice = trade.takeProfit;
-        profitOrLoss = await calculatePL(trade, trade.takeProfit);
-      } else if (
-        trade.stopLoss &&
-        ((trade.isShort && currentPrice >= trade.stopLoss) ||
-          (!trade.isShort && currentPrice <= trade.stopLoss))
-      ) {
-        shouldClose = true;
-        reason = TradeClosureReason.stopLoss;
-        closingPrice = trade.stopLoss;
-        profitOrLoss = await calculatePL(trade, trade.stopLoss);
-      } else {
+      } else if (trade.takeProfit) {
+        const takeProfit = DecimalHelper.normalize(trade.takeProfit);
+        if ((trade.isShort && DecimalHelper.isLessThan(currentPrice, takeProfit) || DecimalHelper.isEqual(currentPrice, takeProfit)) ||
+          (!trade.isShort && DecimalHelper.isGreaterThan(currentPrice, takeProfit) || DecimalHelper.isEqual(currentPrice, takeProfit))) {
+          shouldClose = true;
+          reason = TradeClosureReason.takeProfit;
+          closingPrice = takeProfit;
+          profitOrLoss = await calculatePL(trade, takeProfit);
+        }
+      } else if (trade.stopLoss) {
+        const stopLoss = DecimalHelper.normalize(trade.stopLoss);
+        if ((trade.isShort && DecimalHelper.isGreaterThan(currentPrice, stopLoss) || DecimalHelper.isEqual(currentPrice, stopLoss)) ||
+          (!trade.isShort && DecimalHelper.isLessThan(currentPrice, stopLoss) || DecimalHelper.isEqual(currentPrice, stopLoss))) {
+          shouldClose = true;
+          reason = TradeClosureReason.stopLoss;
+          closingPrice = stopLoss;
+          profitOrLoss = await calculatePL(trade, stopLoss);
+        }
+      }
+
+      if (!shouldClose) {
         profitOrLoss = await calculatePL(trade, currentPrice);
-        if (Number(trade.bidAmount) + Number(profitOrLoss) <= 0) {
+        const bidAmount = DecimalHelper.normalize(trade.bidAmount);
+        const totalValue = DecimalHelper.add(bidAmount, profitOrLoss);
+
+        if (DecimalHelper.isLessThan(totalValue, 0) || DecimalHelper.isEqual(totalValue, 0)) {
           shouldClose = true;
           reason = TradeClosureReason.stopOut;
-          profitOrLoss = Number(trade.bidAmount) * -1;
+          profitOrLoss = DecimalHelper.multiply(bidAmount, -1);
         }
       }
 
       // Normalize all numeric values
-      profitOrLoss = Number(profitOrLoss);
-      trade.bidAmount = Number(trade.bidAmount);
+      profitOrLoss = DecimalHelper.normalize(profitOrLoss);
+      const bidAmount = DecimalHelper.normalize(trade.bidAmount);
 
       if (!shouldClose) {
         await queryRunner.manager.update(TradeEntity, trade.id, {
@@ -116,11 +126,11 @@ export class TradeService {
         });
       } else {
         // Validate closing price before update
-        if (!closingPrice || closingPrice <= 0) {
+        if (DecimalHelper.isLessThan(closingPrice, 0) || DecimalHelper.isEqual(closingPrice, 0)) {
           throw new BadRequestException(`Invalid closing price: ${closingPrice}`);
         }
 
-        const finalBalance = trade.bidAmount + profitOrLoss;
+        const finalBalance = DecimalHelper.add(bidAmount, profitOrLoss);
 
         await this.accountService.increaseBalance(
           trade.account.id,
@@ -139,7 +149,8 @@ export class TradeService {
         };
 
         // Validate all prices before update
-        if (updateData.buyPrice <= 0 || updateData.sellPrice <= 0) {
+        if (DecimalHelper.isLessThan(updateData.buyPrice, 0) || DecimalHelper.isEqual(updateData.buyPrice, 0) ||
+          DecimalHelper.isLessThan(updateData.sellPrice, 0) || DecimalHelper.isEqual(updateData.sellPrice, 0)) {
           throw new BadRequestException('Invalid buy/sell price calculated');
         }
 
@@ -171,9 +182,9 @@ export class TradeService {
       const account = await this.accountService.findOne(createTrade.accountID);
 
       const bidAmount = this.validateAndNormalizeNumber(createTrade.bidAmount, 'bidAmount');
-      const walletBalance = Number(account.walletBalance);
+      const walletBalance = DecimalHelper.normalize(account.walletBalance);
 
-      if (walletBalance < bidAmount) {
+      if (DecimalHelper.isLessThan(walletBalance, bidAmount)) {
         throw new BadRequestException('Insufficient funds');
       }
 
@@ -307,7 +318,7 @@ export class TradeService {
       .andWhere('TR.status = :status', { status: query.status })
       .andWhere('TR.assetType = :assetType', { assetType: query.assetType })
       .getRawOne();
-    return data?.total || 0;
+    return DecimalHelper.normalize(data?.total || 0);
   }
 
   async fetchTotalActiveBid(query: FindTradeAmountsQueryParams, user: User) {
@@ -324,7 +335,7 @@ export class TradeService {
       .andWhere('TR.status = :status', { status: query.status })
       .andWhere('TR.assetType = :assetType', { assetType: query.assetType })
       .getRawOne();
-    return data?.total || 0;
+    return DecimalHelper.normalize(data?.total || 0);
   }
 
   findOne(id: string) {
@@ -345,7 +356,9 @@ export class TradeService {
       } else {
         updateTrade.buyPrice = openingPrice;
       }
-      updateTrade.units = (trade.bidAmount * trade.leverage) / openingPrice;
+      const bidAmount = DecimalHelper.normalize(trade.bidAmount);
+      const leverage = DecimalHelper.normalize(trade.leverage);
+      updateTrade.units = DecimalHelper.divide(DecimalHelper.multiply(bidAmount, leverage), openingPrice);
       delete updateTrade.openingPrice;
     }
 
@@ -361,19 +374,22 @@ export class TradeService {
         const currentPrice = updateTrade.currentPrice || null;
         await this.checkAndCloseTrade(trade, true, currentPrice);
       } else if (updateTrade.takeProfit || updateTrade.stopLoss) {
-        if (
-          updateTrade.takeProfit &&
-          ((trade.isShort && +trade.currentPrice <= +updateTrade.takeProfit) ||
-            (!trade.isShort && +trade.currentPrice >= +updateTrade.takeProfit))
-        ) {
-          throw new BadRequestException('Please input a valid take profit parameter');
+        const currentPrice = DecimalHelper.normalize(trade.currentPrice);
+
+        if (updateTrade.takeProfit) {
+          const takeProfit = DecimalHelper.normalize(updateTrade.takeProfit);
+          if ((trade.isShort && DecimalHelper.isLessThan(currentPrice, takeProfit) || DecimalHelper.isEqual(currentPrice, takeProfit)) ||
+            (!trade.isShort && DecimalHelper.isGreaterThan(currentPrice, takeProfit) || DecimalHelper.isEqual(currentPrice, takeProfit))) {
+            throw new BadRequestException('Please input a valid take profit parameter');
+          }
         }
-        if (
-          updateTrade.stopLoss &&
-          ((trade.isShort && +trade.currentPrice >= +updateTrade.stopLoss) ||
-            (!trade.isShort && +trade.currentPrice <= +updateTrade.stopLoss))
-        ) {
-          throw new BadRequestException('Please input a valid stop loss parameter');
+
+        if (updateTrade.stopLoss) {
+          const stopLoss = DecimalHelper.normalize(updateTrade.stopLoss);
+          if ((trade.isShort && DecimalHelper.isGreaterThan(currentPrice, stopLoss) || DecimalHelper.isEqual(currentPrice, stopLoss)) ||
+            (!trade.isShort && DecimalHelper.isLessThan(currentPrice, stopLoss) || DecimalHelper.isEqual(currentPrice, stopLoss))) {
+            throw new BadRequestException('Please input a valid stop loss parameter');
+          }
         }
       }
 
