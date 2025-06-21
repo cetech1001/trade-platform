@@ -9,6 +9,7 @@ import { AccountModule } from '../account/account.module';
 import { EmailModule } from '../email/email.module';
 import { TradeJob } from './jobs/trade.job';
 import { UserModule } from '../user/user.module';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UserModule } from '../user/user.module';
     AccountModule,
     EmailModule,
     UserModule,
+    CommonModule,
   ],
   controllers: [TradeController],
   providers: [TradeService, TradeJob],

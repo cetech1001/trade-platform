@@ -8,6 +8,7 @@ import {
   UpdateAccount,
   UserRole,
 } from '@coinvant/types';
+import { DecimalHelper } from '../../helpers/decimal';
 
 @Injectable()
 export class AccountService {
@@ -25,17 +26,19 @@ export class AccountService {
       where: {
         user: { id: createAccount.user.id || userID },
         type: createAccount.type,
-      }
+      },
     });
 
     if (accountExists) {
-      throw new BadRequestException(`User already has a ${accountExists.type} account`);
+      throw new BadRequestException(
+        `User already has a ${accountExists.type} account`
+      );
     }
 
     if (createAccount.user.role === UserRole.admin) {
       return this.accountRepo.save({
         type: AccountType.live,
-        user: (userID as any),
+        user: userID as any,
       });
     }
 
@@ -63,11 +66,27 @@ export class AccountService {
     return account;
   }
 
+  async findOneForUpdate(id: string, queryRunner: QueryRunner) {
+    const account = await queryRunner.manager.findOne(AccountEntity, {
+      where: { id },
+      lock: { mode: 'pessimistic_write' },
+    });
+    if (!account) {
+      throw new BadRequestException('Account does not exist');
+    }
+    return account;
+  }
+
   async update(
     id: string,
     updateAccount: UpdateAccount,
     queryRunner?: QueryRunner
   ) {
+    if (updateAccount.walletBalance) {
+      updateAccount.walletBalance = DecimalHelper.normalize(
+        updateAccount.walletBalance
+      );
+    }
     if (queryRunner) {
       await queryRunner.manager.update(AccountEntity, id, updateAccount);
     } else {
@@ -77,28 +96,46 @@ export class AccountService {
   }
 
   async increaseBalance(id: string, amount: number, queryRunner: QueryRunner) {
-    const accountExists = await this.findOne(id);
-    if (!accountExists) {
-      throw new BadRequestException('Account does not exist');
+    // Lock the account row to prevent concurrent updates
+    const account = await this.findOneForUpdate(id, queryRunner);
+
+    // Use DecimalHelper for precise calculations
+    const normalizedAmount = DecimalHelper.normalize(amount);
+    const currentBalance = DecimalHelper.normalize(account.walletBalance);
+    const newBalance = DecimalHelper.add(currentBalance, normalizedAmount);
+
+    // Validate balance doesn't become negative due to floating point issues
+    if (DecimalHelper.isLessThan(newBalance, 0)) {
+      throw new BadRequestException(
+        'Operation would result in negative balance'
+      );
     }
-    return queryRunner.manager.increment(
+
+    await queryRunner.manager.update(
       AccountEntity,
       { id },
-      'walletBalance',
-      amount
+      { walletBalance: newBalance }
     );
   }
 
   async decreaseBalance(id: string, amount: number, queryRunner: QueryRunner) {
-    const accountExists = await this.findOne(id);
-    if (!accountExists) {
-      throw new BadRequestException('Account does not exist');
+    // Lock the account row to prevent concurrent updates
+    const account = await this.findOneForUpdate(id, queryRunner);
+
+    // Use DecimalHelper for precise calculations
+    const currentBalance = DecimalHelper.normalize(account.walletBalance);
+    const amountToDecrease = DecimalHelper.normalize(amount);
+
+    if (DecimalHelper.isLessThan(currentBalance, amountToDecrease)) {
+      throw new BadRequestException('Insufficient funds');
     }
-    return queryRunner.manager.decrement(
+
+    const newBalance = DecimalHelper.subtract(currentBalance, amountToDecrease);
+
+    await queryRunner.manager.update(
       AccountEntity,
       { id },
-      'walletBalance',
-      amount
+      { walletBalance: newBalance }
     );
   }
 

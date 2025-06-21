@@ -10,7 +10,7 @@ import {
 import { PaymentMethodService } from './payment-method.service';
 import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
-import {PaginationOptionsDto} from "../../dto/pagination.dto";
+import {PaginationOptionsDto} from "../common/dto/pagination.dto";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {JwtAuthGuard} from "../../guards";
 import {Roles} from "../../decorators";

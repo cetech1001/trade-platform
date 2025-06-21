@@ -10,6 +10,7 @@ import { EmailService } from '../email/email.service';
 import { formatDate } from '../../helpers';
 import { environment } from '../../environments/environment';
 import { DBTransactionService } from '../common/db-transaction.service';
+import { DecimalHelper } from '../../helpers/decimal';
 
 @Injectable()
 export class UserService {
@@ -30,10 +31,15 @@ export class UserService {
         throw new BadRequestException("Email address already exists");
       }
       const user = await queryRunner.manager.save(UserEntity, createUserDto);
+
+      // Use DecimalHelper for the initial wallet balance
+      const initialBalance = DecimalHelper.normalize(100000);
+
       await this.accountService.create({
         user,
-        walletBalance: 100000
+        walletBalance: initialBalance
       }, queryRunner);
+
       Promise.all([
         this.emailService.sendMail(user.email, `Welcome to ${environment.appName}`, './user/welcome', {
           name: user.name,

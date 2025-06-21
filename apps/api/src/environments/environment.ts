@@ -4,7 +4,7 @@ import * as process from 'node:process';
 dotenv.config();
 
 export const environment = {
-  production: false,
+  production: process.env.NODE_ENV === "production",
   port: process.env.PORT || 3000,
   appName: process.env.NX_REACT_APP_SITE_NAME,
   webUrl: process.env.NX_REACT_APP_WEB_URL,
@@ -38,5 +38,7 @@ export const environment = {
   supportEmail: process.env.SUPPORT_EMAIL,
   polygonAPIKey: process.env.POLYGON_API_KEY,
   alphaVantageAPIKey: process.env.ALPHA_VANTAGE_API_KEY,
-  assetsPath: path.join(process.cwd(), 'apps', 'api', 'src', 'assets'),
+  assetsPath: process.env.NODE_ENV === "development"
+    ? path.join(process.cwd(), 'apps', 'api', 'src', 'assets')
+    : path.join(process.cwd(), 'assets'),
 }
