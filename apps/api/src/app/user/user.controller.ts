@@ -12,7 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {JwtAuthGuard} from "../../guards";
-import {PaginationOptionsDto} from "../../dto/pagination.dto";
+import {PaginationOptionsDto} from "../common/dto/pagination.dto";
 import {User, UserRole} from "@coinvant/types";
 import { CurrentUser, Roles } from '../../decorators';
 import { CreateKycDto } from './dto/create-kyc.dto';

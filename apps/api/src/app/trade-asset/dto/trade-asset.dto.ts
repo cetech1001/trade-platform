@@ -1,4 +1,4 @@
-import {PaginationOptionsDto} from "../../../dto/pagination.dto";
+import {PaginationOptionsDto} from "../../common/dto/pagination.dto";
 import {
 	FindCryptoCurrencies,
 	FindForexPairs,

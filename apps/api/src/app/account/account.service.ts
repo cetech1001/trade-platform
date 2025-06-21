@@ -63,6 +63,17 @@ export class AccountService {
     return account;
   }
 
+  async findOneForUpdate(id: string, queryRunner: QueryRunner) {
+    const account = await queryRunner.manager.findOne(AccountEntity, {
+      where: { id },
+      lock: { mode: 'pessimistic_write' }
+    });
+    if (!account) {
+      throw new BadRequestException('Account does not exist');
+    }
+    return account;
+  }
+
   async update(
     id: string,
     updateAccount: UpdateAccount,
@@ -77,28 +88,40 @@ export class AccountService {
   }
 
   async increaseBalance(id: string, amount: number, queryRunner: QueryRunner) {
-    const accountExists = await this.findOne(id);
-    if (!accountExists) {
-      throw new BadRequestException('Account does not exist');
+    // Lock the account row to prevent concurrent updates
+    const account = await this.findOneForUpdate(id, queryRunner);
+
+    const newBalance = Number(account.walletBalance) + Number(amount);
+
+    // Validate balance doesn't become negative due to floating point issues
+    if (newBalance < 0) {
+      throw new BadRequestException('Operation would result in negative balance');
     }
-    return queryRunner.manager.increment(
+
+    await queryRunner.manager.update(
       AccountEntity,
       { id },
-      'walletBalance',
-      amount
+      { walletBalance: newBalance }
     );
   }
 
   async decreaseBalance(id: string, amount: number, queryRunner: QueryRunner) {
-    const accountExists = await this.findOne(id);
-    if (!accountExists) {
-      throw new BadRequestException('Account does not exist');
+    // Lock the account row to prevent concurrent updates
+    const account = await this.findOneForUpdate(id, queryRunner);
+
+    const currentBalance = Number(account.walletBalance);
+    const amountToDecrease = Number(amount);
+
+    if (currentBalance < amountToDecrease) {
+      throw new BadRequestException('Insufficient funds');
     }
-    return queryRunner.manager.decrement(
+
+    const newBalance = currentBalance - amountToDecrease;
+
+    await queryRunner.manager.update(
       AccountEntity,
       { id },
-      'walletBalance',
-      amount
+      { walletBalance: newBalance }
     );
   }
 
