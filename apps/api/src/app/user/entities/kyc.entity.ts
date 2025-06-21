@@ -57,7 +57,7 @@ export class KycEntity implements KYC{
   @Column()
   photo: string;
 
-  @Column()
+  @Column({ nullable: true, default: null })
   proofOfAddress: string;
 
   @OneToOne(
